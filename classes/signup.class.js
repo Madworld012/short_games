@@ -92,7 +92,6 @@ module.exports = {
                 var jid = randomstring.generate(10);
                 var extime = commonClass.AddTime(60);
                 commonClass.SendSMS(udatac, function (cb_status) {
-                    cl("AUCI--------->>>cb_status: ", cb_status)
                     if (cb_status.status == 1) {
                         db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp } }, function (err) {
                             commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });

@@ -66,7 +66,7 @@ if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
 	// var httpsOptions = { key: fs.readFileSync('certificate/server.key'), cert: fs.readFileSync('certificate/final.crt') };
 	// var server = https.createServer(httpsOptions, app);
 }
-io = module.exports = socketIO(server, { 'origins': '*:*', 'pingTimeout': 7000, 'pingInterval': 10000 });
+io = module.exports = socketIO(server, { 'origins': '*:*', 'pingTimeout': 20000, 'pingInterval': 10000 });
 server.listen(SERVER_PORT);
 
 app.use(express.static(__dirname + '/public'));

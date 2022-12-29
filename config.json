@@ -17,7 +17,7 @@
     "REDIS_HOST_LIVE": "13.126.142.77",
     "REDIS_DB": 15,
 
-    "BASE_URL": "http://13.126.142.77:3000",
+    "BASE_URL": "13.126.142.77:3000",
     "INITIAL_CASH": 1000,
 
 

@@ -65,7 +65,7 @@ module.exports = {
         let wh = {};
         wh.mobile_no = data.mobile_no;
         let userData = await db.collection('game_users').find(wh).toArray();
-        if (userData.length > 0) {
+        if (userData && userData.length > 0) {
             userData = userData[0];
             //last login save 
             //set user data into socket

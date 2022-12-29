@@ -14,7 +14,7 @@ module.exports = {
 			// io.sockets.sockets.get();
 
 			// cl("New Socket Connection Made");
-			// console.log('socket id', socket.id);
+			console.log('socket id', socket.id);
 			// socket.join("rest");
 
 			// // io.to("rest").emit('new_user', {});

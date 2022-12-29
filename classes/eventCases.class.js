@@ -14,11 +14,10 @@ module.exports = {
 			// io.sockets.sockets.get();
 
 			// cl("New Socket Connection Made");
+			console.log("call come for connection");
 			console.log('socket id', socket.id);
-			socket.join("rest");
-			setInterval(() => {
-				io.to("rest").emit('new_user', {});
-			}, 100);
+			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
+			
 			let flg = true
 
 

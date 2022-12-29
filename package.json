@@ -1,0 +1,28 @@
+{
+  "name": "aviator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "aviator_server.js",
+  "scripts": {
+    "start": "node ./aviator_server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "16.0.3",
+    "ejs": "3.1.8",
+    "express": "4.18.2",
+    "graceful-fs": "4.2.10",
+    "moment": "2.29.4",
+    "mongodb": "4.12.1",
+    "node-schedule": "2.1.0",
+    "randomstring": "1.2.3",
+    "redis": "3.0.2",
+    "request": "2.88.2",
+    "socket.io": "4.5.4",
+    "socket.io-client": "4.5.4",
+    "socket.io-stream": "0.9.1",
+    "underscore": "1.13.6"
+  }
+}

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html>
+<style>
+    .box {
+        width: 100%;
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 60px 0 0;
+    }
+
+    .inner_box {
+        width: 800px;
+        height: auto;
+        border: 2px solid red;
+    }
+
+    .user_box {
+        float: left;
+        width: 100%;
+        border-bottom: 2px solid #f00;
+    }
+
+    .status_box {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 2px solid #f00;
+    }
+
+    .user_info {
+        float: left;
+        width: 49%;
+        height: 65px;
+        text-align: center;
+
+    }
+
+    .inner_content {
+        float: left;
+        width: 100%;
+        height: 400px;
+        text-align: center;
+        padding: 40px 0;
+        border-bottom: 2px solid #f00;
+    }
+
+    .game_container {
+        float: left;
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .bid-full {
+        float: left;
+        width: 100%;
+        height: 211px;
+    }
+
+    .bid-content {
+        float: left;
+        width: 49%;
+
+        padding: 30px 0;
+        text-align: center;
+    }
+
+    .bid-content:first-child,
+    .user_info:first-child {
+        border-right: 2px solid red;
+    }
+</style>
+
+<body>
+    <div class="box">
+
+        <div class="inner_box">
+
+            <div class="user_box">
+                <div class="user_info">
+                    <h2>
+                        <label>Username :</label>
+                        <label id="name">Aviator</label>
+                    </h2>
+
+
+                </div>
+                <div class="user_info">
+                    <h2>
+                        <label>Chips :</label>
+                        <label id="chips" style="color: red;">0</label>
+                    </h2>
+                </div>
+            </div>
+            <div class="status_box">
+                <p id="status" style="font-size: 40px;">Status Of the game</p>
+            </div>
+            <div class="game_play">
+                <!-- hidden fileds -->
+                <input type="hidden" name="uid" id="uid">
+                <input type="hidden" name="tblid" id="tblid">
+                <input type="hidden" name="x" id="x">
+
+                <input type="hidden" name="can_i_cash_out_flg" id="can_i_cash_out_flg">
+                <input type="hidden" name="can_i_bet_flg" id="can_i_bet_flg">
+
+
+                <input type="hidden" name="me_bet_mari_1" id="me_bet_mari_1">
+                <input type="hidden" name="me_bet_mari_2" id="me_bet_mari_2">
+
+                <div class="inner_content">
+                    <div class="game_container" id="signup_div">
+                        <label>Enter Phone Numer &nbsp;&nbsp;</label>
+                        <input type="number" id="phno" value="9999999999" required /></br></br></br></br>
+                        <label>Enter Your Name &nbsp;&nbsp;</label>
+                        <input type="text" id="un" required /></br></br></br></br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button onclick="signup()">Signup</button></br>
+
+                    </div>
+
+                    <div class="game_container" id="game_div">
+                        <input style="height:50px;width:200px" type="button" id="start_game" value="Start Game"
+                            onclick="start_game()">
+                        <p style="font-size: 50px;" id="xxvalue">0</p>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+            <div class="bid-full">
+                <div class="bid-content">
+                    <input type="number" step=any style="height: 28px;width: 172px;" id="bet_1" value="1" /></br></br>
+                    <input type="button" style="height:65px;width:287px;font-size: x-large;" id="btn_bet_1"
+                        onclick="bet(1)" value="BET"></button></br>
+                    <input type="button" style="height:65px;width:287px;font-size: x-large;" id="cashout_1"
+                        onclick="cashout(1)" value="CashOut"></button></br>
+
+                    <input type="button" style="height:65px;width:287px;font-size: x-large;background-color: #f00;"
+                        id="cancel_1" onclick="cancel(1)" value="Cancel"></button></br>
+
+                </div>
+                <div class="bid-content">
+                    <input type="number" step=any style="height: 28px;width: 172px;" id="bet_2" value="1" /></br></br>
+                    <input type="button" style="height:65px;width:287px;font-size: x-large;" id="btn_bet_2"
+                        onclick="bet(2)" value="BET"></button></br>
+                    <input type="button" style="height:65px;width:287px;font-size: x-large;" id="cashout_2"
+                        onclick="cashout(2)" value="CashOut"></button></br>
+
+                    <input type="button" style="height:65px;width:287px;font-size: x-large;background-color: #f00;"
+                        id="cancel_2" onclick="cancel(2)" value="Cancel"></button></br>
+                </div>
+            </div>
+
+            <!-- <input style="height:50px;width:200px" type="button" id="" value="ns test"
+                onclick="nstest()"> -->
+
+            <input style="height:50px;width:200px" type="button" id="" value="LOGIN_PHNO" onclick="LOGIN_PHNO()">
+
+            <input style="height:50px;width:200px" type="button" id="" value="VERIFY_OTP" onclick="VERIFY_OTP()">
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+
+
+
+        var socket = io("http://192.168.0.12:9000");
+
+        socket.on('res', function (event_data) {
+            console.log("event_data", event_data);
+            let data = event_data.data;
+            let en = event_data.en;
+            console.log("en : ", en);
+            switch (en) {
+                case "SP":
+                    SP(data);
+                    break;
+
+                case "GTI":
+                    GTI(data);
+                    break;
+
+                case "FLAY":
+                    FLAY(data);
+                    break;
+
+                case "SBT":
+                    SBT(data);
+                    break;
+
+                case "SF":
+                    SF(data);
+                    break;
+
+                case "CP":
+                    break;
+
+                case "PLACE_BET":
+                    PLACE_BET(data);
+                    break;
+
+                case "UC":
+                    UC(data);
+                    break;
+
+                default:
+                    break;
+            }
+        });
+
+        function SP(data) {
+            console.log("data", data);
+            console.log("data.uid", data.uid);
+
+            document.getElementById("uid").value = data.uid.toString();
+            document.getElementById("chips").innerHTML = data.total_cash;
+            document.getElementById("name").innerHTML = data.un;
+
+            document.getElementById("can_i_bet_flg").value = false;
+            document.getElementById("can_i_cash_out_flg").value = false;
+
+
+            var element = document.getElementById("signup_div");
+            element.style.display = "none";
+
+            var game_div = document.getElementById("game_div");
+            game_div.style.display = "block";
+
+            // document.getElementById("xxvalue").innerHTML = "";
+        }
+        function GTI(data) {
+            console.log("table data was come", data);
+            document.getElementById("tblid").value = data._id.toString();
+            document.getElementById("status").innerHTML = data.status;
+            var element = document.getElementById("start_game");
+            element.style.display = "none";
+        }
+        function FLAY(data) {
+
+            document.getElementById("xxvalue").innerHTML = data.count + "x";
+            let bet_value_1 = parseInt(document.getElementById("bet_1").value);
+            let bet_value_2 = parseInt(document.getElementById("bet_2").value);
+
+            document.getElementById("x").value = parseFloat(data.count).toFixed(2);
+
+            let me_1_par_bet_mari = document.getElementById("me_bet_mari_1").value;
+            let me_2_par_bet_mari = document.getElementById("me_bet_mari_2").value;
+            if (me_1_par_bet_mari > 0) {
+
+                var element = document.getElementById("btn_bet_1");
+                element.style.display = "none";
+
+                var element = document.getElementById("cashout_1");
+                element.style.display = "block";
+                document.getElementById("cashout_1").value = "CashOut " + parseFloat(bet_value_1 * data.count).toFixed(2);
+            }
+
+            if (me_2_par_bet_mari > 0) {
+
+                var element = document.getElementById("btn_bet_2");
+                element.style.display = "none";
+
+                var element = document.getElementById("cashout_2");
+                element.style.display = "block";
+                document.getElementById("cashout_2").value = "CashOut " + parseFloat(bet_value_2 * data.count).toFixed(2);
+            }
+
+        }
+        function SBT(data) {
+            document.getElementById("xxvalue").innerHTML = "";
+            document.getElementById("status").innerHTML = "Place Your Bet...";
+
+            document.getElementById("can_i_bet_flg").value = true;
+            document.getElementById("can_i_cash_out_flg").value = false;
+
+            document.getElementById("btn_bet_1").disabled = false;
+            document.getElementById("btn_bet_2").disabled = false;
+
+            document.getElementById("me_bet_mari_1").value = 0;
+            document.getElementById("me_bet_mari_2").value = 0;
+
+            //hide cashout button becuase start bet time
+            var element = document.getElementById("cashout_1");
+            element.style.display = "none";
+            var element = document.getElementById("cashout_2");
+            element.style.display = "none";
+
+            //Show bet button  becuase start bet time
+            var element = document.getElementById("btn_bet_1");
+            element.style.display = "block";
+            var element = document.getElementById("btn_bet_2");
+            element.style.display = "block";
+
+        }
+        function CP(data) {
+            // document.getElementById("xxvalue").innerHTML = "";
+            document.getElementById("status").innerHTML = "Plane Is CutOut...";
+            document.getElementById("can_i_bet_flg").value = false;
+            document.getElementById("can_i_cash_out_flg").value = false;
+
+            document.getElementById("btn_bet_1").style.backgroundColor = "lightgreen";
+            document.getElementById("btn_bet_2").style.backgroundColor = "lightgreen";
+
+            document.getElementById("btn_bet_1").disabled = true;
+            document.getElementById("btn_bet_2").disabled = true;
+
+            document.getElementById("cashout_1").disabled = true;
+            document.getElementById("cashout_2").disabled = true;
+
+            document.getElementById("me_bet_mari_1").value = 0;
+            document.getElementById("me_bet_mari_2").value = 0;
+
+
+        }
+        function SF(data) {
+            document.getElementById("can_i_bet_flg").value = false;
+            document.getElementById("can_i_cash_out_flg").value = true;
+            document.getElementById("status").innerHTML = "You Can Cashout Money...";
+
+            //hide cashout button becuase start bet time
+
+            var element = document.getElementById("cancel_1");
+            element.style.display = "none";
+            var element = document.getElementById("cancel_2");
+            element.style.display = "none";
+
+            let me_bet_mari_1 = document.getElementById("me_bet_mari_1").value;
+            let me_bet_mari_2 = document.getElementById("me_bet_mari_2").value;
+
+            if (me_bet_mari_1 > 0) {
+                var element = document.getElementById("cashout_1");
+                element.style.display = "block";
+                document.getElementById("cashout_1").disabled = false;
+            }
+
+            if (me_bet_mari_2 > 0) {
+                var element = document.getElementById("cashout_2");
+                element.style.display = "block";
+                document.getElementById("cashout_2").disabled = false;
+
+            }
+        }
+        function PLACE_BET(data) {
+            console.log("data in place bet", data);
+            if (data.status == true) {
+                let new_chips = parseFloat(data.total_cash).toFixed(2);
+                document.getElementById("chips").innerHTML = parseFloat(new_chips);
+            }
+
+        }
+        function UC(data) {
+            console.log("data in place bet", data);
+            if (data.status == true) {
+                let new_chips = parseFloat(data.total_cash).toFixed(2);
+                document.getElementById("chips").innerHTML = parseFloat(new_chips);
+            }
+        }
+
+
+
+        //login 
+        function LOGIN_PHNO() {
+            socket.emit('req', { en: "LOGIN_PHNO", data: { ult: "phone", mobile_no: "8460516032", un: "Shubham", email: "sk@game.com" } })
+        }
+
+        //login 
+        function VERIFY_OTP() {
+            socket.emit('req', { en: "VERIFY_OTP", data: { ult: "phone", mobile_no: "8460516032", otp: 1234 } })
+        }
+
+
+
+
+
+        function bet(data) {
+            let bet_flg = document.getElementById("can_i_bet_flg").value;
+            console.log("bet flag is----------------", bet_flg);
+            if (bet_flg == "true") {
+                let cash_out_flg = document.getElementById("can_i_cash_out_flg").value;
+                let uid = document.getElementById("uid").value;
+                let tblid = document.getElementById("tblid").value;
+                let bet_1 = 0;
+                let bet_2 = 0;
+
+                if (data == 1) {
+
+                    var element = document.getElementById("btn_bet_1");
+                    element.style.display = "none";
+
+
+                    var element = document.getElementById("cancel_1");
+                    element.style.display = "block";
+
+                    document.getElementById("btn_bet_1").disabled = true;
+
+                    let bet_value_1 = document.getElementById("bet_1").value;
+
+                    document.getElementById("me_bet_mari_1").value = bet_value_1;
+                    bet_1 = bet_value_1;
+
+                } else if (data == 2) {
+                    var element = document.getElementById("btn_bet_2");
+                    element.style.display = "none";
+
+                    var element = document.getElementById("cancel_2");
+                    element.style.display = "block";
+
+                    document.getElementById("btn_bet_2").disabled = true;
+
+                    let bet_value_2 = document.getElementById("bet_2").value;
+                    document.getElementById("me_bet_mari_2").value = bet_value_2;
+                    bet_2 = bet_value_2;
+                }
+
+                console.log("tblid", tblid);
+                if (bet_flg == "true") {
+                    console.log("you can bet");
+                    socket.emit('req', { en: "PLACE_BET", data: { uid: uid, tblid: tblid, bet_1: parseFloat(bet_1), bet_2: parseFloat(bet_2) } });
+                } else {
+                    console.log("bet is close now", bet_flg);
+                }
+            } else {
+                console.log("you can not bet");
+            }
+
+
+        }
+        function cancel(data) {
+            let bet_flg = document.getElementById("can_i_bet_flg").value;
+            let cash_out_flg = document.getElementById("can_i_cash_out_flg").value;
+            let uid = document.getElementById("uid").value;
+            let tblid = document.getElementById("tblid").value;
+            let cancel;
+            if (bet_flg == "true") {
+                if (data == 1) {
+                    document.getElementById("me_bet_mari_1").value = 0;
+                    document.getElementById("btn_bet_1").disabled = false;
+                    var element = document.getElementById("btn_bet_1");
+                    element.style.display = "block";
+
+                    var element = document.getElementById("cancel_1");
+                    element.style.display = "none";
+                    cancel = 1;
+
+                }
+
+                if (data == 2) {
+                    document.getElementById("me_bet_mari_2").value = 0;
+                    document.getElementById("btn_bet_2").disabled = false;
+                    var element = document.getElementById("btn_bet_2");
+                    element.style.display = "block";
+
+                    var element = document.getElementById("cancel_2");
+                    element.style.display = "none";
+                    cancel = 2;
+
+                }
+
+                socket.emit('req', { en: "CANCEL_BET", data: { uid: uid, tblid: tblid, cancel: cancel } });
+
+
+                console.log("cacel bet", data);
+            } else {
+                console.log("you cant revert your bet");
+            }
+
+
+
+        }
+
+        function bet2(data) {
+            let bet_flg = document.getElementById("can_i_bet_flg").value;
+            let cash_out_flg = document.getElementById("can_i_cash_out_flg").value;
+            let uid = document.getElementById("uid").value;
+            let tblid = document.getElementById("tblid").value;
+
+            let bet_value = parseInt(document.getElementById("bet_2").value);
+
+            document.getElementById("me_bet_mari_2").value = bet_value;
+            console.log("tblid", tblid);
+            if (bet_flg == "true" && bet_value > 0) {
+                console.log("you can bet");
+                socket.emit('req', { en: "PLACE_BET", data: { uid: uid, tblid: tblid, bet_1: bet_value, cashout_1: true, bet_2: 0 } });
+            } else {
+                console.log("bet is close now", bet_flg);
+            }
+        }
+
+        function signup() {
+            let name = document.getElementById("un").value;
+            let ph_no = document.getElementById("phno").value;
+            socket.emit('req', { en: "SP", data: { ult: "phone", mobile_no: ph_no, un: name } })
+        }
+
+        function nstest(params) {
+            console.log("cal");
+            socket.emit('req', { en: "TEST", data: {} });
+        }
+
+        function start_game() {
+            let name = document.getElementById("un").value;
+            let ph_no = document.getElementById("phno").value;
+            var uid = document.getElementById("uid").value;
+
+            document.getElementById("xxvalue").innerHTML = "";
+            socket.emit('req', { en: "SG", data: { uid: uid } });
+        }
+
+        function cashout(data) {
+
+            let cash_out_flg = document.getElementById("can_i_cash_out_flg").value;
+            let x_value = document.getElementById("x").value;
+            let uid = document.getElementById("uid").value;
+            let tblid = document.getElementById("tblid").value;
+            if (cash_out_flg == "true") {
+                console.log("x value is-----------------", x_value);
+                if (data == 1) {
+                    document.getElementById("me_bet_mari_1").value = 0;
+                    document.getElementById("cashout_1").disabled = true;
+                }
+
+                if (data == 2) {
+                    document.getElementById("me_bet_mari_2").value = 0;
+                    document.getElementById("cashout_2").disabled = true;
+
+                }
+                socket.emit('req', { en: "CASH_OUT", data: { uid: uid, tblid: tblid, x: x_value, cashout: data } });
+                // socket.emit('req', { en: "CASH_OUT", data: { uid: uid,  tblid: tblid, x: x_value } });
+            } else {
+                console.log("you can not cashout now.")
+            }
+
+
+        }
+
+        var element = document.getElementById("game_div");
+        element.style.display = "none";
+
+        document.getElementById("can_i_bet_flg").value = false;
+        document.getElementById("can_i_cash_out_flg").value = false;
+
+        console.log(document.getElementById("can_i_cash_out_flg").value);
+
+        document.getElementById("btn_bet_1").style.backgroundColor = "lightgreen";
+        document.getElementById("btn_bet_2").style.backgroundColor = "lightgreen";
+
+        //diable button
+        document.getElementById("btn_bet_1").disabled = true;
+        document.getElementById("btn_bet_2").disabled = true;
+
+
+        var element = document.getElementById("cashout_1");
+        element.style.display = "none";
+
+        var element = document.getElementById("cashout_2");
+        element.style.display = "none";
+
+        document.getElementById("me_bet_mari_1").value = 0;
+        document.getElementById("me_bet_mari_2").value = 0;
+
+        var element = document.getElementById("cancel_1");
+        element.style.display = "none";
+
+        var element = document.getElementById("cancel_2");
+        element.style.display = "none";
+
+
+
+    </script>
+
+
+</body>
+
+</html>

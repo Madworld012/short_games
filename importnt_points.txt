@@ -1,0 +1,1 @@
+1. if user not take any action then need to throw on lobby after 5 round.

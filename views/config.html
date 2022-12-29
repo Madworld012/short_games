@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Config</title>
+    <style>
+        .main-container {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+            text-align: center
+        }
+
+        .header {
+            margin: auto;
+            width: 50%;
+            padding: 10px;
+            text-align: center
+        }
+    </style>
+</head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $.get({
+            url: "/gc?id=tyxdryrydrtxuxtdrutrdutrdutdrurdtu",
+            type: 'GET',
+            success: function (result) {
+                $("#config-text").text(JSON.stringify(result, undefined, 4));
+            }
+        });
+    });
+
+    function saveConfig() {
+        $.post({
+            url: "/sc?id=tyxdryrydrtxuxtdrutrdutrdutdrurdtu",
+            data: {
+                config: $("#config-text").val(),
+            },
+            success: function (result) {
+                $("#config-text").text(JSON.stringify(result, undefined, 4));
+            }
+        });
+    }
+</script>
+
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h2>Server Config</h2>
+        </div>
+        <textarea rows="30" cols="80" id="config-text"></textarea>
+        <br>
+        <input type="button" name="Save" value="Save" onclick="saveConfig()">
+    </div>
+</body>
+
+</html>

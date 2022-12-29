@@ -98,7 +98,7 @@ module.exports = {
                             commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
                             schedule.scheduleJob(jid, new Date(extime), function () {
                                 schedule.cancelJob(jid);
-                                db.collection('game_users').updateOne({ _id: ObjectId(resp._id.toString()) }, { $set: { isexpire: true } }, function (err) { })
+                                db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { isexpire: true } }, function (err) { })
                             })
                         })
                     }

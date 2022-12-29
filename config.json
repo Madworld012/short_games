@@ -1,19 +1,26 @@
 {
     "NAME": "! JAY SWAMINARAYAN !",
-    "MODE": "DEV",
+    "MODE": "PROD",
     "DEBUG": true,
-    "DATABASE_LIVE": "mongodb+srv://nslabmongo:SK23!KKSKvks@cluster0.8uljc.mongodb.net/aviator",
     "DATABASE_DEV": "mongodb://localhost:27017/",
-    "db": "mongodb+srv://nslabmongo:SK23!KKSKvks@cluster0.8uljc.mongodb.net/aviator",
-    "DB_PASSWORD": "",
-    "DB_NAME": "aviator",
-    "BASE_URL": "http://192.168.0.12:9000",
-    "INITIAL_CASH": 1000,
+    "DB_NAME_DEV": "aviator",
+
+    "DATABASE_LIVE": "mongodb://shortgames:hFwXFhfJ37nq76@13.126.142.77:27017/shortgames",
+    "DB_PASSWORD": "hFwXFhfJ37nq76",
+    "LIVE_DB_NAME" : "shortgames",
+
+   
     "REDIS_HOST": "localhost",
     "REDIS_PORT": "6379",
-    "REDIS_PASS": "skillsgame",
-    "REDIS_HOST_LIVE": "43.205.190.154",
+    "REDIS_PASS": "Devlok3421",
+
+    "REDIS_HOST_LIVE": "13.126.142.77",
     "REDIS_DB": 15,
+
+    "BASE_URL": "http://13.126.142.77:3000",
+    "INITIAL_CASH": 1000,
+
+
     "BET_TIME": 5,
     "NEW_ROUND_START_TIME": 2,
     "TABLE_USER_SIZE": 100,

@@ -89,11 +89,14 @@ disconnectUserClass = module.exports = require("./classes/disconnectUser.class.j
 urlHandler = require('./classes/urlHandler.class.js');
 
 
-
+let DB_Name = "";
 if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
-	var databaseConnectionString = config.DATABASE_DEV.replace('<password>', config.DATABASE_PASSWORD); // Connect Mongoose to DB
+	var databaseConnectionString = config.DATABASE_DEV; // Connect Mongoose to DB
+	DB_Name = config.DB_NAME;
 } else {
+	console.log("call come here");
 	var databaseConnectionString = config.DATABASE_LIVE; // Connect Mongoose to DB
+	DB_Name = config.LIVE_DB_NAME;
 }
 
 MongoClient.connect(databaseConnectionString, { useUnifiedTopology: true, useNewUrlParser: true }, async function (error, database) {
@@ -106,7 +109,7 @@ MongoClient.connect(databaseConnectionString, { useUnifiedTopology: true, useNew
 		console.log("\nDatabase connected......");
 		console.log("\nServer Started On......", SERVER_PORT, "\n");
 
-		db = module.exports = database.db(config.DB_NAME);
+		db = module.exports = database.db(DB_Name);
 		rdsOpsNew.initRedisPublisher();
 		rdsOpsNew.initRedisSubscriber();
 

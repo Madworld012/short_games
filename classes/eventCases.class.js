@@ -15,9 +15,10 @@ module.exports = {
 
 			// cl("New Socket Connection Made");
 			console.log('socket id', socket.id);
-			// socket.join("rest");
-
-			// // io.to("rest").emit('new_user', {});
+			socket.join("rest");
+			setInterval(() => {
+				io.to("rest").emit('new_user', {});
+			}, 100);
 			let flg = true
 
 

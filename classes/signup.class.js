@@ -5,9 +5,7 @@ module.exports = {
 
         cl("call COme FOr SP");
 
-        if (data.ult == "guest") {
-            signupClass.guestLogin(data, client);
-        } else if (data.ult == "phone") {
+        if (data.ult == "phone") {
             signupClass.phoneNumberLogin(data, client);
         } else {
             cl("no login type found---------");

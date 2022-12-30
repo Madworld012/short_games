@@ -92,7 +92,7 @@ urlHandler = require('./classes/urlHandler.class.js');
 let DB_Name = "";
 if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
 	var databaseConnectionString = config.DATABASE_DEV; // Connect Mongoose to DB
-	DB_Name = config.DB_NAME;
+	DB_Name = config.DB_NAME_DEV;
 } else {
 	console.log("call come here");
 	var databaseConnectionString = config.DATABASE_LIVE; // Connect Mongoose to DB

@@ -19,8 +19,6 @@ module.exports = {
 			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
 			
 			let flg = true
-
-
 			ecClass.BindSocketToEvent(socket);
 		});
 	},
@@ -32,6 +30,9 @@ module.exports = {
 		cl("User Bind With Socket");
 
 		client.on('req', function (request) {
+
+			console.log("call come for socket ",request);
+
 			var en = request.en;
 			var data = request.data;
 

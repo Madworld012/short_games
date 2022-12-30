@@ -188,6 +188,7 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
+                        console.log("otp verified");
                         db.collection('game_users').update({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
                         signupClass.SP(data, client);
                     } else {

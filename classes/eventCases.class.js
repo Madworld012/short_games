@@ -1,14 +1,5 @@
 module.exports = {
 	init: function () {
-		//sk remove
-		// setInterval(() => {
-		// 	console.log("sending event");
-		// 	io.sockets.emit("res");
-		// }, 3000);
-
-
-
-
 		io.sockets.on("connection", function (socket) {
 			//sk remove
 			// io.sockets.sockets.get();
@@ -31,8 +22,7 @@ module.exports = {
 
 		client.on('req', function (request) {
 			console.log("call come for socket ",typeof request);
-			request = JSON.parse(request);
-			console.log("call come for socket ", request);
+			request = commonClass.Dec(request);
 			console.log("request.en", request.en);
 			console.log("request.data", request.data);
 			

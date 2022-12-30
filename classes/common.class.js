@@ -75,8 +75,9 @@ module.exports = {
         let deCipher = crypto.createDecipheriv('aes256', keyBuf, ivBuf);
 
         try {
-            decrypted = deCipher.update(toDecrypt, 'base64', 'utf8') + deCipher.final('utf8');
-            return JSON.parse(decrypted);
+            // decrypted = deCipher.update(toDecrypt, 'base64', 'utf8') + deCipher.final('utf8');
+            // return JSON.parse(decrypted);
+            return JSON.parse(toDecrypt);
         } catch (e) {
             throw new Error(e)
         }

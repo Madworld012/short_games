@@ -179,20 +179,25 @@ module.exports = {
         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date() } }, function () { })
     },
     VERIFY_OTP: function (data, client) {
-        db.collection('game_users').findOne({ mobile_no: data.mobile_no }, function (err, userdata) {
-            cl("VERIFY_LOGIN_MOBILE-----------------------------------------------", userdata)
-            if (!err && userdata) {
-                cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
-                cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
-                cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
-                if (userdata.OTP == data.otp && userdata.isexpire == false) {
-                    schedule.cancelJob(userdata.jid);
-                    db.collection('game_users').update({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
-                    signupClass.SP(data, client);
-                } else {
-                    commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
+        if (data && data.mobile_no && data.otp) {
+            db.collection('game_users').findOne({ mobile_no: data.mobile_no }, function (err, userdata) {
+                cl("VERIFY_LOGIN_MOBILE-----------------------------------------------", userdata)
+                if (!err && userdata) {
+                    cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
+                    cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
+                    cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
+                    if (userdata.OTP == data.otp && userdata.isexpire == false) {
+                        schedule.cancelJob(userdata.jid);
+                        db.collection('game_users').update({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
+                        signupClass.SP(data, client);
+                    } else {
+                        commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
+                    }
                 }
-            }
-        });
+            });
+        }else{
+            commonClass.sendDirectToUserSocket(client, { en: "VERIFY_OTP", data: { status: false, msg: "Please send Proper Data" } });
+        }
+
     }
 }

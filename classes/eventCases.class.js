@@ -30,7 +30,8 @@ module.exports = {
 		cl("User Bind With Socket");
 
 		client.on('req', function (request) {
-
+			console.log("call come for socket ",typeof request);
+			request = JSON.parse(request);
 			console.log("call come for socket ", request);
 			console.log("request.en", request.en);
 			console.log("request.data", request.data);

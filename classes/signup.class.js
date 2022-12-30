@@ -15,6 +15,7 @@ module.exports = {
     },
     //first call this  // Done
     LOGIN_PHNO: async function (data, client) {
+        console.log("call come for login with phone");
         var wh = {};
         wh.mobile_no = data.mobile_no;
         var resp = await db.collection('game_users').find(wh).toArray()
@@ -34,6 +35,7 @@ module.exports = {
                 }
             });
         } else {
+            console.log("send for sp user found");
             signupClass.SP(data, client);
         }
     },

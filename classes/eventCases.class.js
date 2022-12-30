@@ -17,7 +17,7 @@ module.exports = {
 			console.log("call come for connection");
 			console.log('socket id', socket.id);
 			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
-			
+
 			let flg = true
 			ecClass.BindSocketToEvent(socket);
 		});
@@ -31,10 +31,11 @@ module.exports = {
 
 		client.on('req', function (request) {
 
-			console.log("call come for socket ",request);
-
+			console.log("call come for socket ", request);
+			console.log("request.en", request.en);
+			console.log("request.data", request.data);
+			
 			var en = request.en;
-			var data = request.data;
 
 			switch (en) {
 				case "SP": //user register

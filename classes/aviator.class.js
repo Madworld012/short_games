@@ -144,14 +144,14 @@ module.exports = {
             if (x == cut_out_x_value) {
                 cache.del(tblid.toString());
                 //need to add indexing
-                let no_bet_available_data = await db.collection('game_users').find({tblid: tblid.toString(), $or: [{ bet_1:{ $gt: 0 } }, { bet_2:{ $gt: 0 } }] }).toArray();
+                let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
                 let rand_value = _.random(1, 10);
-                if(no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1){
+                if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1) {
                     console.log("-----------------------------------------start again-------------------------------------------------------");
                     call(_.random(config.FAKE_PLANE_FLAY_MIN_AMOUNT, config.FAKE_PLANE_FLAY_MAX_AMOUNT));
                     re_fly = 1;
                     return;
-                }else{
+                } else {
                     await db.collection('aviator_table').updateOne({ _id: ObjectId(tblid.toString()) }, { $set: { bet_flg: false, cash_out_flg: false }, $push: { history: x } }, function () { });
                     aviatorClass.cut_plane({ tblid: tblid, x: x });
                     return false;
@@ -159,10 +159,10 @@ module.exports = {
             } else {
                 await sleep(100 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
-                cl("x value is --",x)
-                commonClass.sendToRoom(tblid.toString(), { en: "NACHI", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true } });
+                cl("x value is --", x)
+                commonClass.sendToRoom(tblid.toString(), { en: "NACHI", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true, count: x } });
 
-                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { count : x.toString() } });
+                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { count: x.toString() } });
 
                 await cache.set(tblid.toString(), JSON.stringify({
                     x: x

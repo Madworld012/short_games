@@ -160,7 +160,7 @@ module.exports = {
                 await sleep(100 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
                 cl("x value is --", x)
-                commonClass.sendToRoom(tblid.toString(), { en: "NACHI", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true, count: x } });
+                commonClass.sendToRoom(tblid.toString(), { en: "NACHI", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true, nachi_value: x } });
 
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { count: x.toString() } });
 

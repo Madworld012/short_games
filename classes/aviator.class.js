@@ -162,7 +162,7 @@ module.exports = {
                 cl("x value is --", x)
                 commonClass.sendToRoom(tblid.toString(), { en: "NACHI", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true, nachi_value: x } });
 
-                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { count: x.toString() } });
+                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x.toString() } });
 
                 await cache.set(tblid.toString(), JSON.stringify({
                     x: x

@@ -87,7 +87,6 @@ module.exports = {
                         }
                         if (typeof io.to(room) != 'undefined') {
                             // var eData = commonClass.Enc(message);
-                            console.log(JSON.parse(msg));
                             io.to(room).emit('res', JSON.parse(msg));
                         }
                     } else {

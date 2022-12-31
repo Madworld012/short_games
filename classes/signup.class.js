@@ -8,7 +8,7 @@ module.exports = {
         if (data.ult == "phone") {
             signupClass.phoneNumberLogin(data, client);
         } else {
-            cl("no login type found---------");
+            commonClass.sendDirectToUserSocket(client, { en: "VERIFY_OTP", data: { status: false, msg: "Please send ult with data" } });
         }
 
 
@@ -49,11 +49,11 @@ module.exports = {
                         if (cb_status.status == 1) {
                             var jid = randomstring.generate(10);
                             var extime = commonClass.AddTime(60);
-                            db.collection('game_users').update({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
+                            db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
                             commonClass.SendData(client, 'RESEND', { success: true, mobile_no: data.mobile_no, timer: 60 });
                             schedule.scheduleJob(jid, new Date(extime), function () {
                                 schedule.cancelJob(jid);
-                                db.collection('game_users').update({ mobile_no: data.mobile_no }, { $set: { isexpire: true } }, function (err) { })
+                                db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { isexpire: true } }, function (err) { })
                             })
                         }
                     });
@@ -121,11 +121,11 @@ module.exports = {
                 if (cb_status.status == 1) {
                     var jid = randomstring.generate(10);
                     var extime = commonClass.AddTime(60);
-                    db.collection('game_users').update({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
+                    db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
                     commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
                     schedule.scheduleJob(jid, new Date(extime), function () {
                         schedule.cancelJob(jid);
-                        db.collection('game_users').update({ mobile_no: data.mobile_no }, { $set: { isexpire: true } }, function (err) { })
+                        db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { isexpire: true } }, function (err) { })
                     })
                 }
             })
@@ -189,7 +189,7 @@ module.exports = {
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
                         console.log("otp verified");
-                        db.collection('game_users').update({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
+                        db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
                         signupClass.SP(data, client);
                     } else {
                         commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });

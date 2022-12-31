@@ -159,7 +159,9 @@ module.exports = {
             } else {
                 await sleep(100 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
-                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { "count": x } });
+                cl("x value is --",x)
+                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { count : x } });
+
                 await cache.set(tblid.toString(), JSON.stringify({
                     x: x
                 }));

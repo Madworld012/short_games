@@ -65,6 +65,7 @@ module.exports = {
         return toCrypt;
     },
     Dec: function (toDecrypt) {
+        console.log("toDecrypt",toDecrypt);
         let keyBuf = Buffer.from(Array(32));
 
         keyBuf.write(encKey, 'utf8');
@@ -74,13 +75,18 @@ module.exports = {
 
         let deCipher = crypto.createDecipheriv('aes256', keyBuf, ivBuf);
 
-        try {
+       // try {
             // decrypted = deCipher.update(toDecrypt, 'base64', 'utf8') + deCipher.final('utf8');
             // return JSON.parse(decrypted);
-            return JSON.parse(toDecrypt);
-        } catch (e) {
-            throw new Error(e)
-        }
+            // return JSON.parse(toDecrypt);
+            if(typeof toDecrypt == "object"){
+                return toDecrypt;
+            }else{
+                return JSON.parse(toDecrypt);
+            }
+        // } catch (e) {
+        //     throw new Error(e)
+        // }
     },
     sendToRoom_test: async function (room_id, data) {
         if (typeof room_id == 'object') {

@@ -46,6 +46,7 @@ module.exports = {
         }
         if (typeof room_id == 'string' && room_id.length > 23) {
             // io.to(room_id).emit('res', data);
+            console.log("sendToRoom",JSON.stringify(data));
             rPub.publish("room." + room_id, JSON.stringify(data));
         }
     },

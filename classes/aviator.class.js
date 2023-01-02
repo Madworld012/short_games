@@ -119,11 +119,16 @@ module.exports = {
     fly_plane: async function (tblid) {
         if (tblid) {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
-            if (table_data && table_data[0].status == "START_BET_TIME") {
-                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { status: "FLAY_PLANE", bet_flg: false, cash_out_flg: true } }, function () { });
-                //SF - start fly plne
-                commonClass.sendToRoom(tblid.toString(), { en: "SF", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true } });
-                await aviatorClass.send_fly_event(table_data[0]._id);
+            if (table_data && table_data.length > 0) {
+                if (table_data[0].status == "START_BET_TIME") {
+                    await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { status: "FLAY_PLANE", bet_flg: false, cash_out_flg: true } }, function () { });
+                    //SF - start fly plne
+                    commonClass.sendToRoom(tblid.toString(), { en: "SF", data: { status: true, msg: "Start Flay Plane", bet_flg: false, cash_out_flg: true } });
+                    await aviatorClass.send_fly_event(table_data[0]._id);
+                }
+                else {
+                    cl("\nsome problem in table status in playing table", table_data);
+                }
             } else {
                 cl("\nsome problem in table status");
             }

@@ -46,6 +46,7 @@ module.exports = {
                     await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData[0]._id.toString() } }, function () { })
                     client.tblid = tableData[0]._id.toString();
                     client.join(tableData[0]._id.toString());
+                    tableData[0]["total_cash"] = userData[0].total_cash;
                     commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData[0] });
                     await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData[0]._id.toString()) }, { $inc: { count: 1 } }, function () { });
 
@@ -66,6 +67,8 @@ module.exports = {
                         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data[0]._id.toString() } }, function () { })
                         client.tblid = new_table_data[0]._id.toString();
                         client.join(new_table_data[0]._id.toString());
+                        console.log("userData[0].total_cash----------------------------------------------------------------------",userData[0].total_cash);
+                        new_table_data[0]["total_cash"] = userData[0].total_cash;
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data[0] });
                         aviatorClass.startGame(new_table_data[0]._id);
                         cl("table_data", new_table_data);

@@ -433,7 +433,7 @@
                 console.log("tblid", tblid);
                 if (bet_flg == "true") {
                     console.log("you can bet");
-                    socket.emit('req', { en: "PLACE_BET", data: { uid: uid, tblid: tblid, bet_1: parseFloat(bet_1), bet_2: parseFloat(bet_2) } });
+                    socket.emit('req', { en: "PLACE_BET", data: { uid: uid, tblid: tblid, bet_1: parseFloat(bet_1), bet: data, bet_2: parseFloat(bet_2) } });
                 } else {
                     console.log("bet is close now", bet_flg);
                 }

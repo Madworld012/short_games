@@ -255,12 +255,11 @@
             element.style.display = "none";
         }
         function FLAY(data) {
-
-            document.getElementById("xxvalue").innerHTML = data.count + "x";
+            document.getElementById("xxvalue").innerHTML = data.x + "x";
             let bet_value_1 = parseInt(document.getElementById("bet_1").value);
             let bet_value_2 = parseInt(document.getElementById("bet_2").value);
 
-            document.getElementById("x").value = parseFloat(data.count).toFixed(2);
+            document.getElementById("x").value = parseFloat(data.x).toFixed(2);
 
             let me_1_par_bet_mari = document.getElementById("me_bet_mari_1").value;
             let me_2_par_bet_mari = document.getElementById("me_bet_mari_2").value;
@@ -271,7 +270,7 @@
 
                 var element = document.getElementById("cashout_1");
                 element.style.display = "block";
-                document.getElementById("cashout_1").value = "CashOut " + parseFloat(bet_value_1 * data.count).toFixed(2);
+                document.getElementById("cashout_1").value = "CashOut " + parseFloat(bet_value_1 * data.x).toFixed(2);
             }
 
             if (me_2_par_bet_mari > 0) {
@@ -281,7 +280,7 @@
 
                 var element = document.getElementById("cashout_2");
                 element.style.display = "block";
-                document.getElementById("cashout_2").value = "CashOut " + parseFloat(bet_value_2 * data.count).toFixed(2);
+                document.getElementById("cashout_2").value = "CashOut " + parseFloat(bet_value_2 * data.x).toFixed(2);
             }
 
         }

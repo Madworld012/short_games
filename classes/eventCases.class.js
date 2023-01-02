@@ -21,11 +21,11 @@ module.exports = {
 		cl("User Bind With Socket");
 
 		client.on('req', function (request) {
-			console.log("call come for socket ",typeof request);
+			console.log("call come for socket ", typeof request);
 			request = commonClass.Dec(request);
 			console.log("request.en", request.en);
 			console.log("request.data", request.data);
-			
+
 			var en = request.en;
 
 			switch (en) {
@@ -40,6 +40,7 @@ module.exports = {
 				case "CASH_OUT": //cashout 
 				case "CANCEL_BET": //cancel_bet
 				case "LG": // Leave Game
+				case "HISTORY": //game history
 					aviatorClass[en](request.data, client);
 					break;
 				case "DEPOSIT":

@@ -522,6 +522,17 @@ module.exports = {
 
             }
         }
+    },
+    HISTORY: async function (data, client) {
+        if (data.tblid && data.uid) {
+            let history_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }, { history: 1 }).toArray();
+            if (history_data && history_data.length > 0) {
+                commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data[0].history, msg: "You Have Not Sufficient Balance" } });
+            }
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: false, table_history: [], msg: "Table Not found." } });
+
+        }
     }
 
 }

@@ -468,15 +468,15 @@ module.exports = {
 
                 console.log("new_user_data", new_user_data);
                 commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet" });
-                commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success" } });
+                commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
 
             } else {
-                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "Your Cancel Amount is lessthen 0" } });
+                commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: false, msg: "Your Cancel Amount is lessthen 0", cancel: data.cancel } });
 
             }
 
         } else {
-            commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: false, msg: "Missing Data" } });
+            commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: false, msg: "Missing Data", cancel: data.cancel } });
         }
     },
     LG: async function (data, client) {

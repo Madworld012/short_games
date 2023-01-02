@@ -9,7 +9,7 @@ module.exports = {
                     let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
                     if (tableDate.length > 0) {
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
-                        client.join(tableDate[0]._id.toString());
+                        client.leave(tableDate[0]._id.toString());
                     }
                     await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { sck: "", is_online: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 } else {

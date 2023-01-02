@@ -138,7 +138,7 @@ module.exports = {
             let today = moment().format("DD/MM/YYYY");
             let daily_updated_record = db.collection('daily_cash_track').findOneAndUpdate({ date: today }, { $inc: { total_cash: data.cash } }, { new: true, upsert: true, returnDocument: 'after' });
 
-            let user_cash_track = db.collection('user_cash_track').insertOne({ total_cash: data.cash, uid: data.uid, msg: data.msg });
+            let user_cash_track = db.collection('user_cash_track').insertOne({ total_cash: data.cash, uid: data.uid, msg: data.msg, cd: new Date() });
         }
     },
     SendSMS: function (data, callback) {

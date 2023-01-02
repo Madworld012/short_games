@@ -33,7 +33,7 @@ module.exports = {
 
                 if (userData[0].tblid != "") {
                     console.log("Your Game Already Running please leave first");
-                    aviatorClass.LG({},client);
+                    aviatorClass.LG({}, client);
                     commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, leave: true, msg: "Please leave from Game first" } });
                     return;
                 }
@@ -68,7 +68,7 @@ module.exports = {
                         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data[0]._id.toString() } }, function () { })
                         client.tblid = new_table_data[0]._id.toString();
                         client.join(new_table_data[0]._id.toString());
-                        console.log("userData[0].total_cash----------------------------------------------------------------------",userData[0].total_cash);
+                        console.log("userData[0].total_cash----------------------------------------------------------------------", userData[0].total_cash);
                         new_table_data[0]["total_cash"] = userData[0].total_cash;
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data[0] });
                         aviatorClass.startGame(new_table_data[0]._id);
@@ -240,8 +240,6 @@ module.exports = {
         console.log("\n User Bet Come", data);
         if (data.uid && data.tblid) {
 
-
-
             if (typeof data.bet_1 == "undefined" || data.bet_1 < 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("1");
@@ -326,7 +324,7 @@ module.exports = {
                 commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet" });
 
                 let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { user_data, status: true, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { user_data, status: true, bet: data.bet, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                 commonClass.sendToRoom(data.tblid.toString(), { en: "UPDATE_BET", data: { type: "BET", uid: data.uid.toString(), bet: total_bet } });
             } else {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "You Have Not Sufficient Balance" } });

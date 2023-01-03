@@ -28,5 +28,25 @@ module.exports = {
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -data.amount, msg: "Please Send Proper Data" } });
         }
-    }
+    },
+    DEPOSIT_HISTORY: async function (data, client) {
+        if (data.uid) {
+            let deposit_history = db.collection('payment_transection').find({ UID: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            if (deposit_history && deposit_history.length > 0) {
+                commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_HISTORY", data: { status: true, deposit_history: deposit_history } });
+            } else {
+                commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_HISTORY", data: { status: false, deposit_history: [] } });
+            }
+        }
+    },
+    WITHDRAWAL_HISTORY: async function (data, client) {
+        if (data.uid) {
+            let withdraw_history = db.collection('withdraw_request').find({ uid: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            if (withdraw_history && withdraw_history.length > 0) {
+                commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });
+            } else {
+                commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: false, withdraw_history: [] } });
+            }
+        }
+    },
 }

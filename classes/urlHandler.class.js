@@ -65,6 +65,12 @@ module.exports = {
         app.post("/paynow", async (req, res) => {
             // Route for making payment
             console.log("data", req.body);
+
+            if(!req.body.amount && req.body.amount <= 0){
+                res.send('Payment failed');
+                return false;
+            }
+
             if (IS_DEPOSIT == true) {
                 if (req.body.amount >= config.MIN_DEPOSIT) {
 
@@ -131,8 +137,6 @@ module.exports = {
                                 } else {
                                     console.log("transection not storeed");
                                 }
-
-
                             }
                         } else {
                             console.log("user not found");

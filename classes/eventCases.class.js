@@ -45,6 +45,8 @@ module.exports = {
 					break;
 				case "DEPOSIT":
 				case "WITHDRAWAL":
+				case "DEPOSIT_HISTORY":
+				case "WITHDRAWAL_HISTORY":
 					cashClass[en](request.data, client);
 					break;
 

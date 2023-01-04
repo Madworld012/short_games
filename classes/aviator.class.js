@@ -339,7 +339,7 @@ module.exports = {
 
         if (current_x_value == null) {
             console.log("1");
-            commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "Already Flay Away Plane...." } });
+            commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Already Flay Away Plane...." } });
             return false;
         }
 
@@ -347,7 +347,7 @@ module.exports = {
 
             if (typeof data.cashout == 'undefined' || data.cashout == "" || data.cashout <= 0) {
                 cl("1.1")
-                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "Send Proper Data" } });
+                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Send Proper Data" } });
                 return false;
             }
 
@@ -357,7 +357,7 @@ module.exports = {
             if (user_data && user_data.length > 0) {
 
                 if (typeof user_data[0].tblid == "undefined" || user_data[0].tblid == "") {
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "Table Not Found" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Table Not Found" } });
                     console.log("table Not Found");
                     cl("2");
                     return false;
@@ -367,7 +367,7 @@ module.exports = {
 
                 if (!table_data || table_data.length <= 0 || table_data[0].cash_out_flg != true) {
                     cl("3");
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "You can not cashout this time" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
                     return false;
                 }
 
@@ -385,7 +385,7 @@ module.exports = {
                         update_data["bet_1"] = 0;
                     } else {
                         cl("6");
-                        commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, cashout: data.cashout, msg: "You not Place Any bet" } });
+                        commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "You not Place Any bet" } });
                     }
                 } else if (data.cashout == 2) {
                     if (user_data[0].bet_2 > 0) {
@@ -394,11 +394,11 @@ module.exports = {
                         update_data["bet_2"] = 0;
                     } else {
                         cl("8");
-                        commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, cashout: data.cashout, msg: "You not Place Any bet" } });
+                        commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "You not Place Any bet" } });
                     }
                 } else {
                     cl("9");
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, cashout: data.cashout, msg: "Please provide proper cashout data" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "Please provide proper cashout data" } });
                 }
 
                 if (win_amount > 0) {
@@ -407,19 +407,19 @@ module.exports = {
                     commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: win_amount, msg: "Cash Out" });
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, win_amount: win_amount, total_cash: user_updated_data.value.total_cash } });
+                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash } });
                     commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString(), bet: user_data[0].bet_1 + user_data[0].bet_2, win_amount: win_amount } });
                 } else {
                     cl("10");
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, cashout: data.cashout, msg: "Your Winning Price is lessthen 0" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "Your Winning Price is lessthen 0" } });
                 }
             } else {
                 cl("11");
-                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "User Or table Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "User Or table Not Found" } });
             }
         } else {
             cl("12")
-            commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "User Or table Not Found" } });
+            commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "User Or table Not Found" } });
         }
 
     },

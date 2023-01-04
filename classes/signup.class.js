@@ -76,14 +76,16 @@ module.exports = {
                 uid: userData._id.toString(),
                 un: userData.un,
                 total_cash: userData.total_cash,
-                msg: "Your Data"
+                unique_id : userData.unique_id,
+                ue : userData.ue,
+                mobile_no : userData.mobile_no
             }
             if (userData.isMobileVerified == 1) {
                 commonClass.sendDirectToUserSocket(client, { en: "SP", data: send_json });
             } else {
                 send_json.msg = "Please Verify Your Phone Number First..";
                 send_json.status = false;
-                commonClass.sendDirectToUserSocket(client, { en: "SP", data: { status: false, msg: "Please Verify Your Phone Number First.." } });
+                // commonClass.sendDirectToUserSocket(client, { en: "SP", data: { status: false, msg: "Please Verify Your Phone Number First.." } });
             }
 
             if (userData.isMobileVerified == 0 && userData.mobile_no != '') {
@@ -129,18 +131,6 @@ module.exports = {
                     })
                 }
             })
-            // } else {
-
-            // var send_json = {
-            //     status: true,
-            //     uid: newUserData._id.toString(),
-            //     un: newUserData.un,
-            //     total_cash: newUserData.total_cash,
-            //     msg: "Your Data"
-            // }
-            // console.log("event send");
-            // commonClass.sendDirectToUserSocket(client, { en: "SP", data: send_json });
-            // }
         }
     },
     getUserDefaultFields: async function (data, client) {
@@ -173,6 +163,11 @@ module.exports = {
         if (data == null || typeof client.id == 'undefined') {
             return false;
         }
+
+        if (data.sck != null && data.sck != '' && data.sck != client.id) {
+            commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: {} });
+        }
+
         client.uid = data._id.toString();
         client.un = data.un.toString();
 

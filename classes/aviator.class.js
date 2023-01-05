@@ -187,7 +187,7 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }).toArray();
             if (table_data.length > 0 && table_data[0].status == "FLAY_PLANE") {
                 //CP - Cutout plae , stop cutout, wait for start new round
-                commonClass.sendToRoom(data.tblid.toString(), { en: "CP", data: { status: true, msg: "Stop Flay Plane Cut Out", bet_flg: false, cash_out_flg: false } });
+                commonClass.sendToRoom(data.tblid.toString(), { en: "CP", data: { status: true, msg: "Stop Flay Plane Cut Out", x: data.x, bet_flg: false, cash_out_flg: false } });
                 var jobId = randomstring.generate(10);
 
                 let update_data = {
@@ -494,7 +494,7 @@ module.exports = {
                         client.leave(tableDate[0]._id.toString());
                         commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
                     }
-                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: {  bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
+                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 } else {
                     await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 }
@@ -529,11 +529,10 @@ module.exports = {
         if (data.tblid && data.uid) {
             let history_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }, { history: 1 }).toArray();
             if (history_data && history_data.length > 0) {
-                commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data[0].history, msg: "You Have Not Sufficient Balance" } });
+                commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data[0].history.reverse(), msg: "You Have Not Sufficient Balance" } });
             }
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: false, table_history: [], msg: "Table Not found." } });
-
         }
     }
 

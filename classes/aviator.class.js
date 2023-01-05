@@ -19,68 +19,70 @@ module.exports = {
         if (data.uid) {
 
             //ALERT if want check user cash
-
-            console.log("in SG game form client event------------------------------");
-            let userData = await db.collection('game_users').find({ _id: ObjectId(client.uid.toString()) }).toArray();
-
-
-            if (userData && userData.length > 0) {
-
-                if (userData[0].isMobileVerified == 0) {
-                    commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "Please Verify Your Mobile NUmber First" } });
-                    return false;
-                }
-
-                if (userData[0].tblid != "") {
-                    console.log("Your Game Already Running please leave first");
-                    aviatorClass.LG({}, client);
-                    commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, leave: true, msg: "Please leave from Game first" } });
-                    return;
-                }
-
-                let wh = { count: { $lte: config.TABLE_USER_SIZE } };
-                let tableData = await db.collection('aviator_table').find(wh).toArray();
+            if (client.uid) {
+                console.log("in SG game form client event------------------------------");
+                let userData = await db.collection('game_users').find({ _id: ObjectId(client.uid.toString()) }).toArray();
 
 
-                if (tableData.length > 0) {
+                if (userData && userData.length > 0) {
 
-                    await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData[0]._id.toString() } }, function () { })
-                    client.tblid = tableData[0]._id.toString();
-                    client.join(tableData[0]._id.toString());
-                    tableData[0]["total_cash"] = userData[0].total_cash;
-                    commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData[0] });
-                    await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData[0]._id.toString()) }, { $inc: { count: 1 } }, function () { });
-
-                } else {
-                    let in_tableData = {
-                        status: "INIT",
-                        cd: new Date(),
-                        history: [],
-                        x: 0,
-                        count: 1,
-                        bet_flg: false,
-                        cash_out_flg: false
+                    if (userData[0].isMobileVerified == 0) {
+                        commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "Please Verify Your Mobile NUmber First" } });
+                        return false;
                     }
 
-                    let table_id = await db.collection('aviator_table').insertOne(in_tableData);
-                    let new_table_data = await db.collection('aviator_table').find({ _id: ObjectId(table_id.insertedId.toString()) }).toArray();
-                    if (new_table_data && new_table_data.length > 0) {
-                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data[0]._id.toString() } }, function () { })
-                        client.tblid = new_table_data[0]._id.toString();
-                        client.join(new_table_data[0]._id.toString());
-                        console.log("userData[0].total_cash----------------------------------------------------------------------", userData[0].total_cash);
-                        new_table_data[0]["total_cash"] = userData[0].total_cash;
-                        commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data[0] });
-                        aviatorClass.startGame(new_table_data[0]._id);
-                        cl("table_data", new_table_data);
+                    if (userData[0].tblid != "") {
+                        console.log("Your Game Already Running please leave first");
+                        aviatorClass.LG({}, client);
+                        commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, leave: true, msg: "Please leave from Game first" } });
+                        return;
+                    }
+
+                    let wh = { count: { $lte: config.TABLE_USER_SIZE } };
+                    let tableData = await db.collection('aviator_table').find(wh).toArray();
+
+
+                    if (tableData.length > 0) {
+
+                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData[0]._id.toString() } }, function () { })
+                        client.tblid = tableData[0]._id.toString();
+                        client.join(tableData[0]._id.toString());
+                        tableData[0]["total_cash"] = userData[0].total_cash;
+                        commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData[0] });
+                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData[0]._id.toString()) }, { $inc: { count: 1 } }, function () { });
+
                     } else {
-                        cl("Critical error please check server and log", new_table_data);
-                    }
+                        let in_tableData = {
+                            status: "INIT",
+                            cd: new Date(),
+                            history: [],
+                            x: 0,
+                            count: 1,
+                            bet_flg: false,
+                            cash_out_flg: false
+                        }
 
+                        let table_id = await db.collection('aviator_table').insertOne(in_tableData);
+                        let new_table_data = await db.collection('aviator_table').find({ _id: ObjectId(table_id.insertedId.toString()) }).toArray();
+                        if (new_table_data && new_table_data.length > 0) {
+                            await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data[0]._id.toString() } }, function () { })
+                            client.tblid = new_table_data[0]._id.toString();
+                            client.join(new_table_data[0]._id.toString());
+                            console.log("userData[0].total_cash----------------------------------------------------------------------", userData[0].total_cash);
+                            new_table_data[0]["total_cash"] = userData[0].total_cash;
+                            commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data[0] });
+                            aviatorClass.startGame(new_table_data[0]._id);
+                            cl("table_data", new_table_data);
+                        } else {
+                            cl("Critical error please check server and log", new_table_data);
+                        }
+
+                    }
+                } else {
+                    commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "User Not Found Please registerFirst" } });
                 }
-            } else {
-                commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "User Not Found Please registerFirst" } });
             }
+
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "Please send User id " } });
         }

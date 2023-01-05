@@ -137,7 +137,7 @@ module.exports = {
         var unique_id = await commonClass.GetRandomInt(1, 9999999);
         var OTP = await commonClass.GetRandomInt(1, 99999);
         var fields = {
-            un: data.un.substr(0, 15),
+            un: data.name.substr(0, 15),
             unique_id: unique_id,
             sck: client.id,//client.id,
             ue: (typeof data.email != 'undefined') ? data.email : "",

@@ -494,9 +494,9 @@ module.exports = {
                         client.leave(tableDate[0]._id.toString());
                         commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
                     }
-                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { sck: "", is_online: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
+                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: {  bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 } else {
-                    await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: "", is_online: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
+                    await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 }
             } else {
                 cl("client.uid is not found");

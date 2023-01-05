@@ -67,7 +67,7 @@ module.exports = {
 		client.on('disconnect', function (disc) {
 			cl("User Disconnect ------> ", client.id);
 			cl("User Disconnect ------> ", client.uid);
-			aviatorClass.LG({}, client);
+			disconnectUserClass.disconnectUser(client);
 		});
 
 	}

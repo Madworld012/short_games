@@ -86,6 +86,7 @@ signupClass = module.exports = require("./classes/signup.class.js");
 commonClass = module.exports = require("./classes/common.class.js"); //common functions
 aviatorClass = module.exports = require("./classes/aviator.class.js"); //common functions
 disconnectUserClass = module.exports = require("./classes/disconnectUser.class.js"); //common functions
+cashClass = module.exports = require("./classes/cashClass.class.js"); //common functions
 urlHandler = require('./classes/urlHandler.class.js');
 
 

@@ -66,12 +66,17 @@ if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
 	// var httpsOptions = { key: fs.readFileSync('certificate/server.key'), cert: fs.readFileSync('certificate/final.crt') };
 	// var server = https.createServer(httpsOptions, app);
 }
-io = module.exports = socketIO(server, { 'origins': '*:*', 'pingTimeout': 7000, 'pingInterval': 10000 });
+io = module.exports = socketIO(server, {
+	'origins': '*:*',
+	'pingTimeout': 7000,
+	'pingInterval': 10000,
+	parser: require("socket.io-msgpack-parser")
+});
 server.listen(SERVER_PORT);
 
 app.use(express.static(__dirname + '/public'));
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.urlencoded({extended:false}));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ extended: false }))
 app.set('view engine', 'ejs');
 

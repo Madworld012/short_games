@@ -32,7 +32,7 @@
     "GAME_NAME": "LuckyRocket",
     "GAME_EMAIL": "LuckyRocket@gmail.com",
     "TEST_MOBILE": "9999999999",
-    "TEST_OTP": 9999,
+    "TEST_OTP": 999999,
     "MM": false,
     "MM_T": 300,
     "VERSION_MESSAGE": "New Version Available",

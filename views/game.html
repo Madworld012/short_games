@@ -162,12 +162,16 @@
             <!-- <input style="height:50px;width:200px" type="button" id="" value="ns test"
                 onclick="nstest()"> -->
 
-            <input style="height:50px;width:200px" type="button" id="" value="LOGIN_PHNO" onclick="LOGIN_PHNO()">
+            <input style="height:50px;width:200px" type="button" id="" value="REGISTRATION" onclick="SIGNUP()">
 
-            <input style="height:50px;width:200px" type="button" id="" value="VERIFY_OTP" onclick="VERIFY_OTP()">
+            <input style="height:50px;width:200px" type="button" id="" value="LOGIN" onclick="LOGIN()">
+
+            <input style="height:50px;width:200px" type="button" id="" value="VERIFYOTP" onclick="VERIFYOTP()">
+
+            <input style="height:50px;width:200px" type="button" id="" value="RESEND" onclick="RESENDOTP()">
 
 
-
+               
         </div>
 
 
@@ -378,13 +382,23 @@
 
 
         //login 
-        function LOGIN_PHNO() {
-            socket.emit('req', { en: "LOGIN_PHNO", data: { ult: "phone", mobile_no: "9999999999", un: "zz", email: "zz@game.com" } })
+        function SIGNUP() {
+            socket.emit('req', { en: "REGISTRATION", data: { ult: "phone", mobile_no: "9999999999", password: "kajgsdkj", name: "zz", email: "zz@game.com" } })
         }
 
         //login 
-        function VERIFY_OTP() {
-            socket.emit('req', { en: "VERIFY_OTP", data: { ult: "phone", mobile_no: "9999999999", otp: 1234 } })
+        function VERIFYOTP() {
+            socket.emit('req', { en: "VERIFY_OTP", data: { ult: "phone", mobile_no: "9999999999", otp: 999999, name: "zz", email: "zz@game.com" } })
+        }
+
+        //login 
+        function LOGIN() {
+            socket.emit('req', { en: "LOGIN", data: { ult: "phone", mobile_no: "9999999999", password: "kajgsdkj" } })
+        }
+
+        //login 
+        function RESENDOTP() {
+            socket.emit('req', { en: "RESEND", data: { ult: "phone", mobile_no: "9999999999" } })
         }
 
 

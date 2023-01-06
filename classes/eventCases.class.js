@@ -30,7 +30,8 @@ module.exports = {
 
 			switch (en) {
 				case "SP": //user register
-				case "LOGIN_PHNO": //user register // intial call come here
+				case "REGISTRATION": //user register // intial call come here
+				case "LOGIN": //user register // intial call come here
 				case "RESEND": // resend OTP
 				case "VERIFY_OTP": //verify otp
 					signupClass[en](request.data, client);

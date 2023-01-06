@@ -168,7 +168,9 @@ module.exports = {
                     return false;
                 }
             } else {
-                await sleep(100 / x);
+
+                // await sleep(100 / x);
+                await sleep((x > 20) ? 5 : 100 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
 

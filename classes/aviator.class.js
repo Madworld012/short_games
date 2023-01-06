@@ -156,7 +156,7 @@ module.exports = {
                 cache.del(tblid.toString());
                 //need to add indexing
                 let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
-                let rand_value = _.random(1, 10);
+                let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
                 if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1) {
                     console.log("-----------------------------------------start again-------------------------------------------------------");
                     call(_.random(config.FAKE_PLANE_FLAY_MIN_AMOUNT, config.FAKE_PLANE_FLAY_MAX_AMOUNT));

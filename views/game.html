@@ -115,12 +115,12 @@
                     <div class="game_container" id="signup_div">
                         <label>Enter Phone Numer &nbsp;&nbsp;</label>
                         <input type="number" id="phno" value="9999999999" required /></br></br></br></br>
-                        <label>Enter Your Name &nbsp;&nbsp;</label>
+                        <label>Password &nbsp;&nbsp;</label>
                         <input type="text" id="un" required /></br></br></br></br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button onclick="signup()">Signup</button></br>
+                        <button onclick="LOGIN()">LOGIN</button></br>
 
                     </div>
 
@@ -383,7 +383,7 @@
 
         //login 
         function SIGNUP() {
-            socket.emit('req', { en: "REGISTRATION", data: { ult: "phone", mobile_no: "9999999999", password: "kajgsdkj", name: "zz", email: "zz@game.com" } })
+            socket.emit('req', { en: "REGISTRATION", data: { ult: "phone", mobile_no: "9999999999", password: "Nachi2203#", name: "zz", email: "zz@game.com" } })
         }
 
         //login 
@@ -393,7 +393,9 @@
 
         //login 
         function LOGIN() {
-            socket.emit('req', { en: "LOGIN", data: { ult: "phone", mobile_no: "9999999999", password: "kajgsdkj" } })
+            let pass = document.getElementById("un").value;
+            let ph_no = document.getElementById("phno").value;
+            socket.emit('req', { en: "LOGIN", data: { ult: "phone", mobile_no: ph_no, password: pass } })
         }
 
         //login 

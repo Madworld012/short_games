@@ -25,16 +25,16 @@ module.exports = {
 
 
                 if (userData && userData.length > 0) {
-
-                    if (userData[0].isMobileVerified == 0) {
-                        commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "Please Verify Your Mobile NUmber First" } });
+                    userData = userData[0];
+                    if (userData.isMobileVerified == 0) {
+                        commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Please Verify Your Mobile NUmber First" } });
                         return false;
                     }
 
-                    if (userData[0].tblid != "") {
+                    if (userData.tblid != "") {
                         console.log("Your Game Already Running please leave first");
                         aviatorClass.LG({}, client);
-                        commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, leave: true, msg: "Please leave from Game first" } });
+                        commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Please leave from Game first" } });
                         return;
                     }
 
@@ -42,14 +42,23 @@ module.exports = {
                     let tableData = await db.collection('aviator_table').find(wh).toArray();
 
 
-                    if (tableData.length > 0) {
+                    if (tableData && tableData.length > 0) {
+                        tableData = tableData[0];
+                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData._id.toString() } }, function () { })
+                        client.tblid = tableData._id.toString();
+                        client.join(tableData._id.toString());
+                        tableData["total_cash"] = userData.total_cash;
 
-                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData[0]._id.toString() } }, function () { })
-                        client.tblid = tableData[0]._id.toString();
-                        client.join(tableData[0]._id.toString());
-                        tableData[0]["total_cash"] = userData[0].total_cash;
-                        commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData[0] });
-                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData[0]._id.toString()) }, { $inc: { count: 1 } }, function () { });
+                        if (tableData.status == "START_BET_TIME") {
+                            tableData["bet_time"] = parseInt(config.BET_TIME) - commonClass.GetTimeDifference(tableData.sbt, new Date(), 'second');
+                        }
+
+                        if (tableData.status == "WAIT_NEW_ROUND") {
+                            tableData.x = tableData.history[tableData.history.length - 1];
+                        }
+
+                        commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
+                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
 
                     } else {
                         let in_tableData = {
@@ -68,8 +77,8 @@ module.exports = {
                             await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data[0]._id.toString() } }, function () { })
                             client.tblid = new_table_data[0]._id.toString();
                             client.join(new_table_data[0]._id.toString());
-                            console.log("userData[0].total_cash----------------------------------------------------------------------", userData[0].total_cash);
-                            new_table_data[0]["total_cash"] = userData[0].total_cash;
+                            console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
+                            new_table_data[0]["total_cash"] = userData.total_cash;
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data[0] });
                             aviatorClass.startGame(new_table_data[0]._id);
                             cl("table_data", new_table_data);
@@ -79,12 +88,11 @@ module.exports = {
 
                     }
                 } else {
-                    commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "User Not Found Please registerFirst" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "User Not Found Please Register First" } });
                 }
             }
-
         } else {
-            commonClass.sendDirectToUserSocket(client, { en: "SG", data: { status: false, msg: "Please send User id " } });
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "User Not Found Please Register First" } });
         }
     },
     startGame: async function (tblid) {
@@ -107,9 +115,9 @@ module.exports = {
                 var startGameBetTimer = commonClass.AddTime(config.BET_TIME);
                 var jobId = randomstring.generate(10);
                 console.log("\nStart Bet time");
-                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
+                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
                 //SBT = start bet time
-                commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, "time": config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
+                commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
 
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
@@ -245,7 +253,8 @@ module.exports = {
         if (data.uid && data.tblid) {
 
             if (typeof data.bet_1 == "undefined" || data.bet_1 < 0) {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Please Send Proper Bet value" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("1");
                 return false;
             }
@@ -285,7 +294,8 @@ module.exports = {
             }
 
             if (typeof user_data[0].tblid == "undefined" || user_data[0].tblid == "") {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "User Not Found Please Register First" } });
                 console.log("table Not Found");
                 cl("7");
                 return false;
@@ -294,7 +304,8 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(user_data[0].tblid.toString()) }).toArray();
             if (!table_data || table_data.length <= 0 || table_data[0].bet_flg != true) {
                 console.log("table or Bet flar of");
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
                 cl("8");
                 return false;
             }
@@ -331,7 +342,8 @@ module.exports = {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { user_data, status: true, bet: data.bet, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                 commonClass.sendToRoom(data.tblid.toString(), { en: "UPDATE_BET", data: { type: "BET", uid: data.uid.toString(), bet: total_bet } });
             } else {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "You Have Not Sufficient Balance" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "You Have Not Sufficient Balance" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "You Have Not Sufficient Balance" } });
             }
         }
     },
@@ -343,7 +355,8 @@ module.exports = {
 
         if (current_x_value == null) {
             console.log("1");
-            commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Already Flay Away Plane...." } });
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Already Flay Away Plane...." } });
+            // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Already Flay Away Plane...." } });
             return false;
         }
 
@@ -351,7 +364,7 @@ module.exports = {
 
             if (typeof data.cashout == 'undefined' || data.cashout == "" || data.cashout <= 0) {
                 cl("1.1")
-                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Send Proper Data" } });
+                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, msg: "Send Proper Data" } });
                 return false;
             }
 
@@ -361,8 +374,10 @@ module.exports = {
             if (user_data && user_data.length > 0) {
 
                 if (typeof user_data[0].tblid == "undefined" || user_data[0].tblid == "") {
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Table Not Found" } });
+                    // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Table Not Found" } });
                     console.log("table Not Found");
+                    commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
+
                     cl("2");
                     return false;
                 }
@@ -371,7 +386,9 @@ module.exports = {
 
                 if (!table_data || table_data.length <= 0 || table_data[0].cash_out_flg != true) {
                     cl("3");
-                    commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "You can not cashout this time" } });
+
+                    // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
                     return false;
                 }
 
@@ -419,11 +436,13 @@ module.exports = {
                 }
             } else {
                 cl("11");
-                commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "User Or table Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "User Or table Not Found" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "User Or table Not Found" } });
             }
         } else {
             cl("12")
-            commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "User Or table Not Found" } });
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "User Or table Not Found" } });
+            // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "User Or table Not Found" } });
         }
 
     },
@@ -433,14 +452,16 @@ module.exports = {
 
             let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
             if (!user_data || user_data.length <= 0) {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "User Not Found" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "User Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "User Not Found" } });
                 console.log("table or user not found");
                 cl("2");
                 return false;
             }
 
             if (typeof user_data[0].tblid == "undefined" || user_data[0].tblid == "") {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
                 console.log("table Not Found");
                 cl("2");
                 return false;
@@ -449,7 +470,8 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(user_data[0].tblid.toString()) }).toArray();
             if (!table_data || table_data.length <= 0 || table_data[0].bet_flg != true) {
                 console.log("table or Bet flar of");
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Table Not Found" } });
+                // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
                 cl("3");
                 return false;
             }
@@ -478,7 +500,6 @@ module.exports = {
 
             } else {
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: false, msg: "Your Cancel Amount is lessthen 0", cancel: data.cancel } });
-
             }
 
         } else {

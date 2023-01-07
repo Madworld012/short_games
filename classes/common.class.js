@@ -65,7 +65,7 @@ module.exports = {
         return toCrypt;
     },
     Dec: function (toDecrypt) {
-        console.log("toDecrypt",toDecrypt);
+        console.log("toDecrypt", toDecrypt);
         let keyBuf = Buffer.from(Array(32));
 
         keyBuf.write(encKey, 'utf8');
@@ -75,15 +75,15 @@ module.exports = {
 
         let deCipher = crypto.createDecipheriv('aes256', keyBuf, ivBuf);
 
-       // try {
-            // decrypted = deCipher.update(toDecrypt, 'base64', 'utf8') + deCipher.final('utf8');
-            // return JSON.parse(decrypted);
-            // return JSON.parse(toDecrypt);
-            if(typeof toDecrypt == "object"){
-                return toDecrypt;
-            }else{
-                return JSON.parse(toDecrypt);
-            }
+        // try {
+        // decrypted = deCipher.update(toDecrypt, 'base64', 'utf8') + deCipher.final('utf8');
+        // return JSON.parse(decrypted);
+        // return JSON.parse(toDecrypt);
+        if (typeof toDecrypt == "object") {
+            return toDecrypt;
+        } else {
+            return JSON.parse(toDecrypt);
+        }
         // } catch (e) {
         //     throw new Error(e)
         // }
@@ -180,6 +180,25 @@ module.exports = {
             return false;
         }
         return true;
-    }
+    },
+    GetTimeDifference: function (startDate, endDate, type) {
+        var date1 = new Date(startDate);
+        var date2 = new Date(endDate);
+        var diffMs = (date2 - date1); // milliseconds between now & Christmas
+
+        if (type == 'day') {
+            var date1 = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 0, 0, 0);
+            var date2 = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), 0, 0, 0);
+            var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return diffDays;
+        } else if (type == 'hour') {
+            return Math.round((diffMs % 86400000) / 3600000);
+        } else if (type == 'minute') {
+            return Math.round(((diffMs % 86400000) % 3600000) / 60000);
+        } else {
+            return Math.round((diffMs / 1000));
+        }
+    },
 
 }

@@ -88,7 +88,7 @@ module.exports = {
         }
 
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
-            commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: {} });
+            commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
         }
 
         client.uid = data._id.toString();
@@ -159,7 +159,7 @@ module.exports = {
     },
     //AL
     REGISTRATION: async function (data, client) {
-        console.log("data",data);
+        console.log("data", data);
         if (!data || !data.mobile_no || !data.password || !data.name || !data.email) {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please send proper data." } });
             return;

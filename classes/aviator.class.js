@@ -59,12 +59,11 @@ module.exports = {
 
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
-
                     } else {
                         let in_tableData = {
                             status: "INIT",
                             cd: new Date(),
-                            history: [],
+                            history: commonClass.getRandomeHistory(),
                             x: 0,
                             count: 1,
                             bet_flg: false,

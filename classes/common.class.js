@@ -200,5 +200,16 @@ module.exports = {
             return Math.round((diffMs / 1000));
         }
     },
-
+    getRandomeHistory: function () {
+        let history = [
+            40, 1.2, 1, 36, 1.3, 1.49, 11.69, 37, 1.98, 2.58,
+            1, 1.12, 35, 1, 40, 2.75, 1, 7.56, 5.48, 1.01, 8.09,
+            1.18, 1, 100, 55, 1.2, 5.6, 10.9, 8.1, 5, 8, 6, 8, 12,
+            26, 26.15, 89.1, 6.20, 10.69, 8.01, 2.76, 2.92, 6.07, 8.63,
+            2.74, 7.46, 55, 1, 1.4, 1, 58
+        ];
+        let history_data = _.shuffle(history);
+        
+        return history_data.splice(0,25);
+    }
 }

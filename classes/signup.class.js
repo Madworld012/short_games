@@ -167,7 +167,6 @@ module.exports = {
 
         let wh = {};
         wh.mobile_no = data.mobile_no;
-        wh.password = data.password;
         let userData = await db.collection('game_users').find(wh).toArray();
         if (userData && userData.length > 0) {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Phone Number Already Registered Please Login." } });

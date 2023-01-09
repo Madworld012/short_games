@@ -1,9 +1,8 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
-            let user_data = db.collection('game_users').findOne({ _id: ObjectId(data.uid.toString()) })
-            console.log("user_data",user_data);
-            if (user_data) {
+            let user_data =await db.collection('game_users').findOne({ _id: ObjectId(data.uid.toString()) }).toArray();
+            if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
 
                 if (user_data.total_cash >= parseInt(data.amount)) {
@@ -16,7 +15,7 @@ module.exports = {
                         cd: new Date(),
                         status: "pending"
                     }
-                    db.collection('withdrawal_request').insertOne(withdrawal_data);
+                    await db.collection('withdrawal_request').insertOne(withdrawal_data);
                     console.log("1");
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request" });
                     commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: true, cash: -parseInt(data.amount), msg: "Withdrawal Request Added, Admin Can Contact you soon !" } });
@@ -35,7 +34,7 @@ module.exports = {
     },
     DEPOSIT_HISTORY: async function (data, client) {
         if (data.uid) {
-            let deposit_history = db.collection('payment_transection').find({ UID: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            let deposit_history =await db.collection('payment_transection').find({ UID: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
             if (deposit_history && deposit_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_HISTORY", data: { status: true, deposit_history: deposit_history } });
             } else {
@@ -45,7 +44,7 @@ module.exports = {
     },
     WITHDRAWAL_HISTORY: async function (data, client) {
         if (data.uid) {
-            let withdraw_history = db.collection('withdraw_request').find({ uid: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            let withdraw_history =await db.collection('withdraw_request').find({ uid: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
             if (withdraw_history && withdraw_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });
             } else {

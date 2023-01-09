@@ -17,15 +17,19 @@ module.exports = {
                         status: "pending"
                     }
                     db.collection('withdrawal_request').insertOne(withdrawal_data);
+                    console.log("1");
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request" });
                     commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: true, cash: -parseInt(data.amount), msg: "Withdrawal Request Added, Admin Can Contact you soon !" } });
                 } else {
+                    console.log("2");
                     commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -parseInt(data.amount), msg: "Not Enought Cash In YOur Account !" } });
                 }
             } else {
+                console.log("3");
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -parseInt(data.amount), msg: "User Not Found" } });
             }
         } else {
+            console.log("4");
             commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -parseInt(data.amount), msg: "Please Send Proper Data" } });
         }
     },

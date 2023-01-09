@@ -273,13 +273,13 @@ module.exports = {
             }
 
             if (config.MAX_BET_FLAG && data.bet_1 > 0 && data.bet_1 > config.MAX_BET) {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Maximum Bet limit Reached" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Maximum Bet limit Reached" } });
                 cl("4");
                 return false;
             }
 
             if (config.MAX_BET_FLAG && data.bet_2 > 0 && data.bet_2 > config.MAX_BET) {
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Maximum Bet limit Reached" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Maximum Bet limit Reached" } });
                 cl("5");
                 return false;
             }

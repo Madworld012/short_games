@@ -1,7 +1,7 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
-            let user_data =await db.collection('game_users').findOne({ _id: ObjectId(data.uid.toString()) }).toArray();
+            let user_data =await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
 

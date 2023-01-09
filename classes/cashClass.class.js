@@ -1,9 +1,9 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
-            let user_data = db.collection('game_users').findOne({ _id: ObjectId(data.uid.toString()) }).toArray();
+            let user_data = db.collection('game_users').findOne({ _id: ObjectId(data.uid.toString()) })
             console.log("user_data",user_data);
-            if (user_data && user_data.length > 0) {
+            if (user_data) {
                 user_data = user_data[0];
 
                 if (user_data.total_cash >= parseInt(data.amount)) {

@@ -1,7 +1,7 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
-            let user_data =await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
+            let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
 
@@ -34,7 +34,7 @@ module.exports = {
     },
     DEPOSIT_HISTORY: async function (data, client) {
         if (data.uid) {
-            let deposit_history =await db.collection('payment_transection').find({ UID: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            let deposit_history = await db.collection('payment_transection').find({ UID: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
             if (deposit_history && deposit_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_HISTORY", data: { status: true, deposit_history: deposit_history } });
             } else {
@@ -44,7 +44,7 @@ module.exports = {
     },
     WITHDRAWAL_HISTORY: async function (data, client) {
         if (data.uid) {
-            let withdraw_history =await db.collection('withdraw_request').find({ uid: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            let withdraw_history = await db.collection('withdraw_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
             if (withdraw_history && withdraw_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });
             } else {

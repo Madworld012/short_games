@@ -11,15 +11,15 @@ if (config.MODE == "PROD") {
     redis_conf["password"] = config.REDIS_PASS;
 }
 
-redis.RedisClient.prototype.delWildcard = function (key, callback) {
+redis.RedisClient.prototype.delWildcard = async function (key, callback) {
     var redis = this
+    console.log("key -------------", key);
 
-    redis.keys(key, function (err, rows) {
-        for (var i = 0, j = rows.length; i < j; ++i) {
-            redis.del(rows[i])
-        }
-        return callback();
-    });
+    let rows = await redis.keys(key.toString());
+    for (var i = 0, j = rows.length; i < j; ++i) {
+        redis.del(rows[i])
+    }
+    return callback();
 }
 
 const client = redis.createClient(redis_conf);
@@ -40,5 +40,6 @@ client.on("reconnecting", function () {
 
 client.get = util.promisify(client.get);
 client.zrange = util.promisify(client.zrange);
+client.keys = util.promisify(client.keys);
 
 module.exports = client

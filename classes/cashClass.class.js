@@ -44,7 +44,9 @@ module.exports = {
     },
     WITHDRAWAL_HISTORY: async function (data, client) {
         if (data.uid) {
-            let withdraw_history = await db.collection('withdraw_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
+            let withdraw_history = await db.collection('withdrawal_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
+            console.log("withdraw_history",withdraw_history);
+
             if (withdraw_history && withdraw_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });
             } else {

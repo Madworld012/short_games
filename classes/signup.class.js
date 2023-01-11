@@ -184,7 +184,7 @@ module.exports = {
                     var jid = randomstring.generate(10);
                     var extime = commonClass.AddTime(60);
                     db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
-                    commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
+                    commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, is_from_pass: false, mobile_no: data.mobile_no, timer: 60 } });
                     schedule.scheduleJob(jid, new Date(extime), function () {
                         schedule.cancelJob(jid);
                         db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { isexpire: true } }, function (err) { })
@@ -194,7 +194,7 @@ module.exports = {
         }
     },
     FORGOT_PASS: async function (data, client) {
-        if (!data || !data.mobile_no ) {
+        if (!data || !data.mobile_no) {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please send proper data." } });
             return;
         }
@@ -212,7 +212,7 @@ module.exports = {
             commonClass.SendSMS(udatac, function (cb_status) {
                 if (cb_status.status == 1) {
                     db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) {
-                        commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
+                        commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, is_from_pass: true, mobile_no: data.mobile_no, timer: 60 } });
                         schedule.scheduleJob(jid, new Date(extime), function () {
                             schedule.cancelJob(jid);
                             db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { isexpire: true } }, function (err) { })

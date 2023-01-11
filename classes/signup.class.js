@@ -238,7 +238,7 @@ module.exports = {
                         schedule.cancelJob(userdata.jid);
                         console.log("otp verified");
                         db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { password: data.new_password, isexpire: true, OTP: "" } }, function () { });
-                        commonClass.sendDirectToUserSocket(client, { en: "VERIFY_CAHNGE_PASS_OTP", data: { status: false, msg: "Your Password Has Been Changed Please Do login." } });
+                        commonClass.sendDirectToUserSocket(client, { en: "VERIFY_CAHNGE_PASS_OTP", data: { status: true, msg: "Your Password Has Been Changed Please Do login." } });
                     } else {
                         commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
                     }

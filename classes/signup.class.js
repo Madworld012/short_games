@@ -132,7 +132,7 @@ module.exports = {
         var wh = {};
         wh.mobile_no = data.mobile_no;
         wh.password = data.password;
-        var userData = await db.collection('game_users').find(wh).toArray()
+        var userData = await db.collection('game_users').find(wh).toArray();
         if (userData.length > 0) {
             if (userData.isMobileVerified == 0 && userData.mobile_no != '') {
                 var udatac = {};
@@ -191,6 +191,77 @@ module.exports = {
                     })
                 }
             })
+        }
+    },
+    FORGOT_PASS: async function (data, client) {
+        if (!data || !data.mobile_no || !data.uid) {
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please send proper data." } });
+            return;
+        }
+
+        var wh = {};
+        wh.mobile_no = data.mobile_no;
+        var userData = await db.collection('game_users').find(wh).toArray();
+
+        if (userData.length > 0) {
+            userData = userData[0];
+            var udatac = {};
+            udatac.mobile_no = userData.mobile_no;
+            var jid = randomstring.generate(10);
+            var extime = commonClass.AddTime(60);
+            commonClass.SendSMS(udatac, function (cb_status) {
+                if (cb_status.status == 1) {
+                    db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) {
+                        commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
+                        schedule.scheduleJob(jid, new Date(extime), function () {
+                            schedule.cancelJob(jid);
+                            db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { isexpire: true } }, function (err) { })
+                        })
+                    })
+                }
+            });
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Phone Number Not Found" } });
+        }
+
+
+    },
+    VERIFY_CAHNGE_PASS_OTP: function (data, client) {
+        if (data && data.mobile_no && data.otp && data.new_password) {
+            db.collection('game_users').findOne({ mobile_no: data.mobile_no }, function (err, userdata) {
+                cl("VERIFY_LOGIN_MOBILE-----------------------------------------------", userdata)
+                if (!err && userdata) {
+                    cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
+                    cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
+                    cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
+                    if (userdata.OTP == data.otp && userdata.isexpire == false) {
+                        schedule.cancelJob(userdata.jid);
+                        console.log("otp verified");
+                        db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { password: data.new_password, isexpire: true, OTP: "" } }, function () { });
+                        commonClass.sendDirectToUserSocket(client, { en: "VERIFY_CAHNGE_PASS_OTP", data: { status: false, msg: "Your Password Has Been Changed Please Do login." } });
+                    } else {
+                        commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
+                    }
+                }
+            });
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "VERIFY_OTP", data: { status: false, msg: "Please send Proper Data" } });
+        }
+    },
+    CHANGE_PASSWORD: async function (data, client) {
+        if (!data || !data.mobile_no || !data.current_password || !data.new_password) {
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please send proper data." } });
+            return;
+        }
+        let wh = {};
+        wh.mobile_no = data.mobile_no;
+        wh.password = data.current_password;
+        let userData = await db.collection('game_users').find(wh).toArray();
+        if (userData && userData.length > 0) {
+            db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { password: data.new_password } }, function (err) { });
+            commonClass.sendDirectToUserSocket(client, { en: "CHANGE_PASSWORD", data: { status: false, msg: "Your Password Has Been Changed Please Do login." } });
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, login: true, restart: true, msg: "Phone Nunmber and Password not Matched!" } });
         }
     }
 }

@@ -71,7 +71,7 @@ module.exports = {
                 return false;
             }
 
-            if (IS_DEPOSIT == true) {
+            if (config.IS_DEPOSIT == true) {
                 if (req.body.amount >= config.MIN_DEPOSIT) {
 
                     if (req.body && req.body.uid) {
@@ -119,6 +119,7 @@ module.exports = {
                                 console.log(insert_status);
 
                                 if (insert_status.acknowledged) {
+                                    console.log("------------------------------------");
                                     paytmCheckSum.genchecksum(params, paytmConfig.PaytmConfig.KEY, function (err, checksum) {
                                         // var txn_url = "https://securegw-stage.paytm.in/theia/processTransaction"; // for staging
                                         var txn_url = "https://securegw.paytm.in/theia/processTransaction"; // for production
@@ -129,10 +130,11 @@ module.exports = {
                                         }
                                         form_fields += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "' >";
                                         // console.log("--txn_url",txn_url)
-                                        res.writeHead(200, { 'Content-Type': 'text/html' });
-                                        res.write('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
+                                        // res.writeHead(200, { 'Content-Type': 'text/html' });
+                                        console.log('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
+                                        res.send('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
                                         //  console.log("---params res write head?>>>>>>>>>>>>>>>>>>>")
-                                        res.end();
+                                        // res.end();
                                     });
                                 } else {
                                     console.log("transection not storeed");

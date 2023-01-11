@@ -170,6 +170,10 @@
 
             <input style="height:50px;width:200px" type="button" id="" value="RESEND" onclick="RESENDOTP()"> -->
 
+            <input style="height:50px;width:200px" type="button" id="" value="FORGOT_PASS" onclick="FORGOT_PASS()">
+            <input style="height:50px;width:200px" type="button" id="" value="VERIFY_CAHNGE_PASS_OTP" onclick="VERIFY_CAHNGE_PASS_OTP()">
+            <input style="height:50px;width:200px" type="button" id="" value="CHANGE_PASSWORD" onclick="CHANGE_PASSWORD()">
+
 
 
         </div>
@@ -386,6 +390,22 @@
         }
 
 
+        //change password
+        function FORGOT_PASS() {
+            socket.emit('req', { en: "FORGOT_PASS", data: { mobile_no: "9999999999" ,uid:"63ad84503290c507323c5982"} })
+        }
+
+        //change password
+        function VERIFY_CAHNGE_PASS_OTP() {
+            socket.emit('req', { en: "VERIFY_CAHNGE_PASS_OTP", data: { mobile_no: "9999999999", new_pass: "Nachi2203#1111", otp:"999999" } })
+        }
+
+        //change password
+        function CHANGE_PASSWORD() {
+            socket.emit('req', { en: "CHANGE_PASSWORD", data: { mobile_no: "9999999999", new_password : "Nachi2203#1", current_password:"Nachi2203#1111" } })
+        }
+
+
 
         //login 
         function SIGNUP() {
@@ -468,7 +488,7 @@
 
                             bet: data,
 
-                            auto_2:1,
+                            auto_2: 1,
                             auto_2_x: 1.10,
                             bet_2: parseFloat(bet_2)
                         }

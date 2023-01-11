@@ -7,6 +7,7 @@ module.exports = {
 			// cl("New Socket Connection Made");
 			console.log("call come for connection");
 			console.log('socket id', socket.id);
+			socket.emit('res',{en:"aa",data:{name:"s"}})
 			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
 
 			let flg = true
@@ -34,6 +35,9 @@ module.exports = {
 				case "LOGIN": //user register // intial call come here
 				case "RESEND": // resend OTP
 				case "VERIFY_OTP": //verify otp
+				case "FORGOT_PASS":
+				case "VERIFY_CAHNGE_PASS_OTP":
+				case "CHANGE_PASSWORD":
 					signupClass[en](request.data, client);
 					break;
 				case "SG": //start game

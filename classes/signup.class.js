@@ -194,7 +194,7 @@ module.exports = {
         }
     },
     FORGOT_PASS: async function (data, client) {
-        if (!data || !data.mobile_no || !data.uid) {
+        if (!data || !data.mobile_no ) {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please send proper data." } });
             return;
         }

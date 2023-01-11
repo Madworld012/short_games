@@ -259,7 +259,7 @@ module.exports = {
         let userData = await db.collection('game_users').find(wh).toArray();
         if (userData && userData.length > 0) {
             db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { password: data.new_password } }, function (err) { });
-            commonClass.sendDirectToUserSocket(client, { en: "CHANGE_PASSWORD", data: { status: false, msg: "Your Password Has Been Changed Please Do login." } });
+            commonClass.sendDirectToUserSocket(client, { en: "CHANGE_PASSWORD", data: { status: true, msg: "Your Password Has Been Changed Please Do login." } });
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, login: true, restart: true, msg: "Phone Nunmber and Password not Matched!" } });
         }

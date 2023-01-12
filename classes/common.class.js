@@ -200,7 +200,7 @@ module.exports = {
             return Math.round((diffMs / 1000));
         }
     },
-    getRandomeHistory: function () {
+    getRandomeHistory: function (number) {
         let history = [
             40, 1.2, 1, 36, 1.3, 1.49, 11.69, 37, 1.98, 2.58,
             1, 1.12, 35, 1, 40, 2.75, 1, 7.56, 5.48, 1.01, 8.09,
@@ -210,6 +210,6 @@ module.exports = {
         ];
         let history_data = _.shuffle(history);
         
-        return history_data.splice(0,25);
+        return history_data.splice(0,number);
     }
 }

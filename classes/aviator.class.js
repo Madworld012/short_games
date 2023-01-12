@@ -86,29 +86,36 @@ module.exports = {
                             tableData.x = tableData.history[tableData.history.length - 1];
                         }
 
+                        if(tableData.history.length <= 15){
+                            tableData.history = tableData.history.concat(commonClass.getRandomeHistory(20))
+                        }
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
                     } else {
                         let in_tableData = {
                             status: "INIT",
                             cd: new Date(),
-                            history: commonClass.getRandomeHistory(),
+                            // history: commonClass.getRandomeHistory(),
+                            history: [],
                             x: 0,
                             count: 1,
                             bet_flg: false,
                             cash_out_flg: false
                         }
 
+
                         let table_id = await db.collection('aviator_table').insertOne(in_tableData);
                         let new_table_data = await db.collection('aviator_table').find({ _id: ObjectId(table_id.insertedId.toString()) }).toArray();
                         if (new_table_data && new_table_data.length > 0) {
-                            await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data[0]._id.toString() } }, function () { })
-                            client.tblid = new_table_data[0]._id.toString();
-                            client.join(new_table_data[0]._id.toString());
+                            new_table_data = new_table_data[0];
+                            await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data._id.toString() } }, function () { })
+                            client.tblid = new_table_data._id.toString();
+                            client.join(new_table_data._id.toString());
                             console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
-                            new_table_data[0]["total_cash"] = userData.total_cash;
-                            commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data[0] });
-                            aviatorClass.startGame(new_table_data[0]._id);
+                            new_table_data["total_cash"] = userData.total_cash;
+                            new_table_data.history = commonClass.getRandomeHistory(25);
+                            commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
+                            aviatorClass.startGame(new_table_data._id);
                             cl("table_data", new_table_data);
                         } else {
                             cl("Critical error please check server and log", new_table_data);
@@ -132,6 +139,8 @@ module.exports = {
             if (table_data && table_data.length > 0) {
                 if (table_data[0].count <= 0) {
                     cl("game over no more player available.")
+                    let today = moment().format("DD/MM/YYYY");
+                    await db.collection('daily_table_history').insertOne({ cd: today, history: table_data[0].history });
                     await db.collection('aviator_table').deleteOne({ _id: ObjectId(tblid.toString()) });
                     return false;
                 }

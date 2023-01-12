@@ -371,14 +371,14 @@ module.exports = {
             if (total_bet > 0 && user_data[0].total_cash >= total_bet) {
                 cl("11");
 
-                if (data.auto_1 == 1) {
+                if (data.auto_1 == 1 && parseFloat(data.auto_1_x) > 0) {
                     console.log("call come in set 1");
                     await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.auto_1_x) + "_1", JSON.stringify({
                         x: data.auto_1_x
                     }));
                 }
 
-                if (data.auto_2 == 1) {
+                if (data.auto_2 == 1 && parseFloat(data.auto_2_x) > 0) {
                     console.log("call come in set 2");
                     await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.auto_2_x) + "_2", JSON.stringify({
                         x: data.auto_2_x

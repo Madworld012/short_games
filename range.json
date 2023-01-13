@@ -1,0 +1,63 @@
+[
+    {
+        "prob_min": 1,
+        "prob_max": 350,
+        "min_value": 1,
+        "max_value": 1.4
+    },
+    {
+        "prob_min": 351,
+        "prob_max": 600,
+        "min_value": 1,
+        "max_value": 1.96
+    },
+    {
+        "prob_min": 601,
+        "prob_max": 750,
+        "min_value": 1,
+        "max_value": 3.24
+    },
+    {
+        "prob_min": 751,
+        "prob_max": 850,
+        "min_value": 1,
+        "max_value": 1.1
+    },
+    {
+        "prob_min": 851,
+        "prob_max": 920,
+        "min_value": 1,
+        "max_value": 3.90
+    },
+    {
+        "prob_min": 921,
+        "prob_max": 960,
+        "min_value": 1,
+        "max_value": 6.90
+    },
+    {
+        "prob_min": 961,
+        "prob_max": 980,
+        "min_value": 1,
+        "max_value": 9.80
+    },
+    {
+        "prob_min": 981,
+        "prob_max": 990,
+        "min_value": 1,
+        "max_value": 24.50
+    },
+    {
+        "prob_min": 991,
+        "prob_max": 998,
+        "min_value": 1,
+        "max_value": 49.90
+    },
+    {
+        "prob_min": 999,
+        "prob_max": 1000,
+        "min_value": 1,
+        "max_value": 199
+    }
+    
+]

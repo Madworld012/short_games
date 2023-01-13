@@ -5,12 +5,9 @@ module.exports = {
 			// io.sockets.sockets.get();
 
 			// cl("New Socket Connection Made");
-			console.log("call come for connection");
-			console.log('socket id', socket.id);
-			socket.emit('res',{en:"aa",data:{name:"s"}})
+			console.log("call come for connection-------------- ",socket.id);
 			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
 
-			let flg = true
 			ecClass.BindSocketToEvent(socket);
 		});
 	},
@@ -19,7 +16,6 @@ module.exports = {
 		return _.random(100, 500)
 	},
 	BindSocketToEvent: function (client) {
-		cl("User Bind With Socket");
 
 		client.on('req', function (request) {
 			console.log("call come for socket ", typeof request);

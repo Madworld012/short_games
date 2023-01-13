@@ -285,8 +285,11 @@ module.exports = {
         }
     },
     getRandomFloat: async function () {
-
         let rand_value = _.random(1, 100);
+        if(config.RANGE_MAX_COUNT && config.RANGE_MAX_COUNT > 10){
+            rand_value = _.random(1, config.RANGE_MAX_COUNT);
+        }
+        
         console.log("rand_value---------------", rand_value)
         let range = await db.collection('range').find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
         console.log("range", range);
@@ -295,7 +298,7 @@ module.exports = {
             const str = (Math.random() * (range.max_value - range.min_value) + range.min_value).toFixed(2);
             return parseFloat(str);
         } else {
-            console.log("come at else");
+            console.log("\n **-*-*-*-**-*-*-*-*-*-**-*-*-**-*--**-*-*-* Critical log Check Range Table -*-*--*-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*");
             const str = (Math.random() * (2 - 1) + 1).toFixed(2);
             return parseFloat(str);
         }

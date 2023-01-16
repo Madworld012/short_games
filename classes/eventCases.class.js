@@ -1,12 +1,9 @@
 module.exports = {
 	init: function () {
 		io.sockets.on("connection", function (socket) {
-			//sk remove
-			// io.sockets.sockets.get();
 
-			// cl("New Socket Connection Made");
-			console.log("call come for connection-------------- ",socket.id);
-			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
+			console.log("call come for connection----------------------------------------------------------------- ",socket.id);
+			//commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
 
 			ecClass.BindSocketToEvent(socket);
 		});

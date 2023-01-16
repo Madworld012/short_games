@@ -87,7 +87,7 @@ module.exports = {
                         }
 
                         if(tableData.history.length <= 15){
-                            tableData.history = tableData.history.concat(commonClass.getRandomeHistory(20))
+                            tableData.history = tableData.history.concat(tableData.f_history);
                         }
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
@@ -95,8 +95,8 @@ module.exports = {
                         let in_tableData = {
                             status: "INIT",
                             cd: new Date(),
-                            // history: commonClass.getRandomeHistory(),
                             history: [],
+                            f_history : commonClass.getRandomeHistory(25),
                             x: 0,
                             count: 1,
                             bet_flg: false,
@@ -113,7 +113,7 @@ module.exports = {
                             client.join(new_table_data._id.toString());
                             console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
                             new_table_data["total_cash"] = userData.total_cash;
-                            new_table_data.history = commonClass.getRandomeHistory(25);
+                            new_table_data.history = new_table_data.f_history
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
                             cl("table_data", new_table_data);
@@ -628,7 +628,11 @@ module.exports = {
         if (data.tblid && data.uid) {
             let history_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }, { history: 1 }).toArray();
             if (history_data && history_data.length > 0) {
-                commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data[0].history.reverse(), msg: "You Have Not Sufficient Balance" } });
+                history_data = history_data[0];
+                if(history_data.history.length <= 15){
+                    history_data.history = history_data.history.concat(history_data.f_history);
+                }
+                commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data.history.reverse(), msg: "You Have Not Sufficient Balance" } });
             }
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: false, table_history: [], msg: "Table Not found." } });

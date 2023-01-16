@@ -4,7 +4,8 @@ module.exports = {
     disconnectUser: async function (client) {
         if (client) {
             if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
-                let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
+                // let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
+                let userData = await db.collection('game_users').find({ sck: client.id }).toArray();
                 if (userData.length > 0 && typeof userData[0].tblid != "undefined" && userData[0].tblid != "") {
                     let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
                     if (tableDate.length > 0) {

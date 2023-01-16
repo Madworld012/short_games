@@ -630,7 +630,7 @@ module.exports = {
             if (history_data && history_data.length > 0) {
                 history_data = history_data[0];
                 if(history_data.history.length <= 15){
-                    history_data.history = history_data.history.concat(history_data.f_history);
+                    history_data.history = history_data.f_history.concat(history_data.history);
                 }
                 commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data.history.reverse(), msg: "You Have Not Sufficient Balance" } });
             }

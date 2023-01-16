@@ -87,12 +87,13 @@ module.exports = {
                         }
 
                         if(tableData.history.length <= 15){
-                            tableData.history = tableData.history.concat(tableData.f_history);
+                            let table_o_history = tableData.history.reverse();
+                            tableData.history = table_o_history.concat(tableData.f_history);
                         }
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
                     } else {
-                        let history_data = commonClass.getRandomeHistory(25)
+                        let history_data = commonClass.getRandomeHistory(25);
                         let in_tableData = {
                             status: "INIT",
                             cd: new Date(),

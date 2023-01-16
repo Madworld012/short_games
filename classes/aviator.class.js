@@ -114,7 +114,7 @@ module.exports = {
                             client.join(new_table_data._id.toString());
                             console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
                             new_table_data["total_cash"] = userData.total_cash;
-                            new_table_data.history = new_table_data.f_history
+                            new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
                             cl("table_data", new_table_data);

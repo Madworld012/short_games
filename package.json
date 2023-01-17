@@ -21,7 +21,7 @@
     "randomstring": "1.2.3",
     "redis": "3.0.2",
     "request": "2.88.2",
-    "socket.io": "4.5.4",
+    "socket.io": "4.5.1",
     "socket.io-client": "4.5.4",
     "socket.io-msgpack-parser": "3.0.2",
     "socket.io-stream": "0.9.1",

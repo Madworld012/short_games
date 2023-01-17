@@ -306,10 +306,22 @@ module.exports = {
             }
 
             let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-            commonClass.sendDirectToUserSocket(client, { en: "UP", data: { success: true, data: user_updated_record.value } });
+            user_updated_record = user_updated_record.value;
+            commonClass.sendDirectToUserSocket(client, {
+                en: "UP",
+                data: {
+                    success: true,
+                    data: {
+                        un: user_updated_record.un,
+                        sound: user_updated_record.sound,
+                        music: user_updated_record.music,
+                        pp: user_updated_record.pp
+                    }
+                }
+            });
 
         } catch (error) {
-            console.log("error",error);
+            console.log("error", error);
         }
 
     }

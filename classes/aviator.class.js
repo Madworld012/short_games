@@ -15,7 +15,8 @@ autoCut.process(async (job, done) => {
         const { reply } = job.data;
         console.log("call come in bull process", reply);
 
-        reply.forEach(async (key) => {
+        for (let i = 0; i < reply.length; i++) {
+            const key = reply[i];
             console.log("key", key);
             let user_data = key.split("_");
             let tblid = user_data[1];
@@ -23,8 +24,8 @@ autoCut.process(async (job, done) => {
             let x = user_data[3];
             let bet_data = user_data[4];
 
-            aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
-        });
+            await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+        }
 
         done();
     } catch (error) {
@@ -86,7 +87,7 @@ module.exports = {
                             tableData.x = tableData.history[tableData.history.length - 1];
                         }
 
-                        if(tableData.history.length <= 15){
+                        if (tableData.history.length <= 15) {
                             let table_o_history = tableData.history.reverse();
                             tableData.history = table_o_history.concat(tableData.f_history.reverse());
                         }
@@ -97,7 +98,7 @@ module.exports = {
                             status: "INIT",
                             cd: new Date(),
                             history: [],
-                            f_history : commonClass.getRandomeHistory(25),
+                            f_history: commonClass.getRandomeHistory(25),
                             x: 0,
                             count: 1,
                             bet_flg: false,
@@ -240,7 +241,7 @@ module.exports = {
             console.log("data found", reply);
             autoCut.add({ reply }, {
                 removeOnComplete: true,
-                removeOnFail: false
+                removeOnFail: true
             });
         }
     },
@@ -287,10 +288,10 @@ module.exports = {
     },
     getRandomFloat: async function () {
         let rand_value = _.random(1, 100);
-        if(config.RANGE_MAX_COUNT && config.RANGE_MAX_COUNT > 10){
+        if (config.RANGE_MAX_COUNT && config.RANGE_MAX_COUNT > 10) {
             rand_value = _.random(1, config.RANGE_MAX_COUNT);
         }
-        
+
         console.log("rand_value---------------", rand_value)
         let range = await db.collection('range').find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
         console.log("range", range);
@@ -305,36 +306,35 @@ module.exports = {
         }
     },
     PLACE_BET: async function (data, client) {
-        console.log("\n User Bet Come", data);
         if (data.uid && data.tblid) {
 
-            if (typeof data.bet_1 == "undefined" || data.bet_1 < 0) {
+            if (typeof data.bet1.bet_1 == "undefined" || data.bet1.bet_1 < 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Please Send Proper Bet value" } });
                 // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("1");
                 return false;
             }
 
-            if (typeof data.bet_2 == "undefined" || data.bet_2 < 0) {
+            if (typeof data.bet2.bet_2 == "undefined" || data.bet2.bet_2 < 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("2");
                 return false;
             }
 
 
-            if (data.bet_1 <= 0 && data.bet_2 <= 0) {
+            if (data.bet1.bet_1 <= 0 && data.bet2.bet_2 <= 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("3");
                 return false;
             }
 
-            if (config.MAX_BET_FLAG && data.bet_1 > 0 && data.bet_1 > config.MAX_BET) {
+            if (config.MAX_BET_FLAG && data.bet1.bet_1 > 0 && data.bet1.bet_1 > config.MAX_BET) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Maximum Bet limit Reached" } });
                 cl("4");
                 return false;
             }
 
-            if (config.MAX_BET_FLAG && data.bet_2 > 0 && data.bet_2 > config.MAX_BET) {
+            if (config.MAX_BET_FLAG && data.bet2.bet_2 > 0 && data.bet2.bet_2 > config.MAX_BET) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Maximum Bet limit Reached" } });
                 cl("5");
                 return false;
@@ -368,43 +368,43 @@ module.exports = {
 
             let total_bet = 0;
             let update_data = {};
-            if (data.bet_1 > 0) {
+            if (data.bet1.is_bet_1 == true && data.bet1.bet_1 > 0) {
                 cl("9");
-                total_bet += data.bet_1;
-                update_data['bet_1'] = data.bet_1;
+                total_bet += data.bet1.bet_1;
+                update_data['bet_1'] = data.bet1.bet_1;
             }
 
-            if (data.bet_2 > 0) {
+            if (data.bet2.is_bet_2 == true && data.bet2.bet_2 > 0) {
                 cl("10");
-                total_bet += data.bet_2;
-                update_data['bet_2'] = data.bet_2;
+                total_bet += data.bet2.bet_2;
+                update_data['bet_2'] = data.bet2.bet_2;
             }
 
             console.log("total_bet", total_bet);
             if (total_bet > 0 && user_data[0].total_cash >= total_bet) {
                 cl("11");
 
-                if (data.auto_1 == 1 && parseFloat(data.auto_1_x) > 0) {
+                if (data.bet1.is_bet_1 == true && data.bet1.auto_1 == true && parseFloat(data.bet1.auto_1_x) > 0) {
                     console.log("call come in set 1");
-                    await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.auto_1_x) + "_1", JSON.stringify({
-                        x: data.auto_1_x
+                    await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.bet1.auto_1_x) + "_1", JSON.stringify({
+                        x: data.bet1.auto_1_x
                     }));
                 }
 
-                if (data.auto_2 == 1 && parseFloat(data.auto_2_x) > 0) {
+                if (data.bet2.is_bet_2 == true && data.bet2.auto_2 == true && parseFloat(data.bet2.auto_2_x) > 0) {
                     console.log("call come in set 2");
-                    await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.auto_2_x) + "_2", JSON.stringify({
-                        x: data.auto_2_x
+                    await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.bet2.auto_2_x) + "_2", JSON.stringify({
+                        x: data.bet2.auto_2_x
                     }));
                 }
 
                 //cache.delWildcard("cache_*", function () { });
 
                 console.log("total_bet", total_bet);
-                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet" });
+                await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet" });
 
                 let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { user_data, status: true, bet: data.bet, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                 // commonClass.sendToRoom(data.tblid.toString(), { en: "UPDATE_BET", data: { type: "BET", uid: data.uid.toString(), bet: total_bet } });
             } else {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "You Have Not Sufficient Balance" } });
@@ -630,7 +630,7 @@ module.exports = {
             let history_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }, { history: 1 }).toArray();
             if (history_data && history_data.length > 0) {
                 history_data = history_data[0];
-                if(history_data.history.length <= 15){
+                if (history_data.history.length <= 15) {
                     history_data.history = history_data.f_history.concat(history_data.history);
                 }
                 commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: true, table_history: history_data.history.reverse(), msg: "You Have Not Sufficient Balance" } });

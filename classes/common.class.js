@@ -65,7 +65,6 @@ module.exports = {
         return toCrypt;
     },
     Dec: function (toDecrypt) {
-        console.log("toDecrypt", toDecrypt);
         let keyBuf = Buffer.from(Array(32));
 
         keyBuf.write(encKey, 'utf8');
@@ -117,6 +116,7 @@ module.exports = {
             user_data = user_data[0];
 
             console.log("data.balance", data.cash);
+            console.log("user.balance", data.cash);
             console.log("user_data.total_cash", user_data.total_cash);
 
             var final_cash = (((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2);

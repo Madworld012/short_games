@@ -308,33 +308,33 @@ module.exports = {
     PLACE_BET: async function (data, client) {
         if (data.uid && data.tblid) {
 
-            if (typeof data.bet1.bet_1 == "undefined" || data.bet1.bet_1 < 0) {
+            if (typeof data.bet1.bet_1 == "undefined" || parseFloat(data.bet1.bet_1) < 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Please Send Proper Bet value" } });
                 // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("1");
                 return false;
             }
 
-            if (typeof data.bet2.bet_2 == "undefined" || data.bet2.bet_2 < 0) {
+            if (typeof data.bet2.bet_2 == "undefined" || parseFloat(data.bet2.bet_2) < 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("2");
                 return false;
             }
 
 
-            if (data.bet1.bet_1 <= 0 && data.bet2.bet_2 <= 0) {
+            if (parseFloat(data.bet1.bet_1) <= 0 && parseFloat(data.bet2.bet_2) <= 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Please Send Proper Bet value" } });
                 cl("3");
                 return false;
             }
 
-            if (config.MAX_BET_FLAG && data.bet1.bet_1 > 0 && data.bet1.bet_1 > config.MAX_BET) {
+            if (config.MAX_BET_FLAG && parseFloat(data.bet1.bet_1) > 0 && parseFloat(data.bet1.bet_1) > config.MAX_BET) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Maximum Bet limit Reached" } });
                 cl("4");
                 return false;
             }
 
-            if (config.MAX_BET_FLAG && data.bet2.bet_2 > 0 && data.bet2.bet_2 > config.MAX_BET) {
+            if (config.MAX_BET_FLAG && parseFloat(data.bet2.bet_2) > 0 && parseFloat(data.bet2.bet_2) > config.MAX_BET) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Maximum Bet limit Reached" } });
                 cl("5");
                 return false;
@@ -368,16 +368,16 @@ module.exports = {
 
             let total_bet = 0;
             let update_data = {};
-            if (data.bet1.is_bet_1 == true && data.bet1.bet_1 > 0) {
+            if (data.bet1.is_bet_1 == true && parseFloat(data.bet1.bet_1) > 0) {
                 cl("9");
-                total_bet += data.bet1.bet_1;
-                update_data['bet_1'] = data.bet1.bet_1;
+                total_bet += parseFloat(data.bet1.bet_1);
+                update_data['bet_1'] = parseFloat(data.bet1.bet_1);
             }
 
-            if (data.bet2.is_bet_2 == true && data.bet2.bet_2 > 0) {
+            if (data.bet2.is_bet_2 == true && parseFloat(data.bet2.bet_2) > 0) {
                 cl("10");
-                total_bet += data.bet2.bet_2;
-                update_data['bet_2'] = data.bet2.bet_2;
+                total_bet += parseFloat(data.bet2.bet_2);
+                update_data['bet_2'] = parseFloat(data.bet2.bet_2);
             }
 
             console.log("total_bet", total_bet);

@@ -275,7 +275,18 @@ module.exports = {
         }
         let profileData = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { unique_id: 1, un: 1, ue: 1, mobile_no: 1, total_cash: 1, pp: 1, sound: 1, music: 1 }).toArray();
         if (profileData.length > 0) {
-            commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: true, data: profileData[0] } });
+            profileData = profileData[0];
+            var send_json = {
+                status: true,
+                uid: profileData._id.toString(),
+                un: profileData.un,
+                total_cash: profileData.total_cash,
+                unique_id: profileData.unique_id,
+                ue: profileData.ue,
+                pp: profileData.pp,
+                mobile_no: profileData.mobile_no
+            }
+            commonClass.sendDirectToUserSocket(client, { en: "PD", data: send_json });
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: false, msg: "User Not Found" } });
         }

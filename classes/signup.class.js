@@ -311,12 +311,11 @@ module.exports = {
                 en: "UP",
                 data: {
                     success: true,
-                    data: {
-                        un: user_updated_record.un,
-                        sound: user_updated_record.sound,
-                        music: user_updated_record.music,
-                        pp: user_updated_record.pp
-                    }
+                    un: user_updated_record.un,
+                    sound: user_updated_record.sound,
+                    music: user_updated_record.music,
+                    pp: user_updated_record.pp
+
                 }
             });
 

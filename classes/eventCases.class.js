@@ -2,7 +2,7 @@ module.exports = {
 	init: function () {
 		io.sockets.on("connection", function (socket) {
 
-			console.log("call come for connection----------------------------------------------------------------- ",socket.id);
+			console.log("call come for connection----------------------------------------------------------------- ", socket.id);
 			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
 
 			ecClass.BindSocketToEvent(socket);
@@ -31,6 +31,8 @@ module.exports = {
 				case "FORGOT_PASS":
 				case "VERIFY_CAHNGE_PASS_OTP":
 				case "CHANGE_PASSWORD":
+				case "PD": // profile detail
+				case "UP": //update profile
 					signupClass[en](request.data, client);
 					break;
 				case "SG": //start game

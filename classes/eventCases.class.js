@@ -3,7 +3,7 @@ module.exports = {
 		io.sockets.on("connection", function (socket) {
 
 			console.log("call come for connection----------------------------------------------------------------- ",socket.id);
-			//commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
+			commonClass.sendDirectToUserSocket(socket, { en: "done", data: {} });
 
 			ecClass.BindSocketToEvent(socket);
 		});

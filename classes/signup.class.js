@@ -64,6 +64,9 @@ module.exports = {
             ue: (typeof data.email != 'undefined') ? data.email : "",
             mobile_no: data.mobile_no,
             password: data.password,
+            pp: 0,
+            sound: true,
+            music: true,
             isMobileVerified: 0,
             total_cash: config.INITIAL_CASH,
             OTP: 0,
@@ -264,5 +267,53 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, login: true, restart: true, msg: "Phone Nunmber and Password not Matched!" } });
         }
     },
-    
+    PD: async function (data, client) {
+        if (!data || !data.uid) {
+            commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: false, msg: "Please send proper data." } });
+            return;
+        }
+        let profileData = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { unique_id: 1, un: 1, ue: 1, mobile_no: 1, total_cash: 1, pp: 1, sound: 1, music: 1 }).toArray();
+        if (profileData.length > 0) {
+            commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: true, data: profileData[0] } });
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: false, msg: "User Not Found" } });
+        }
+    },
+    UP: async function (data, client) {
+        try {
+            if (!data || !data.uid) {
+                commonClass.sendDirectToUserSocket(client, { en: "UP", data: { success: false, msg: "Please send proper data." } });
+                return;
+            }
+
+            delete data.total_cash;
+
+            let update_data = {};
+            if (typeof data.pp != "undefined" && data.pp) {
+                update_data['pp'] = data.pp;
+            }
+
+            if (typeof data.sound != "undefined" && data.sound) {
+                update_data['sound'] = data.sound;
+            }
+
+            if (typeof data.music != "undefined" && data.music) {
+                update_data['music'] = data.music;
+            }
+
+            if (typeof data.un != "undefined" && data.un) {
+                update_data['un'] = data.un;
+            }
+
+            let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
+            commonClass.sendDirectToUserSocket(client, { en: "UP", data: { success: true, data: user_updated_record.value } });
+
+        } catch (error) {
+            console.log("error",error);
+        }
+
+    }
+
+
+
 }

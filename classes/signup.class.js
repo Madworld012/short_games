@@ -17,6 +17,7 @@ module.exports = {
                 total_cash: userData.total_cash,
                 unique_id: userData.unique_id,
                 ue: userData.ue,
+                pp: userData.pp,
                 mobile_no: userData.mobile_no
             }
             if (userData.isMobileVerified == 1) {

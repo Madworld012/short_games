@@ -91,15 +91,10 @@ module.exports = {
         if (data == null || typeof client.id == 'undefined') {
             return false;
         }
-
-        console.log("data", data);
-
+        
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
-            console.log("call come inside 1");
             commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
-            console.log("call come inside 4");
         }
-        console.log("call come inside 5");
 
         client.uid = data._id.toString();
         client.un = data.un.toString();

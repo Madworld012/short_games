@@ -92,8 +92,10 @@ module.exports = {
         }
 
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
-            delete client.uid;
+            let clientObj = io.sockets.sockets.get(data.sck);
+            delete clientObj.uid;
             commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
+            clientObj.disconnect();
         }
 
         client.uid = data._id.toString();

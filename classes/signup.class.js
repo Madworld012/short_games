@@ -87,36 +87,35 @@ module.exports = {
     },
     //AL
     setUserSocketData: async function (data, client) {
-        try {
-            if (data == null || typeof client.id == 'undefined') {
-                return false;
-            }
-
-            console.log("data", data);
-
-            if (data.sck != null && data.sck != '' && data.sck != client.id) {
-                console.log("call come inside 1");
-                let clientObj = io.sockets.sockets.get(data.sck);
-                if(clientObj){
-                    console.log("inside id object 2");
-                    delete clientObj.uid;
-                    commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
-                    clientObj.disconnect();
-                console.log("call come inside 3");
-
-                }
-                console.log("call come inside 4");
-                
-            }
-            console.log("call come inside 5");
-
-            client.uid = data._id.toString();
-            client.un = data.un.toString();
-
-            await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date() } }, function () { })
-        } catch (error) {
-            console.log("error");
+        // try {
+        if (data == null || typeof client.id == 'undefined') {
+            return false;
         }
+
+        console.log("data", data);
+
+        if (data.sck != null && data.sck != '' && data.sck != client.id) {
+            console.log("call come inside 1");
+            let clientObj = io.sockets.sockets.get(data.sck);
+            if (clientObj) {
+                console.log("inside id object 2");
+                delete clientObj.uid;
+                commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
+                clientObj.disconnect();
+                console.log("call come inside 3");
+            }
+            console.log("call come inside 4");
+
+        }
+        console.log("call come inside 5");
+
+        client.uid = data._id.toString();
+        client.un = data.un.toString();
+
+        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date() } }, function () { })
+        // } catch (error) {
+        //     console.log("error");
+        // }
 
     },
     //AL

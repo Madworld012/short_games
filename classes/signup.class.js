@@ -92,6 +92,7 @@ module.exports = {
         }
 
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
+            delete client.uid;
             commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
         }
 

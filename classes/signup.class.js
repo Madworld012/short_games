@@ -92,6 +92,7 @@ module.exports = {
         }
 
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
+            console.log("call come inside");
             let clientObj = io.sockets.sockets.get(data.sck);
             delete clientObj.uid;
             commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });

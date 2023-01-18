@@ -91,6 +91,8 @@ module.exports = {
             return false;
         }
 
+        console.log("data",data);
+
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
             console.log("call come inside");
             let clientObj = io.sockets.sockets.get(data.sck);

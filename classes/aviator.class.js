@@ -118,6 +118,9 @@ module.exports = {
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
+                            if(config.DEPO_WITH_AUTO_WIN_NOTIFICATION){
+                                aviatorClass.startDepositwithdrawNoti(new_table_data._id);
+                            }
                             cl("table_data", new_table_data);
                         } else {
                             cl("Critical error please check server and log", new_table_data);
@@ -271,9 +274,9 @@ module.exports = {
                 await db.collection('game_users').updateOne({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0 } }, { multi: true }, function () { });
                 var startNewGameTimer = commonClass.AddTime(config.NEW_ROUND_START_TIME);
 
-                if (config.NEW_ROUND_START_TIME > 0) {
-                    aviatorClass.sendAutoNotification(table_data[0]._id.toString(), 5);
-                }
+                // if (config.NEW_ROUND_START_TIME > 0) {
+                //     aviatorClass.sendAutoNotification(table_data[0]._id.toString(), 5);
+                // }
 
                 cl("\nWait For New Round");
                 schedule.scheduleJob(jobId, new Date(startNewGameTimer), async function () {
@@ -615,8 +618,7 @@ module.exports = {
                     if (count == run_count) {
                         clearInterval(myintervaal);
                     } else {
-                        let rand_value_name = _.random(0, names.length);
-                        commonClass.sendToRoom(tblid.toString(), { en: "NOTIFICATION", data: { status: true, name: names[rand_value_name], amount: _.random(config.NOTIFICATION_MIN_WIN_AMOUNT, config.NOTIFICATION_MAX_WIN_AMOUNT) } });
+                        commonClass.sendToRoom(tblid.toString(), { en: "NOTIFICATION", data: { status: true, name: _.sample(names), amount: _.random(config.NOTIFICATION_MIN_WIN_AMOUNT, config.NOTIFICATION_MAX_WIN_AMOUNT) } });
                         console.log("call come", count);
                         count++;
                     }
@@ -637,6 +639,32 @@ module.exports = {
             }
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "HISTORY", data: { status: false, table_history: [], msg: "Table Not found." } });
+        }
+    },
+    startDepositwithdrawNoti: async function (tblid) {
+        if (tblid) {
+            console.log("call come noti noti noti");
+            let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
+            if (table_data.length > 0) {
+                let interval_id = setInterval(async () => {
+                    console.log("start interval cll come-------------------");
+                    let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
+                    if (table_data.length > 0) {
+                        let min_amount = (config.DEPO_WITH_NOTIFICATION_MIN_VALUE) ? config.DEPO_WITH_NOTIFICATION_MIN_VALUE : 1;
+                        let max_amount = (config.DEPO_WITH_NOTIFICATION_MAX_VALUE) ? config.DEPO_WITH_NOTIFICATION_MAX_VALUE : 10;
+                        let final_amount = _.random(min_amount, max_amount) * 100;
+                        if (final_amount == 0) {
+                            final_amount = 1000;
+                        }
+                        //dwn deposit withdraw notification
+                        commonClass.sendToRoom(tblid.toString(), { en: "DWN", data: { status: true, name: _.sample(names), action: _.sample(["Deposited", "Withdrawal"]), amount: final_amount } });
+
+                    } else {
+                        clearInterval(interval_id);
+                        console.log("clear time out");
+                    }
+                }, _.random(1, config.DEPO_WITH_TIME_MAX_INTERVAL) * 20 * 1000);
+            }
         }
     }
 

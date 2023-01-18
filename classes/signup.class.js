@@ -304,7 +304,7 @@ module.exports = {
             delete data.total_cash;
 
             let update_data = {};
-            if (typeof data.pp != "undefined" && data.pp) {
+            if (typeof data.pp != "undefined") {
                 update_data['pp'] = data.pp;
             }
 

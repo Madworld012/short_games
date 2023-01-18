@@ -62,7 +62,7 @@ module.exports = {
 
                 rSub.on("pmessage", function (pattern, channel, msg) {
 
-                    let message = rdsOpsNew.parseJSON(msg)
+                    let message = JSON.parse(msg)
 
                     if (!message) {
                         return console.log("missing message data")
@@ -76,7 +76,13 @@ module.exports = {
                         if (clientObj) {
                             // var eData = commonClass.Enc(message);
                             console.log("data send from pubsub");
-                            clientObj.emit('res', JSON.parse(msg));
+                            if(message.en == "NCC"){
+                                delete clientObj.uid;
+                                clientObj.emit('res', message);
+                                clientObj.disconnect();
+                            }else{
+                                clientObj.emit('res', message);
+                            }
                         }
                     } else if (pattern == "room.*") {
                         //first we have to get table id from routing key.
@@ -87,7 +93,7 @@ module.exports = {
                         }
                         if (typeof io.to(room) != 'undefined') {
                             // var eData = commonClass.Enc(message);
-                            io.to(room).emit('res', JSON.parse(msg));
+                            io.to(room).emit('res', message);
                         }
                     } else {
                         console.log("invalid message in redis channel")

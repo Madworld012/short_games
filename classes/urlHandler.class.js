@@ -66,7 +66,14 @@ module.exports = {
             // Route for making payment
             console.log("data", req.body);
 
-            if(!req.body.amount && req.body.amount <= 0){
+            if (!req.body.amount && req.body.amount <= 0) {
+                console.log("please send proper amount");
+                res.send('Payment failed');
+                return false;
+            }
+
+            if (!req.body.uid) {
+                console.log("please send userid");
                 res.send('Payment failed');
                 return false;
             }
@@ -131,7 +138,7 @@ module.exports = {
                                         form_fields += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "' >";
                                         // console.log("--txn_url",txn_url)
                                         // res.writeHead(200, { 'Content-Type': 'text/html' });
-                                        console.log('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
+                                        // console.log('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
                                         res.send('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
                                         //  console.log("---params res write head?>>>>>>>>>>>>>>>>>>>")
                                         // res.end();

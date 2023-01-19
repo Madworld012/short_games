@@ -18,6 +18,8 @@ module.exports = {
                 unique_id: userData.unique_id,
                 ue: userData.ue,
                 pp: userData.pp,
+                sound:userData.sound,
+                music:userData.music,
                 mobile_no: userData.mobile_no
             }
             if (userData.isMobileVerified == 1) {

@@ -312,11 +312,11 @@ module.exports = {
                 update_data['pp'] = data.pp;
             }
 
-            if (typeof data.sound != "undefined" && data.sound) {
+            if (typeof data.sound != "undefined") {
                 update_data['sound'] = data.sound;
             }
 
-            if (typeof data.music != "undefined" && data.music) {
+            if (typeof data.music != "undefined") {
                 update_data['music'] = data.music;
             }
 

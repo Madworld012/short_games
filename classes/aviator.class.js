@@ -118,7 +118,7 @@ module.exports = {
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
-                            if(config.DEPO_WITH_AUTO_WIN_NOTIFICATION){
+                            if (config.DEPO_WITH_AUTO_WIN_NOTIFICATION) {
                                 aviatorClass.startDepositwithdrawNoti(new_table_data._id);
                             }
                             cl("table_data", new_table_data);
@@ -666,6 +666,20 @@ module.exports = {
                 }, _.random(1, config.DEPO_WITH_TIME_MAX_INTERVAL) * 20 * 1000);
             }
         }
+    },
+    DWN_LIST: async function (data, client) {
+        let list = [];
+        let min_amount = (config.DEPO_WITH_NOTIFICATION_MIN_VALUE) ? config.DEPO_WITH_NOTIFICATION_MIN_VALUE : 1;
+        let max_amount = (config.DEPO_WITH_NOTIFICATION_MAX_VALUE) ? config.DEPO_WITH_NOTIFICATION_MAX_VALUE : 10;
+        for (let i = 0; i < 10; i++) {
+            let final_amount = _.random(min_amount, max_amount) * 100;
+            if (final_amount == 0) {
+                final_amount = 1000;
+            }
+            //dwn deposit withdraw notification
+            list.push({ name: _.sample(names), action: _.sample(["Deposited", "Withdrawal"]), amount: final_amount });
+        }
+        console.log("list", list);
+        commonClass.sendDirectToUserSocket(client, { en: "DWN_LIST", data: { status: true, list: list } });
     }
-
 }

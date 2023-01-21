@@ -139,23 +139,27 @@ module.exports = {
                                         // console.log("--txn_url",txn_url)
                                         // res.writeHead(200, { 'Content-Type': 'text/html' });
                                         // console.log('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
-                                        res.send('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
+                                        res.send({ status: true, html: '<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>' });
                                         //  console.log("---params res write head?>>>>>>>>>>>>>>>>>>>")
                                         // res.end();
                                     });
                                 } else {
                                     console.log("transection not storeed");
+                                    res.send({ status: false });
                                 }
                             }
                         } else {
                             console.log("user not found");
+                            res.send({ status: false });
                         }
                     }
                 } else {
                     console.log("Please deposite minimum 100 rs");
+                    res.send({ status: false });
                 }
             } else {
                 console.log("deposite not available for now");
+                res.send({ status: false });
             }
         });
 

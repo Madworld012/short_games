@@ -165,6 +165,9 @@ module.exports = {
                 res.send({ status: false });
             }
         });
+        app.get("/callback", (req, res) => {
+            console.log("call come here what we can do this is get call");
+        })
 
         app.post("/callback", (req, res) => {
             // Route for verifiying payment

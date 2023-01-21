@@ -239,7 +239,7 @@ module.exports = {
                                     }
                                 }, { returnOriginal: false });
                             if (payment_record.value) {
-                                console.log("payment_record", payment_record);
+                                console.log("payment_record-----------------------------------------------------", payment_record);
                                 commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money" });
                                 commonClass.sendDataToUserId(payment_record.value.UID.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your transaction is successfull." } })
                             }
@@ -263,6 +263,7 @@ module.exports = {
                                         TXNDATE: _result.TXNDATE
                                     }
                                 }, { returnOriginal: false });
+                                console.log("payment transection fail please check details-------------------------");
                             res.send('payment failed');
                         }
                     });

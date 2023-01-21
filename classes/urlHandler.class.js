@@ -133,13 +133,16 @@ module.exports = {
 
                                         var form_fields = "";
                                         for (var x in params) {
-                                            form_fields += "<input type='hidden' name='" + x + "' value='" + params[x] + "' >";
+                                            // form_fields += "<input type='hidden' name='" + x + "' value='" + params[x] + "' >";
+                                            form_fields += `<input type='hidden' name='${x}' value='${params[x]}' >`;
                                         }
-                                        form_fields += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "' >";
+                                        // form_fields += "<input type='hidden' name='CHECKSUMHASH' value='" + checksum + "' >";
+                                        form_fields += `<input type='hidden' name='CHECKSUMHASH' value='${checksum}' >`;
                                         // console.log("--txn_url",txn_url)
                                         // res.writeHead(200, { 'Content-Type': 'text/html' });
                                         // console.log('<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>');
-                                        res.send({ status: true, html: '<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method="post" action="' + txn_url + '" name="f1">' + form_fields + '</form><script type="text/javascript">document.f1.submit();</script></body></html>' });
+                                        let htmlData = `<html><head><title>Merchant Checkout Page</title></head><body><center><h1>Please do not refresh this page...</h1></center><form method='post' action='${txn_url}' name='f1'> ${form_fields}</form><script type='text/javascript'>document.f1.submit();</script></body></html>`;
+                                        res.send({ status: true, html: htmlData });
                                         //  console.log("---params res write head?>>>>>>>>>>>>>>>>>>>")
                                         // res.end();
                                     });

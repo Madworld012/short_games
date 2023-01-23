@@ -118,7 +118,7 @@ module.exports = {
                                     "CALLBACK_URL": paytmConfig.PaytmConfig.CALLBACK_URL,
                                     "EMAIL": paymentDetails.customerEmail,
                                     "MOBILE_NO": userData.mobile_no,
-                                    "STATUS": "pending",
+                                    "tra_status": "pending",
                                     "CD": new Date()
                                 }
 
@@ -165,9 +165,6 @@ module.exports = {
                 res.send({ status: false });
             }
         });
-        app.get("/callback", (req, res) => {
-            console.log("call come here what we can do this is get call");
-        })
 
         app.post("/callback", (req, res) => {
             // Route for verifiying payment
@@ -224,10 +221,10 @@ module.exports = {
 
                         var _result = JSON.parse(response);
                         if (_result.STATUS == 'TXN_SUCCESS') {
-                            let payment_record = await db.collection('payment_transection').findOneAndUpdate({ ORDER_ID: _result.ORDERID, STATUS: 'pending' },
+                            let payment_record = await db.collection('payment_transection').findOneAndUpdate({ ORDER_ID: _result.ORDERID, tra_status: 'pending' },
                                 {
                                     $set: {
-                                        STATUS: "success",
+                                        tra_status: "success",
                                         TXNID: _result.TXNID,
                                         BANKTXNID: _result.BANKTXNID,
                                         STATUS: _result.STATUS,
@@ -249,10 +246,10 @@ module.exports = {
                             res.send('payment sucess');
 
                         } else {
-                            let payment_record = await db.collection('payment_transection').findOneAndUpdate({ ORDER_ID: _result.ORDERID, STATUS: 'pending' },
+                            let payment_record = await db.collection('payment_transection').findOneAndUpdate({ ORDER_ID: _result.ORDERID, tra_status: 'pending' },
                                 {
                                     $set: {
-                                        STATUS: "fail",
+                                        tra_status: "fail",
                                         TXNID: _result.TXNID,
                                         BANKTXNID: _result.BANKTXNID,
                                         STATUS: _result.STATUS,

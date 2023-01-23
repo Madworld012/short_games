@@ -18,8 +18,8 @@ module.exports = {
                 unique_id: userData.unique_id,
                 ue: userData.ue,
                 pp: userData.pp,
-                sound:userData.sound,
-                music:userData.music,
+                sound: userData.sound,
+                music: userData.music,
                 mobile_no: userData.mobile_no
             }
             if (userData.isMobileVerified == 1) {
@@ -28,10 +28,10 @@ module.exports = {
             } else {
                 send_json.msg = "Please Verify Your Phone Number First..";
                 send_json.status = false;
-                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please verify your Mmobile number first, Do login for verify number" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please verify your Mobile number first, Do login for verify number" } });
             }
         } else {
-            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please Do Registration First." } });
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, regi: true, msg: "Please Do Registration First." } });
         }
     },
     //first call this  // Done
@@ -93,7 +93,7 @@ module.exports = {
         if (data == null || typeof client.id == 'undefined') {
             return false;
         }
-        
+
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
             commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true } });
         }

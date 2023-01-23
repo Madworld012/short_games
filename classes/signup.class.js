@@ -151,7 +151,9 @@ module.exports = {
                 var extime = commonClass.AddTime(60);
                 commonClass.SendSMS(udatac, function (cb_status) {
                     if (cb_status.status == 1) {
+                        console.log("condition calle");
                         db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp } }, function (err) {
+                            console.log("call oen otp screen");
                             commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
                             schedule.scheduleJob(jid, new Date(extime), function () {
                                 schedule.cancelJob(jid);

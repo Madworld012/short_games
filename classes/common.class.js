@@ -165,7 +165,7 @@ module.exports = {
                     callback({ status: 0, msg: "ERROR", data: {} });
                     throw new Error(error);
                 } else {
-                    console.log(body);
+                    console.log("ccc---",body);
                     callback({ status: 1, msg: "SUCCESS", data: { otp: otp } });
                 }
             });

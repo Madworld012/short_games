@@ -138,15 +138,12 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Please send Proper Data" } });
             return false;
         }
-
-        console.log(data);
         var wh = {};
         wh.mobile_no = data.mobile_no;
         wh.password = data.password;
-        console.log("wh",wh);
         var userData = await db.collection('game_users').find(wh).toArray();
         if (userData.length > 0) {
-            console.log("user data is ",userData);
+            userData = userData[0];
             if (userData.isMobileVerified == 0 && userData.mobile_no != '') {
                 var udatac = {};
                 udatac.mobile_no = userData.mobile_no;

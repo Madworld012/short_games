@@ -263,7 +263,7 @@ module.exports = {
                                         TXNDATE: _result.TXNDATE
                                     }
                                 }, { returnOriginal: false });
-                                console.log("payment transection fail please check details-------------------------");
+                            console.log("payment transection fail please check details-------------------------");
                             res.send('payment failed');
                         }
                     });
@@ -276,36 +276,36 @@ module.exports = {
         });
 
         app.post("/selectServer", (req, res) => {
-            try {
-                cl("in choose server",req.body);
-                console.log("req.body.v",req.body.v);
-                if (typeof req.body.v == undefined || req.body.v == "" || req.body.v == null) {
-                    commonClass.response(res, {
-                        msg: "not proper data"
-                    });
-                    return false;
-                }
-
-                let config_data = config;
-
-                let app_config_data = {
-                    VM: config_data.VERSION_MESSAGE,
-                    DU: config_data.DOWNLOAD_URL,
-                    VERSION_TITLE: config_data.VERSION_TITLE,
-                    FVP: (parseInt(req.body.v) < parseInt(config_data.FORCE_VERISON_CODE) && config_data.FORCE_VERSION_POPUP) ? true : false,
-                    SVP: (parseInt(req.body.v) < parseInt(config_data.CURRENT_VERISON_CODE) && config_data.DISPLAY_VERSION_POPUP) ? true : false,
-                    SHOW_ADS: config_data.SHOW_ADS,
-                    MM: config_data.MM, // maintenance flag
-                    MM_T: config_data.MM_T, // maintenance time second
-                    BASE_URL: config_data.BASE_URL
-                };
-                console.log("app_config_data",app_config_datas);
-                commonClass.response(res, app_config_data);
-            } catch (error) {
+            // try {
+            cl("in choose server", req.body);
+            console.log("req.body.v", req.body.v);
+            if (typeof req.body.v == undefined || req.body.v == "" || req.body.v == null) {
                 commonClass.response(res, {
                     msg: "not proper data"
                 });
+                return false;
             }
+
+            let config_data = config;
+
+            let app_config_data = {
+                VM: config_data.VERSION_MESSAGE,
+                DU: config_data.DOWNLOAD_URL,
+                VERSION_TITLE: config_data.VERSION_TITLE,
+                FVP: (parseInt(req.body.v) < parseInt(config_data.FORCE_VERISON_CODE) && config_data.FORCE_VERSION_POPUP) ? true : false,
+                SVP: (parseInt(req.body.v) < parseInt(config_data.CURRENT_VERISON_CODE) && config_data.DISPLAY_VERSION_POPUP) ? true : false,
+                SHOW_ADS: config_data.SHOW_ADS,
+                MM: config_data.MM, // maintenance flag
+                MM_T: config_data.MM_T, // maintenance time second
+                BASE_URL: config_data.BASE_URL
+            };
+            console.log("app_config_data", app_config_datas);
+            commonClass.response(res, app_config_data);
+            // } catch (error) {
+            //     commonClass.response(res, {
+            //         msg: "not proper data"
+            //     });
+            // }
 
         })
 

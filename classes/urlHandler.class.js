@@ -298,7 +298,7 @@ module.exports = {
                     MM_T: config_data.MM_T, // maintenance time second
                     BASE_URL: config_data.BASE_URL
                 };
-
+                console.log("app_config_data",app_config_data);
                 commonClass.response(res, app_config_data);
             } catch (error) {
                 commonClass.response(res, {

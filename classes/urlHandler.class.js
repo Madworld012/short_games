@@ -278,6 +278,7 @@ module.exports = {
         app.post("/selectServer", (req, res) => {
             try {
                 cl("in choose server",req.body);
+                console.log("req.body.v",req.body.v);
                 if (typeof req.body.v == undefined || req.body.v == "" || req.body.v == null) {
                     commonClass.response(res, {
                         msg: "not proper data"

@@ -28,7 +28,7 @@ module.exports = {
             } else {
                 send_json.msg = "Please Verify Your Phone Number First..";
                 send_json.status = false;
-                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please verify your Mobile number first, Do login for verify number" } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, regi: true, msg: "Please verify your Mobile number first, Do login for verify number" } });
             }
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, regi: true, msg: "Please Do Registration First." } });

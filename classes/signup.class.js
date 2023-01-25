@@ -116,8 +116,8 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
                     cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
-                    console.log("userdata.isexpire",userdata.isexpire);
-                    console.log("userdata.isexpire",userdata.OTP);
+                    console.log("userdata.isexpire", userdata.isexpire);
+                    console.log("userdata.isexpire", userdata.OTP);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
                         console.log("otp verified");
@@ -155,7 +155,7 @@ module.exports = {
                 commonClass.SendSMS(udatac, function (cb_status) {
                     if (cb_status.status == 1) {
                         console.log("condition calle");
-                        db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp } }, function (err) {
+                        db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) {
                             console.log("call oen otp screen");
                             commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
                             schedule.scheduleJob(jid, new Date(extime), function () {

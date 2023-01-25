@@ -464,6 +464,8 @@ module.exports = {
                     en: "GPD",
                     data: {
                         status: true,
+                        bank_status: (user_bank_details.bank_no) ? true : false,
+                        upi_status: (user_bank_details.user_bank_details.uip_id) ? true : false,
                         bank_no: user_bank_details.bank_no,
                         ifsc_code: user_bank_details.ifsc_code,
                         bank_name: user_bank_details.bank_name,

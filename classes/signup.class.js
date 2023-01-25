@@ -116,12 +116,15 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
                     cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
+                    console.log("userdata.isexpire",userdata.isexpire);
+                    console.log("userdata.isexpire",userdata.OTP);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
                         console.log("otp verified");
                         db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
                         signupClass.SP(data, client);
                     } else {
+                        console.log("----------------1-----------------");
                         commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
                     }
                 }
@@ -344,7 +347,4 @@ module.exports = {
         }
 
     }
-
-
-
 }

@@ -474,7 +474,20 @@ module.exports = {
                     }
                 });
             } else {
-                commonClass.sendDirectToUserSocket(client, { en: "GPD", data: { status: false, data: {} } });
+                commonClass.sendDirectToUserSocket(client, {
+                    en: "GPD", data:
+                    {
+                        status: false,
+                        status: true,
+                        bank_status: false,
+                        upi_status: false,
+                        bank_no: "",
+                        ifsc_code: "",
+                        bank_name: "",
+                        holder_name: "",
+                        uip_id: ""
+                    }
+                });
             }
         }
     },

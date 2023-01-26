@@ -148,7 +148,9 @@ module.exports = {
                                     });
                                 } else {
                                     console.log("transection not storeed");
-                                    res.send({ status: false });
+                                    let msg = "Somthing Not Proper Please Try Again Later.";
+                                    let htmlData = `<html><head><body><h2>'${msg}'</h2></body></html>`;
+                                    res.send({ status: false, html: htmlData });
                                 }
                             }
                         } else {
@@ -157,8 +159,9 @@ module.exports = {
                         }
                     }
                 } else {
-                    console.log("Please deposite minimum 100 rs");
-                    res.send({ status: false });
+                    let msg = "Please deposite minimum "+ config.config.MIN_DEPOSIT +" rs.";
+                    let htmlData = `<html><head><body><h2>'${msg}'</h2></body></html>`;
+                    res.send({ status: false, html: htmlData });
                 }
             } else {
                 console.log("deposite not available for now");
@@ -298,7 +301,8 @@ module.exports = {
                 SHOW_ADS: config_data.SHOW_ADS,
                 MM: config_data.MM, // maintenance flag
                 MM_T: config_data.MM_T, // maintenance time second
-                BASE_URL: config_data.BASE_URL
+                BASE_URL: config_data.BASE_URL,
+                MIN_DEPOSIT: config.MIN_DEPOSIT
             };
             console.log("app_config_data", app_config_data);
             commonClass.response(res, app_config_data);

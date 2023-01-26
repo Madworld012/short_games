@@ -212,8 +212,9 @@ module.exports = {
                 let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
                 let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
                 if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1) {
-                    console.log("-----------------------------------------start again-------------------------------------------------------");
-                    call(_.random(config.FAKE_PLANE_FLAY_MIN_AMOUNT, config.FAKE_PLANE_FLAY_MAX_AMOUNT));
+                    let next_cut_value = x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE);
+                    console.log("-----------------------------------------start again-------------------------------------------------------", next_cut_value);
+                    call(next_cut_value);
                     re_fly = 1;
                     return;
                 } else {
@@ -392,7 +393,7 @@ module.exports = {
                     console.log("call come in set 1");
                     await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.bet1.auto_1_x) + "_1", JSON.stringify({
                         x: data.bet1.auto_1_x,
-                        bet_1 : parseFloat(data.bet1.bet_1)
+                        bet_1: parseFloat(data.bet1.bet_1)
                     }));
                 }
 
@@ -400,7 +401,7 @@ module.exports = {
                     console.log("call come in set 2");
                     await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.bet2.auto_2_x) + "_2", JSON.stringify({
                         x: data.bet2.auto_2_x,
-                        bet_2 :parseFloat(data.bet2.bet_2)
+                        bet_2: parseFloat(data.bet2.bet_2)
                     }));
                 }
 
@@ -566,10 +567,10 @@ module.exports = {
                     // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
                     return false;
                 }
-                if(table_data[0].history.length > 0){
-                    last_x_value = table_data[0].history[table_data[0].history.length-1];
-                    console.log("last_x_value",last_x_value);
-                    if(last_x_value == current_x_value.x){
+                if (table_data[0].history.length > 0) {
+                    last_x_value = table_data[0].history[table_data[0].history.length - 1];
+                    console.log("last_x_value", last_x_value);
+                    if (last_x_value == current_x_value.x) {
                         console.log("please give money to auto user");
                     }
                 }

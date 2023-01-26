@@ -212,7 +212,8 @@ module.exports = {
                 let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
                 let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
                 if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1) {
-                    let next_cut_value = x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE);
+                    let next_cut_value = parseFloat((x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE)).toFixed(2));
+                    // let next_cut_value = parseFloat((1.15 * _.sample([3])).toFixed(2));
                     console.log("-----------------------------------------start again-------------------------------------------------------", next_cut_value);
                     call(next_cut_value);
                     re_fly = 1;

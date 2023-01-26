@@ -159,7 +159,7 @@ module.exports = {
                         }
                     }
                 } else {
-                    let msg = "Please deposite minimum "+ config.config.MIN_DEPOSIT +" rs.";
+                    let msg = "Please deposite minimum "+ config.MIN_DEPOSIT +" rs.";
                     let htmlData = `<html><head><body><h2>'${msg}'</h2></body></html>`;
                     res.send({ status: false, html: htmlData });
                 }

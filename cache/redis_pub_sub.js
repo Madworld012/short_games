@@ -55,19 +55,17 @@ module.exports = {
                 resolve();
 
                 // rSub.psubscribe('user.*', 'single.*', 'table.*', 'test.*', function (err, count) {
-                rSub.psubscribe('socket.*', 'room.*', 'socketid.*', function (err, count) {
+                rSub.psubscribe('socket.*', 'room.*', 'socketid.*','toallsck.*', function (err, count) {
                     console.log("psubscribe : err : ", err)
                     console.log("psubscribe : count : ", count)
                 });
 
                 rSub.on("pmessage", function (pattern, channel, msg) {
-
                     let message = JSON.parse(msg)
 
                     if (!message) {
                         return console.log("missing message data")
                     }
-
                     if (pattern == "socket.*") {
                         let socket = channel.replace('socket.', '');
                         console.log("socket", socket);
@@ -76,11 +74,11 @@ module.exports = {
                         if (clientObj) {
                             // var eData = commonClass.Enc(message);
                             console.log("data send from pubsub");
-                            if(message.en == "NCC"){
+                            if (message.en == "NCC") {
                                 delete clientObj.uid;
                                 clientObj.emit('res', message);
                                 clientObj.disconnect();
-                            }else{
+                            } else {
                                 clientObj.emit('res', message);
                             }
                         }
@@ -95,7 +93,10 @@ module.exports = {
                             // var eData = commonClass.Enc(message);
                             io.to(room).emit('res', message);
                         }
-                    } else {
+                    } else if (pattern == "toallsck.*") {
+                        io.emit('res', message);
+                    }
+                    else {
                         console.log("invalid message in redis channel")
                     }
                 });

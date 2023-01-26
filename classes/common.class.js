@@ -49,6 +49,11 @@ module.exports = {
             rPub.publish("room." + room_id, JSON.stringify(data));
         }
     },
+    sendToAllSocket: async function (data) {
+        if (data) {
+            rPub.publish("toallsck.", JSON.stringify(data));
+        }
+    },
     response: function (res, data) {
         res.send({ data: this.Enc(data) });
     },
@@ -165,7 +170,7 @@ module.exports = {
                     callback({ status: 0, msg: "ERROR", data: {} });
                     throw new Error(error);
                 } else {
-                    console.log("ccc---",body);
+                    console.log("ccc---", body);
                     callback({ status: 1, msg: "SUCCESS", data: { otp: otp } });
                 }
             });

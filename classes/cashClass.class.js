@@ -16,8 +16,8 @@ module.exports = {
                         status: "pending"
                     }
                     await db.collection('withdrawal_request').insertOne(withdrawal_data);
-                    console.log("1");
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request" });
+                    commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data.un) ? user_data.un : "Lucky", action: "Withdrawal", amount: parseInt(data.amount)} });
                     commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: true, cash: -parseInt(data.amount), msg: "Withdrawal Request Added, Admin Can Contact you soon !" } });
                 } else {
                     console.log("2");
@@ -45,7 +45,7 @@ module.exports = {
     WITHDRAWAL_HISTORY: async function (data, client) {
         if (data.uid) {
             let withdraw_history = await db.collection('withdrawal_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
-            console.log("withdraw_history",withdraw_history);
+            console.log("withdraw_history", withdraw_history);
 
             if (withdraw_history && withdraw_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });

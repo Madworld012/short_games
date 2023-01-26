@@ -241,10 +241,11 @@ module.exports = {
                             if (payment_record.value) {
                                 console.log("payment_record-----------------------------------------------------", payment_record);
                                 commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money" });
+                                let user_data = await db.collection('game_users').find({ _id: ObjectId(payment_record.value.UID.toString()) }).toArray();
+                                commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(_result.TXNAMOUNT) } });
                                 commonClass.sendDataToUserId(payment_record.value.UID.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your transaction is successfull." } })
                             }
-                            res.send('payment sucess');
-
+                            res.send('Payment Sucess Perss Back Button For Enjoy Game.');
                         } else {
                             let payment_record = await db.collection('payment_transection').findOneAndUpdate({ ORDER_ID: _result.ORDERID, tra_status: 'pending' },
                                 {

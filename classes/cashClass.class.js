@@ -1,6 +1,10 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
+            if (parseInt(data.amount) < config.MIN_WITHDRAW) {
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'Please Withdraw Minimum ' + config.MIN_WITHDRAW + ' Rs.' } });
+                return;
+            }
             let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
@@ -17,7 +21,7 @@ module.exports = {
                     }
                     await db.collection('withdrawal_request').insertOne(withdrawal_data);
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request" });
-                    commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data.un) ? user_data.un : "Lucky", action: "Withdrawal", amount: parseInt(data.amount)} });
+                    commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data.un) ? user_data.un : "Lucky", action: "Withdrawal", amount: parseInt(data.amount) } });
                     commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: true, cash: -parseInt(data.amount), msg: "Withdrawal Request Added, Admin Can Contact you soon !" } });
                 } else {
                     console.log("2");

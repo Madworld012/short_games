@@ -159,7 +159,7 @@ module.exports = {
                         }
                     }
                 } else {
-                    let msg = 'Please deposite minimum '+ config.MIN_DEPOSIT +' rs.';
+                    let msg = 'Please deposite minimum ' + config.MIN_DEPOSIT + ' rs.';
                     let htmlData = `<html><head><body><h2>'${msg}'</h2></body></html>`;
                     res.send({ status: false, html: htmlData });
                 }
@@ -243,8 +243,12 @@ module.exports = {
                                 }, { returnOriginal: false });
                             if (payment_record.value) {
                                 console.log("payment_record-----------------------------------------------------", payment_record);
-                                commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money" });
+                                commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money", bonus: false });
                                 let user_data = await db.collection('game_users').find({ _id: ObjectId(payment_record.value.UID.toString()) }).toArray();
+                                if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
+                                    signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount : parseInt(_result.TXNAMOUNT)});
+                                }
+                                await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
                                 commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(_result.TXNAMOUNT) } });
                                 commonClass.sendDataToUserId(payment_record.value.UID.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your transaction is successfull." } })
                             }

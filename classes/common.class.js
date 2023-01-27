@@ -124,12 +124,71 @@ module.exports = {
             console.log("user.balance", data.cash);
             console.log("user_data.total_cash", user_data.total_cash);
 
-            var final_cash = (((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2);
-            console.log("final_cash", final_cash);
-            let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: { total_cash: parseFloat(final_cash) } }, { returnDocument: 'after' });
-            commonClass.trackChips(data);
-            commonClass.sendDataToUserSocketId(user_data.sck, { en: "UC", data: { status: true, total_cash: user_updated_record.value.total_cash } });
+            let update_json = {};
 
+            if (data.cash > 0) {
+                console.log("for add cash");
+                if (data.bonus && data.bonus == true) {
+                    update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
+                } else {
+                    update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
+                }
+            } else {
+                console.log("for add cut cash");
+                let total_cash = user_data.total_cash;
+                let bonus_cash = user_data.bonus_cash;
+                let total_cut_cash = Math.abs(data.cash);
+
+                if (total_cash + bonus_cash >= total_cut_cash) {
+
+                    let halft_deduct_cash = total_cut_cash / 2;
+
+                    if (total_cash == 0 && bonus_cash >= total_cut_cash) {
+                        console.log("1");
+                        bonus_cash = bonus_cash - total_cut_cash;
+                        total_cut_cash = 0;
+                    } else if (bonus_cash == 0 && total_cash >= total_cut_cash) {
+                        console.log("2");
+                        total_cash = total_cash - total_cut_cash;
+                        total_cut_cash = 0;
+                    } else if (total_cash >= halft_deduct_cash && bonus_cash >= halft_deduct_cash) {
+                        console.log("3");
+                        total_cash = total_cash - halft_deduct_cash;
+                        bonus_cash = bonus_cash - halft_deduct_cash;
+                        total_cut_cash = 0;
+                    } else if ((bonus_cash < halft_deduct_cash && bonus_cash > 0) || (total_cash < halft_deduct_cash && total_cash > 0)) {
+                        if (bonus_cash < halft_deduct_cash) {
+                            console.log("4");
+                            let diff = halft_deduct_cash - bonus_cash;
+                            bonus_cash = 0;
+                            total_cash = total_cash - (halft_deduct_cash + diff);
+                            total_cut_cash = 0;
+                        } else if (total_cash < halft_deduct_cash) {
+                            console.log("5");
+                            let diff = halft_deduct_cash - total_cash;
+                            total_cash = 0;
+                            bonus_cash = bonus_cash - (halft_deduct_cash + diff);
+                            total_cut_cash = 0;
+                        }
+                    }
+                } else {
+                    console.log("not enough cash");
+                }
+                console.log("total_cash", total_cash);
+                console.log("bonus_cash", bonus_cash);
+                console.log("total_cut_cash", total_cut_cash);
+
+                update_json["total_cash"] = total_cash;
+                update_json["bonus_cash"] = bonus_cash;
+            }
+
+            console.log("update_json", update_json);
+            // var final_cash = (((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2);
+            // console.log("final_cash", final_cash);
+            // let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: { total_cash: parseFloat(final_cash) } }, { returnDocument: 'after' });
+            let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_json }, { returnDocument: 'after' });
+            commonClass.trackChips(data);
+            commonClass.sendDataToUserSocketId(user_data.sck, { en: "UC", data: { status: true, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bonus_cash: user_updated_record.value.bonus_cash } });
         } else {
             console.log("Problem in update cash:: ", data);
         }
@@ -214,7 +273,7 @@ module.exports = {
             2.74, 7.46, 55, 1, 1.4, 1, 58
         ];
         let history_data = _.shuffle(history);
-        
-        return history_data.splice(0,number);
+
+        return history_data.splice(0, number);
     }
 }

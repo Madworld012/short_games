@@ -59,10 +59,10 @@ module.exports = {
     //AL
     getUserDefaultFields: async function (data, client) {
         var unique_id = await commonClass.GetRandomInt(1, 9999999);
-        var OTP = await commonClass.GetRandomInt(1, 99999);
         var fields = {
             un: data.name.substr(0, 15),
             unique_id: unique_id,
+            reference_user_id: (typeof data.reference_user_id != 'undefined') ? parseInt(data.reference_user_id) : "",
             sck: client.id,//client.id,
             ue: (typeof data.email != 'undefined') ? data.email : "",
             mobile_no: data.mobile_no,
@@ -70,8 +70,10 @@ module.exports = {
             pp: 0,
             sound: true,
             music: true,
+            is_deposited: 0,
             isMobileVerified: 0,
-            total_cash: config.INITIAL_CASH,
+            total_cash: 0,
+            bonus_cash: 0,
             OTP: 0,
             bet_1: 0,
             bet_2: 0,
@@ -191,6 +193,9 @@ module.exports = {
             let user = await db.collection('game_users').insertOne(UserFields);
             let newUserData = await db.collection('game_users').find(wh).toArray();
             newUserData = newUserData[0];
+
+            await commonClass.update_cash({ uid: newUserData._id.toString(), cash: config.INITIAL_CASH, msg: "Initial Bonus", bonus: true });
+
             //send sms and other process
             signupClass.setUserSocketData(newUserData, client);
             // if (false) {
@@ -279,6 +284,7 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, login: true, restart: true, msg: "Phone Nunmber and Password not Matched!" } });
         }
     },
+    //profile data
     PD: async function (data, client) {
         if (!data || !data.uid) {
             commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: false, msg: "Please send proper data." } });
@@ -292,6 +298,7 @@ module.exports = {
                 uid: profileData._id.toString(),
                 un: profileData.un,
                 total_cash: profileData.total_cash,
+                bonus_cash: profileData.bonus_cash,
                 unique_id: profileData.unique_id,
                 ue: profileData.ue,
                 pp: profileData.pp,
@@ -346,5 +353,25 @@ module.exports = {
             console.log("error", error);
         }
 
+    },
+    firstDepositReferalBonus: async function (data) {
+        if (data) {
+            console.log("data", data);
+            let amount = data.amount;
+            let deposit_user = data.uid;
+            let ref_uniq_id = data.ref_uniq_id;
+
+            let user_data = await db.collection('game_users').find({ unique_id: ref_uniq_id }).toArray();
+            if(user_data.length > 0){
+                let bonus_amount = amount * config.FIRST_DEPOSIT_REFERAL_BONUS_PER / 100;
+                console.log("bonus_amount", bonus_amount);
+                if (bonus_amount > 0) {
+                    await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: bonus_amount, msg: "Referal Bonus from user : " + ref_uniq_id, bonus: true });
+                }
+            }else{
+                console.log("user not found");
+            }
+            
+        }
     }
 }

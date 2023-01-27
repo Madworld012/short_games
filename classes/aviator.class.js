@@ -278,7 +278,7 @@ module.exports = {
                 cl("\nWait For New Round");
                 schedule.scheduleJob(jobId, new Date(startNewGameTimer), async function () {
                     schedule.cancelJob(jobId);
-                    //aviatorClass.startGame(table_data[0]._id.toString());
+                    aviatorClass.startGame(table_data[0]._id.toString());
                 });
             } else {
                 return;

@@ -78,7 +78,7 @@ module.exports = {
                         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData._id.toString() } }, function () { })
                         client.tblid = tableData._id.toString();
                         client.join(tableData._id.toString());
-                        tableData["total_cash"] = userData.total_cash;
+                        tableData["total_cash"] = userData.total_cash + userData.bonus_cash;
 
                         if (tableData.status == "START_BET_TIME") {
                             tableData["bet_time"] = parseInt(config.BET_TIME) - commonClass.GetTimeDifference(tableData.sbt, new Date(), 'second');
@@ -115,7 +115,7 @@ module.exports = {
                             client.tblid = new_table_data._id.toString();
                             client.join(new_table_data._id.toString());
                             console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
-                            new_table_data["total_cash"] = userData.total_cash;
+                            new_table_data["total_cash"] = userData.total_cash + userData.bonus_cash;
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
@@ -409,7 +409,7 @@ module.exports = {
                 if (user_data[0].total_cash + user_data[0].bonus_cash >= total_bet) {
                     await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false });
                     let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-                    commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                     commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString(), x: 0, bet: total_bet, win_amount: 0 } });
                 } else {
                     commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "You Have Not Sufficient Balance" } });
@@ -524,7 +524,7 @@ module.exports = {
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false });
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-                    commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash } });
+                    commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash + user_updated_data.value.bonus_cash} });
                     commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString(), x: current_x_value.x, bet: user_data.bet_1 + user_data.bet_2, win_amount: win_amount } });
                 } else {
                     cl("10");
@@ -638,7 +638,7 @@ module.exports = {
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false });
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
-                    commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash } });
+                    commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash + user_updated_data.value.bonus_cash} });
                     // commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString(), bet: user_data.bet_1 + user_data.bet_2, win_amount: win_amount } });
                 } else {
                     cl("10");

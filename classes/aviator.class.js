@@ -194,6 +194,7 @@ module.exports = {
     send_fly_event: async function (tblid) {
 
         let cut_out_x_value = await aviatorClass.getRandomFloat();
+        // let cut_out_x_value = 1.01;
 
         console.log("\nNext Cut Out Value ---------------------------", cut_out_x_value);
         //start x value
@@ -227,9 +228,9 @@ module.exports = {
                 // await sleep(100 / x);
                 await sleep((x > 20) ? 5 : 100 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
+                aviatorClass.autoCutUser(tblid.toString(), x);
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
 
-                aviatorClass.autoCutUser(tblid.toString(), x);
                 await cache.set(tblid.toString(), JSON.stringify({
                     x: x
                 }));
@@ -273,7 +274,9 @@ module.exports = {
                 }
 
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, update_data, function () { });
-                await db.collection('game_users').updateOne({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0 } }, { multi: true }, function () { });
+                setTimeout(async () => {
+                    await db.collection('game_users').updateOne({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0 } }, { multi: true }, function () { });
+                }, 5);
                 var startNewGameTimer = commonClass.AddTime(config.NEW_ROUND_START_TIME);
                 cl("\nWait For New Round");
                 schedule.scheduleJob(jobId, new Date(startNewGameTimer), async function () {
@@ -407,6 +410,7 @@ module.exports = {
                     await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false });
                     let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
+                    commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString(), x: 0, bet: total_bet, win_amount: 0 } });
                 } else {
                     commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "You Have Not Sufficient Balance" } });
                 }
@@ -419,6 +423,7 @@ module.exports = {
         console.log("\nUser Cashout Come", data);
         console.log('--------------');
         let current_x_value = JSON.parse(await cache.get(client.tblid.toString()));
+        console.log("x male 6e ke te pan delete thay gayo hoy ?---------------", current_x_value);
         if (data.auto) {
             console.log('--------in------', data.x);
             current_x_value = data.x;
@@ -453,9 +458,23 @@ module.exports = {
 
                 if (!table_data || table_data.length <= 0 || table_data[0].cash_out_flg != true) {
                     cl("3");
-                    commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, msg: "You can not cashout this time" } });
                     // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
-                    return false;
+                    if (data.auto) {
+                        let last_x_value = table_data[0].history[table_data[0].history.length - 1];
+                        console.log("auto 6e bhai java dejo-----------------------------------", last_x_value);
+                        console.log("auto 6e bhai java dejo-----------------------------------", typeof last_x_value);
+                        console.log("auto 6e bhai java dejo-----------------------------------", current_x_value.x);
+                        console.log("auto 6e bhai java dejo-----------------------------------", typeof current_x_value.x);
+                        if (last_x_value != current_x_value.x) {
+                            console.log("a - 1");
+                            commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, msg: "You can not cashout this time" } });
+                            return false;
+                        }
+                    } else {
+                        console.log("a - 2");
+                        commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, msg: "You can not cashout this time" } });
+                        return false;
+                    }
                 }
 
 
@@ -506,7 +525,7 @@ module.exports = {
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash } });
-                    // commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString(), bet: user_data.bet_1 + user_data.bet_2, win_amount: win_amount } });
+                    commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString(), x: current_x_value.x, bet: user_data.bet_1 + user_data.bet_2, win_amount: win_amount } });
                 } else {
                     cl("10");
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "Your Winning Price is lessthen 0" } });
@@ -689,7 +708,7 @@ module.exports = {
                 }, update_data, { returnDocument: 'after' });
 
                 console.log("new_user_data", new_user_data);
-                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet" , bonus: false});
+                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false });
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
 
             } else {

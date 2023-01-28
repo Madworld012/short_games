@@ -14,7 +14,8 @@ module.exports = {
                 status: true,
                 uid: userData._id.toString(),
                 un: userData.un,
-                total_cash: userData.total_cash,
+                total_cash: userData.total_cash + userData.bonus_cash,
+                bonus_cash: userData.bonus_cash,
                 unique_id: userData.unique_id,
                 ue: userData.ue,
                 pp: userData.pp,
@@ -290,14 +291,14 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: false, msg: "Please send proper data." } });
             return;
         }
-        let profileData = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { unique_id: 1, un: 1, ue: 1, mobile_no: 1, total_cash: 1, pp: 1, sound: 1, music: 1 }).toArray();
+        let profileData = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { unique_id: 1, un: 1, ue: 1, mobile_no: 1, total_cash: 1,bonus_cash: 1, pp: 1, sound: 1, music: 1 }).toArray();
         if (profileData.length > 0) {
             profileData = profileData[0];
             var send_json = {
                 status: true,
                 uid: profileData._id.toString(),
                 un: profileData.un,
-                total_cash: profileData.total_cash,
+                total_cash: profileData.total_cash + profileData.bonus_cash,
                 bonus_cash: profileData.bonus_cash,
                 unique_id: profileData.unique_id,
                 ue: profileData.ue,
@@ -317,6 +318,7 @@ module.exports = {
             }
 
             delete data.total_cash;
+            delete data.bonus_cash;
 
             let update_data = {};
             if (typeof data.pp != "undefined") {

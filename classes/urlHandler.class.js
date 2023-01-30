@@ -10,6 +10,7 @@ module.exports = {
         const path = require('path');
 
         app.get('/gcf', function (req, res) {
+            
             res.render('config.html');
         });
 
@@ -246,7 +247,7 @@ module.exports = {
                                 commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money", bonus: false });
                                 let user_data = await db.collection('game_users').find({ _id: ObjectId(payment_record.value.UID.toString()) }).toArray();
                                 if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
-                                    signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount : parseInt(_result.TXNAMOUNT)});
+                                    signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount: parseInt(_result.TXNAMOUNT) });
                                 }
                                 await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
                                 commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(_result.TXNAMOUNT) } });
@@ -306,7 +307,8 @@ module.exports = {
                 MM: config_data.MM, // maintenance flag
                 MM_T: config_data.MM_T, // maintenance time second
                 BASE_URL: config_data.BASE_URL,
-                MIN_DEPOSIT: config.MIN_DEPOSIT
+                MIN_DEPOSIT: config.MIN_DEPOSIT,
+                POLICY_TEXT: config.POLICY_TEXT
             };
             console.log("app_config_data", app_config_data);
             commonClass.response(res, app_config_data);

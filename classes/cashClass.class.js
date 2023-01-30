@@ -58,4 +58,24 @@ module.exports = {
             }
         }
     },
+    //cash detail
+    CD: async function (data, client) {
+        if (!data || !data.uid) {
+            commonClass.sendDirectToUserSocket(client, { en: "CD", data: { success: false, msg: "Please send proper data." } });
+            return;
+        }
+        let cash_detail = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, {total_cash: 1, bonus_cash: 1 }).toArray();
+        if (cash_detail.length > 0) {
+            cash_detail = cash_detail[0];
+            var send_json = {
+                status: true,
+                uid: cash_detail._id.toString(),
+                total_cash: cash_detail.total_cash,
+                bonus_cash: cash_detail.bonus_cash
+            }
+            commonClass.sendDirectToUserSocket(client, { en: "CD", data: send_json });
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "CD", data: { success: false, msg: "User Not Found" } });
+        }
+    }
 }

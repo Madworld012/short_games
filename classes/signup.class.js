@@ -8,7 +8,7 @@ module.exports = {
             userData = userData[0];
 
             if (userData.is_block == 1) {
-                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please Contact Admin you are now block form this game." } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, regi: true, msg: "Please Contact Admin you are now block form this game." } });
                 return false;
             }
             //last login save 
@@ -158,7 +158,7 @@ module.exports = {
             userData = userData[0];
 
             if (userData.is_block == 1) {
-                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please Contact Admin you are now block form this game." } });
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, regi: true, msg: "Please Contact Admin you are now block form this game." } });
                 return false;
             }
 

@@ -41,13 +41,14 @@ module.exports = {
 				case "CANCEL_BET": //cancel_bet
 				case "LG": // Leave Game
 				case "HISTORY": //game history
-				case "DWN_LIST" : //default history
+				case "DWN_LIST": //default history
 					aviatorClass[en](request.data, client);
 					break;
 				case "DEPOSIT":
 				case "WITHDRAWAL":
 				case "DEPOSIT_HISTORY":
 				case "WITHDRAWAL_HISTORY":
+				case "CD": // cash details
 					cashClass[en](request.data, client);
 					break;
 

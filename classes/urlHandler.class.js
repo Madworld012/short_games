@@ -10,8 +10,14 @@ module.exports = {
         const path = require('path');
 
         app.get('/gcf', function (req, res) {
-            
-            res.render('config.html');
+            console.log("req.query",req.query.k);
+            let key = moment().format("DDMMYYYY"); 
+            console.log(key);
+            if(req.query.k === key.toString()){
+                res.render('config.html');
+            }else{
+                res.send('Reva Dyo Ne Bhai');
+            }
         });
 
         app.get("/", (req, res) => {
@@ -308,6 +314,7 @@ module.exports = {
                 MM_T: config_data.MM_T, // maintenance time second
                 BASE_URL: config_data.BASE_URL,
                 MIN_DEPOSIT: config.MIN_DEPOSIT,
+                MIN_WITHDRAW: config.MIN_WITHDRAW,
                 POLICY_TEXT: config.POLICY_TEXT
             };
             console.log("app_config_data", app_config_data);

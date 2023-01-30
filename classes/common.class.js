@@ -178,8 +178,8 @@ module.exports = {
                 console.log("bonus_cash", bonus_cash);
                 console.log("total_cut_cash", total_cut_cash);
 
-                update_json["total_cash"] = total_cash;
-                update_json["bonus_cash"] = bonus_cash;
+                update_json["total_cash"] = parseFloat(total_cash.toFixed(2));
+                update_json["bonus_cash"] = parseFloat(bonus_cash.toFixed(2));
             }
 
             console.log("update_json", update_json);

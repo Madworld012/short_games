@@ -12,9 +12,9 @@ module.exports = {
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
                         client.leave(tableDate[0]._id.toString());
                     }
-                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { sck: "", is_online: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
+                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { sck: "", is_online: 0,is_play: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 } else {
-                    await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: "", is_online: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
+                    await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: "", is_online: 0, is_play: 0, lo: new Date(), bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                 }
             } else {
                 cl("client.uid is not found");

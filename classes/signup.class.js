@@ -6,6 +6,11 @@ module.exports = {
         let userData = await db.collection('game_users').find(wh).toArray();
         if (userData && userData.length > 0) {
             userData = userData[0];
+
+            if (userData.is_block == 1) {
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please Contact Admin you are now block form this game." } });
+                return false;
+            }
             //last login save 
             //set user data into socket
             signupClass.setUserSocketData(userData, client);
@@ -73,6 +78,7 @@ module.exports = {
             music: true,
             is_deposited: 0,
             isMobileVerified: 0,
+            is_block: 0,
             total_cash: 0,
             bonus_cash: 0,
             OTP: 0,
@@ -150,6 +156,12 @@ module.exports = {
         var userData = await db.collection('game_users').find(wh).toArray();
         if (userData.length > 0) {
             userData = userData[0];
+
+            if (userData.is_block == 1) {
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please Contact Admin you are now block form this game." } });
+                return false;
+            }
+
             if (userData.isMobileVerified == 0 && userData.mobile_no != '') {
                 var udatac = {};
                 udatac.mobile_no = userData.mobile_no;
@@ -291,7 +303,7 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "PD", data: { success: false, msg: "Please send proper data." } });
             return;
         }
-        let profileData = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { unique_id: 1, un: 1, ue: 1, mobile_no: 1, total_cash: 1,bonus_cash: 1, pp: 1, sound: 1, music: 1 }).toArray();
+        let profileData = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { unique_id: 1, un: 1, ue: 1, mobile_no: 1, total_cash: 1, bonus_cash: 1, pp: 1, sound: 1, music: 1 }).toArray();
         if (profileData.length > 0) {
             profileData = profileData[0];
             var send_json = {
@@ -364,16 +376,16 @@ module.exports = {
             let ref_uniq_id = data.ref_uniq_id;
 
             let user_data = await db.collection('game_users').find({ unique_id: ref_uniq_id }).toArray();
-            if(user_data.length > 0){
+            if (user_data.length > 0) {
                 let bonus_amount = amount * config.FIRST_DEPOSIT_REFERAL_BONUS_PER / 100;
                 console.log("bonus_amount", bonus_amount);
                 if (bonus_amount > 0) {
                     await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: bonus_amount, msg: "Referal Bonus from user : " + ref_uniq_id, bonus: true });
                 }
-            }else{
+            } else {
                 console.log("user not found");
             }
-            
+
         }
     }
 }

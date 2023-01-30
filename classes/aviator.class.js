@@ -411,11 +411,11 @@ module.exports = {
                     let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                     if (data.bet1.is_bet_1 == true) {
-                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString() + "_1", x: 0, bet: parseFloat(data.bet1.bet_1), win_amount: 0 } });
+                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString() + "_1", x: 0, un: user_data[0].un, bet: parseFloat(data.bet1.bet_1), win_amount: 0 } });
                     }
 
                     if (data.bet2.is_bet_2 == true) {
-                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString() + "_2", x: 0, bet: parseFloat(data.bet1.bet_2), win_amount: 0 } });
+                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString() + "_2", x: 0, un: user_data[0].un, bet: parseFloat(data.bet2.bet_2), win_amount: 0 } });
                     }
                 } else {
                     commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "You Have Not Sufficient Balance" } });
@@ -532,7 +532,7 @@ module.exports = {
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash + user_updated_data.value.bonus_cash } });
                     if (data.cashout == 1) {
-                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString() + "_1", x: current_x_value.x, bet: user_data.bet_1 , win_amount: win_amount } });
+                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString() + "_1", x: current_x_value.x, bet: user_data.bet_1, win_amount: win_amount } });
                     }
 
                     if (data.cashout == 2) {

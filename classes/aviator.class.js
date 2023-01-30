@@ -414,7 +414,7 @@ module.exports = {
                         commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString() + "_1", x: 0, bet: parseFloat(data.bet1.bet_1), win_amount: 0 } });
                     }
 
-                    if (data.bet1.is_bet_2 == true) {
+                    if (data.bet2.is_bet_2 == true) {
                         commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: data.uid.toString() + "_2", x: 0, bet: parseFloat(data.bet1.bet_2), win_amount: 0 } });
                     }
                 } else {
@@ -534,8 +534,9 @@ module.exports = {
                     if (data.cashout == 1) {
                         commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString() + "_1", x: current_x_value.x, bet: user_data.bet_1 , win_amount: win_amount } });
                     }
+
                     if (data.cashout == 2) {
-                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString() + "_1", x: current_x_value.x, bet: user_data.bet_2, win_amount: win_amount } });
+                        commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: data.uid.toString() + "_2", x: current_x_value.x, bet: user_data.bet_2, win_amount: win_amount } });
                     }
 
                 } else {

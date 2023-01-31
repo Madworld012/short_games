@@ -20,12 +20,12 @@ module.exports = {
                         status: "pending"
                     }
                     await db.collection('withdrawal_request').insertOne(withdrawal_data);
-                    commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request", bonus: false });
+                    commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request", bonus: false, withdraw: true });
                     commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data.un) ? user_data.un : "Lucky", action: "Withdrawal", amount: parseInt(data.amount) } });
                     commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: true, cash: -parseInt(data.amount), msg: "Withdrawal Request Added, Admin Can Contact you soon !" } });
                 } else {
                     console.log("2");
-                    commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -parseInt(data.amount), msg: "Not Enought Cash In YOur Account !" } });
+                    commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -parseInt(data.amount), msg: "Not Enought Cash In Your Cash Wallet !" } });
                 }
             } else {
                 console.log("3");

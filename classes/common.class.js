@@ -130,6 +130,8 @@ module.exports = {
                 console.log("for add cash");
                 if (data.bonus && data.bonus == true) {
                     update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
+                } else if (data.withdraw && data.withdraw == true) {
+                    update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
                 } else {
 
                     let bet_from_bonus = user_data.bet_from_bonus;
@@ -231,13 +233,13 @@ module.exports = {
             commonClass.trackChips({
                 uid: user_data._id.toString(),
                 msg: data.msg,
-                cut_cash : data.cash,
+                cut_cash: data.cash,
                 cash: user_data.total_cash,
                 bonus: user_data.bonus_cash,
-                bet_from_bonus:user_data.bet_from_bonus,
+                bet_from_bonus: (user_data.bet_from_bonus) ? user_data.bet_from_bonus : "",
                 a_cash: user_updated_record.value.total_cash,
                 a_bonus: user_updated_record.value.bonus_cash,
-                a_bet_from_bonus: update_json.bet_from_bonus,
+                a_bet_from_bonus: (update_json.bet_from_bonus) ? update_json.bet_from_bonus : "",
                 cd: new Date()
             });
             commonClass.sendDataToUserSocketId(user_data.sck, { en: "UC", data: { status: true, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bonus_cash: user_updated_record.value.bonus_cash } });

@@ -11,6 +11,13 @@ module.exports = {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, regi: true, msg: "Please Contact Admin you are now block form this game." } });
                 return false;
             }
+
+            console.log("userData.rejoin_id", userData.rejoin_id);
+            if (userData.rejoin_id != "") {
+                console.log("cancel job id -------------------------------------------");
+                schedule.cancelJob(userData.rejoin_id);
+            }
+
             //last login save 
             //set user data into socket
             signupClass.setUserSocketData(userData, client);
@@ -26,7 +33,8 @@ module.exports = {
                 pp: userData.pp,
                 sound: userData.sound,
                 music: userData.music,
-                mobile_no: userData.mobile_no
+                mobile_no: userData.mobile_no,
+                is_play: userData.is_play
             }
             if (userData.isMobileVerified == 1) {
                 commonClass.sendDirectToUserSocket(client, { en: "SP", data: send_json });
@@ -88,6 +96,7 @@ module.exports = {
             country: (data.country_name) ? data.country_name : "India",
             gender: (data.gender) ? data.gender : '', //gender,
             is_play: 0,
+            rejoin_id: "",
             is_online: 0,
             last_game_play: "",
             cd: new Date(),
@@ -110,7 +119,7 @@ module.exports = {
         client.uid = data._id.toString();
         client.un = data.un.toString();
 
-        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date() } }, function () { })
+        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date(), rejoin_id: "", is_play: 0 } }, function () { })
         // } catch (error) {
         //     console.log("error");
         // }

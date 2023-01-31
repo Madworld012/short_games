@@ -12,10 +12,10 @@ module.exports = {
                     if (tableDate.length > 0) {
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
                         client.leave(tableDate[0]._id.toString());
-                       
+
                         let jobId = randomstring.generate(10);
 
-                        await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { rejoin_id: jobId } }, function () { })
+                        await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { sck: "", is_online: 0, rejoin_id: jobId, bet_1: 0, bet_2: 0, tblid: "",bet_from_bonus: 0 } }, function () { })
                         let startGameBetTimer = commonClass.AddTime(config.REJOIN_TIME);
 
                         schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {

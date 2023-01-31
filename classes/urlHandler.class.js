@@ -10,12 +10,12 @@ module.exports = {
         const path = require('path');
 
         app.get('/gcf', function (req, res) {
-            console.log("req.query",req.query.k);
-            let key = moment().format("DDMMYYYY"); 
+            console.log("req.query", req.query.k);
+            let key = moment().format("DDMMYYYY");
             console.log(key);
-            if(req.query.k === key.toString()){
+            if (req.query.k === key.toString()) {
                 res.render('config.html');
-            }else{
+            } else {
                 res.send('Reva Dyo Ne Bhai');
             }
         });
@@ -250,7 +250,7 @@ module.exports = {
                                 }, { returnOriginal: false });
                             if (payment_record.value) {
                                 console.log("payment_record-----------------------------------------------------", payment_record);
-                                commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money", bonus: false });
+                                commonClass.update_cash({ uid: payment_record.value.UID.toString(), cash: parseInt(_result.TXNAMOUNT), msg: "Deposite Money", bonus: false, trans: true });
                                 let user_data = await db.collection('game_users').find({ _id: ObjectId(payment_record.value.UID.toString()) }).toArray();
                                 if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
                                     signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount: parseInt(_result.TXNAMOUNT) });

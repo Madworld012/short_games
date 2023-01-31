@@ -130,7 +130,7 @@ module.exports = {
                 console.log("for add cash");
                 if (data.bonus && data.bonus == true) {
                     update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
-                } else if (data.withdraw && data.withdraw == true) {
+                } else if (data.trans && data.trans == true) {
                     update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
                 } else {
 

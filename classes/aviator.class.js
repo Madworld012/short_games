@@ -407,7 +407,7 @@ module.exports = {
 
                 console.log("total_bet", total_bet);
                 if (user_data[0].total_cash + user_data[0].bonus_cash >= total_bet) {
-                    await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false });
+                    await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false,trans: false });
                     let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                     if (data.bet1.is_bet_1 == true) {
@@ -527,7 +527,7 @@ module.exports = {
                 if (win_amount && win_amount > 0) {
                     cl("4");
                     cl("win amount =", win_amount)
-                    commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false });
+                    commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false ,trans: false});
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash + user_updated_data.value.bonus_cash } });
@@ -612,7 +612,7 @@ module.exports = {
 
                 console.log("new_user_data", new_user_data);
 
-                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false });
+                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false,trans: false });
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
                 
                 if (data.cancel == 1 ) {

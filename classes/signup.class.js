@@ -119,7 +119,7 @@ module.exports = {
         client.uid = data._id.toString();
         client.un = data.un.toString();
 
-        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date(), rejoin_id: "", is_play: 0 } }, function () { })
+        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { sck: client.id, is_online: 1, ll: new Date(), rejoin_id: "", is_play: 0, bet_from_bonus: 0 } }, function () { })
         // } catch (error) {
         //     console.log("error");
         // }

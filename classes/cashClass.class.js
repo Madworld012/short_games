@@ -9,7 +9,7 @@ module.exports = {
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
 
-                if (user_data.total_cash >= parseInt(data.amount)) {
+                if (user_data.total_cash > 0 && user_data.total_cash >= parseInt(data.amount)) {
                     let withdrawal_data = {
                         uid: user_data._id,
                         name: (user_data.un) ? user_data.un : "",
@@ -64,7 +64,7 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "CD", data: { success: false, msg: "Please send proper data." } });
             return;
         }
-        let cash_detail = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, {total_cash: 1, bonus_cash: 1 }).toArray();
+        let cash_detail = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }, { total_cash: 1, bonus_cash: 1 }).toArray();
         if (cash_detail.length > 0) {
             cash_detail = cash_detail[0];
             var send_json = {

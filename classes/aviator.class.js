@@ -75,10 +75,10 @@ module.exports = {
 
                     if (tableData && tableData.length > 0) {
                         tableData = tableData[0];
-                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData._id.toString() } }, function () { })
+                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData._id.toString(), bet_from_bonus: 0 } }, function () { })
                         client.tblid = tableData._id.toString();
                         client.join(tableData._id.toString());
-                        tableData["total_cash"] = userData.total_cash + userData.bonus_cash;
+                        tableData["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
 
                         if (tableData.status == "START_BET_TIME") {
                             tableData["bet_time"] = parseInt(config.BET_TIME) - commonClass.GetTimeDifference(tableData.sbt, new Date(), 'second');
@@ -111,11 +111,11 @@ module.exports = {
                         let new_table_data = await db.collection('aviator_table').find({ _id: ObjectId(table_id.insertedId.toString()) }).toArray();
                         if (new_table_data && new_table_data.length > 0) {
                             new_table_data = new_table_data[0];
-                            await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: new_table_data._id.toString() } }, function () { })
+                            await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), bet_from_bonus: 0, tblid: new_table_data._id.toString() } }, function () { })
                             client.tblid = new_table_data._id.toString();
                             client.join(new_table_data._id.toString());
                             console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
-                            new_table_data["total_cash"] = userData.total_cash + userData.bonus_cash;
+                            new_table_data["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
@@ -212,7 +212,7 @@ module.exports = {
                 //need to add indexing
                 let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
                 let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
-                if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1) {
+                if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1 && 0) {
                     let next_cut_value = parseFloat((x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE)).toFixed(2));
                     console.log("-----------------------------------------start again-------------------------------------------------------", next_cut_value);
                     call(next_cut_value);
@@ -275,13 +275,13 @@ module.exports = {
 
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, update_data, function () { });
                 setTimeout(async () => {
-                    await db.collection('game_users').updateOne({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0 } }, { multi: true }, function () { });
+                    await db.collection('game_users').updateOne({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0, bet_from_bonus: 0 } }, { multi: true }, function () { });
                 }, 5);
                 var startNewGameTimer = commonClass.AddTime(config.NEW_ROUND_START_TIME);
                 cl("\nWait For New Round");
                 schedule.scheduleJob(jobId, new Date(startNewGameTimer), async function () {
                     schedule.cancelJob(jobId);
-                    aviatorClass.startGame(table_data[0]._id.toString());
+                    //aviatorClass.startGame(table_data[0]._id.toString());
                 });
             } else {
                 return;
@@ -588,16 +588,20 @@ module.exports = {
 
             let update_data = { $set: {} };
             let total_cancel = 0;
-            if (data.cancel == 1) {
+            if (data.cancel == 1 && user_data[0].bet_1 > 0) {
                 update_data.$set['bet_1'] = 0;
                 total_cancel += user_data[0].bet_1;
                 cache.delWildcard("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_*_1", function () { });
+            } else {
+                commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
             }
 
-            if (data.cancel == 2) {
+            if (data.cancel == 2 && user_data[0].bet_2 > 0) {
                 update_data.$set['bet_2'] = 0;
                 total_cancel += user_data[0].bet_2;
                 cache.delWildcard("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_*_2", function () { });
+            } else {
+                commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
             }
 
             cl("update_data", update_data)
@@ -607,8 +611,17 @@ module.exports = {
                 }, update_data, { returnDocument: 'after' });
 
                 console.log("new_user_data", new_user_data);
+
                 commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false });
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
+                
+                if (data.cancel == 1 ) {
+                    commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CANCELBET", uid: user_data[0]._id.toString() + "_1", x: 0, un: user_data[0].un, bet: 0, win_amount: 0 } });
+                }
+
+                if (data.cancel == 2) {
+                    commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CANCELBET", uid: user_data[0]._id.toString() + "_2", x: 0, un: user_data[0].un, bet: 0, win_amount: 0 } });
+                }
 
             } else {
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: false, msg: "Your Cancel Amount is lessthen 0", cancel: data.cancel } });

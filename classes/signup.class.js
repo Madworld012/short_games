@@ -19,7 +19,7 @@ module.exports = {
                 status: true,
                 uid: userData._id.toString(),
                 un: userData.un,
-                total_cash: userData.total_cash + userData.bonus_cash,
+                total_cash: parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2)),
                 bonus_cash: userData.bonus_cash,
                 unique_id: userData.unique_id,
                 ue: userData.ue,

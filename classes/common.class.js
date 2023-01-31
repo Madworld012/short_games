@@ -131,10 +131,49 @@ module.exports = {
                 if (data.bonus && data.bonus == true) {
                     update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
                 } else {
-                    update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
+
+                    let bet_from_bonus = user_data.bet_from_bonus;
+                    let add_cash = data.cash;
+
+                    let total_cash = 0;
+                    let bonus_cash = 0;
+
+                    if (bet_from_bonus > 0) {
+                        if (add_cash > bet_from_bonus) {
+                            bonus_cash = bet_from_bonus;
+                            add_cash = add_cash - bet_from_bonus;
+                            bet_from_bonus = 0;
+
+                            if (add_cash > 0) {
+                                total_cash = add_cash;
+                            }
+                        } else if (bet_from_bonus > add_cash) {
+                            bet_from_bonus = bet_from_bonus - add_cash;
+                            bonus_cash = add_cash;
+                        } else if (add_cash == bet_from_bonus) {
+                            bonus_cash = add_cash;
+                            bet_from_bonus = 0;
+                        }
+                    } else {
+                        total_cash = add_cash;
+                    }
+
+                    console.log("bet_from_bonus", bet_from_bonus);
+                    console.log("total_cash", total_cash);
+                    console.log("bonus_cash", bonus_cash);
+
+                    if (total_cash > 0) {
+                        update_json['total_cash'] = parseFloat((((total_cash + user_data.total_cash) < 0) ? 0 : total_cash + user_data.total_cash).toFixed(2));
+                        update_json['bet_from_bonus'] = bet_from_bonus;
+                    }
+
+                    if (bonus_cash > 0) {
+                        update_json['bonus_cash'] = parseFloat((((bonus_cash + user_data.bonus_cash) < 0) ? 0 : bonus_cash + user_data.bonus_cash).toFixed(2));
+                        update_json['bet_from_bonus'] = bet_from_bonus;
+                    }
                 }
             } else {
-                console.log("for add cut cash");
+                console.log("for add cut cash", user_data.total_cash);
                 let total_cash = user_data.total_cash;
                 let bonus_cash = user_data.bonus_cash;
                 let total_cut_cash = Math.abs(data.cash);
@@ -180,6 +219,8 @@ module.exports = {
 
                 update_json["total_cash"] = parseFloat(total_cash.toFixed(2));
                 update_json["bonus_cash"] = parseFloat(bonus_cash.toFixed(2));
+
+                update_json["bet_from_bonus"] = user_data.bet_from_bonus + parseFloat((user_data.bonus_cash - bonus_cash).toFixed(2));
             }
 
             console.log("update_json", update_json);
@@ -187,7 +228,18 @@ module.exports = {
             // console.log("final_cash", final_cash);
             // let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: { total_cash: parseFloat(final_cash) } }, { returnDocument: 'after' });
             let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_json }, { returnDocument: 'after' });
-            commonClass.trackChips(data);
+            commonClass.trackChips({
+                uid: user_data._id.toString(),
+                msg: data.msg,
+                cut_cash : data.cash,
+                cash: user_data.total_cash,
+                bonus: user_data.bonus_cash,
+                bet_from_bonus:user_data.bet_from_bonus,
+                a_cash: user_updated_record.value.total_cash,
+                a_bonus: user_updated_record.value.bonus_cash,
+                a_bet_from_bonus: update_json.bet_from_bonus,
+                cd: new Date()
+            });
             commonClass.sendDataToUserSocketId(user_data.sck, { en: "UC", data: { status: true, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bonus_cash: user_updated_record.value.bonus_cash } });
         } else {
             console.log("Problem in update cash:: ", data);
@@ -198,11 +250,10 @@ module.exports = {
     },
     trackChips: function (data) {
         if (data) {
-            let cash_track = db.collection('cash_track').findOneAndUpdate({}, { $inc: { total_cash: data.cash } }, { new: true, upsert: true, returnDocument: 'after' });
+            let cash_track = db.collection('cash_track').findOneAndUpdate({}, { $inc: { total_cash: data.cut_cash } }, { new: true, upsert: true, returnDocument: 'after' });
             let today = moment().format("DD/MM/YYYY");
-            let daily_updated_record = db.collection('daily_cash_track').findOneAndUpdate({ date: today }, { $inc: { total_cash: data.cash } }, { new: true, upsert: true, returnDocument: 'after' });
-
-            let user_cash_track = db.collection('user_cash_track').insertOne({ total_cash: data.cash, uid: data.uid, msg: data.msg, cd: new Date() });
+            let daily_updated_record = db.collection('daily_cash_track').findOneAndUpdate({ date: today }, { $inc: { total_cash: data.cut_cash } }, { new: true, upsert: true, returnDocument: 'after' });
+            let user_cash_track = db.collection('user_cash_track').insertOne(data);
         }
     },
     SendSMS: function (data, callback) {

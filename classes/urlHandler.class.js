@@ -315,7 +315,8 @@ module.exports = {
                 BASE_URL: config_data.BASE_URL,
                 MIN_DEPOSIT: config.MIN_DEPOSIT,
                 MIN_WITHDRAW: config.MIN_WITHDRAW,
-                POLICY_TEXT: config.POLICY_TEXT
+                POLICY_TEXT: config.POLICY_TEXT,
+                REJOIN_MSG : config.REJOIN_MSG
             };
             console.log("app_config_data", app_config_data);
             commonClass.response(res, app_config_data);

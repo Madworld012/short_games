@@ -692,7 +692,6 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
             if (table_data.length > 0) {
                 let interval_id = setInterval(async () => {
-                    console.log("start interval cll come-------------------");
                     let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
                     if (table_data.length > 0) {
                         let min_amount = (config.DEPO_WITH_NOTIFICATION_MIN_VALUE) ? config.DEPO_WITH_NOTIFICATION_MIN_VALUE : 1;

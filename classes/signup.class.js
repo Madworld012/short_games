@@ -19,8 +19,8 @@ module.exports = {
             }
 
             let rejoin = 0;
-            if (data.sck != null && data.sck != '' && data.sck != client.id) {
-                commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
+            if (userData.sck != null && userData.sck != '' && userData.sck != client.id) {
+                commonClass.sendDataToUserSocketId(userData.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
                 rejoin = 1;
             }
 

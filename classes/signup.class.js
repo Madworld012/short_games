@@ -18,6 +18,13 @@ module.exports = {
                 schedule.cancelJob(userData.rejoin_id);
             }
 
+            let rejoin = 0;
+            if (data.sck != null && data.sck != '' && data.sck != client.id) {
+                commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
+                rejoin = 1;
+            }
+
+
             //last login save 
             //set user data into socket
             signupClass.setUserSocketData(userData, client);
@@ -34,7 +41,7 @@ module.exports = {
                 sound: userData.sound,
                 music: userData.music,
                 mobile_no: userData.mobile_no,
-                is_play: userData.is_play
+                is_play: (rejoin) ? 0 : userData.is_play
             }
             if (userData.isMobileVerified == 1) {
                 commonClass.sendDirectToUserSocket(client, { en: "SP", data: send_json });
@@ -112,10 +119,10 @@ module.exports = {
             return false;
         }
 
-        if (data.sck != null && data.sck != '' && data.sck != client.id) {
-            commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
-            // io.sockets.sockets[data.sck].disconnect();
-        }
+        // if (data.sck != null && data.sck != '' && data.sck != client.id) {
+        //     commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
+        //     // io.sockets.sockets[data.sck].disconnect();
+        // }
 
         client.uid = data._id.toString();
         client.un = data.un.toString();

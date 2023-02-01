@@ -120,20 +120,13 @@ module.exports = {
         if (user_data && user_data.length > 0) {
             user_data = user_data[0];
 
-            console.log("data.balance", data.cash);
-            console.log("user.balance", data.cash);
-            console.log("user_data.total_cash", user_data.total_cash);
 
             let update_json = {};
-            console.log("data.trans", data.trans);
 
             if (data.cash > 0) {
-                console.log("for add cash");
                 if (data.bonus && data.bonus == true) {
-                    console.log("1");
                     update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
                 } else {
-                    console.log("3");
 
                     let bet_from_bonus = user_data.bet_from_bonus;
                     let add_cash = data.cash;
@@ -161,9 +154,6 @@ module.exports = {
                         total_cash = add_cash;
                     }
 
-                    console.log("bet_from_bonus", bet_from_bonus);
-                    console.log("total_cash", total_cash);
-                    console.log("bonus_cash", bonus_cash);
 
                     if (total_cash > 0) {
                         update_json['total_cash'] = parseFloat((((total_cash + user_data.total_cash) < 0) ? 0 : total_cash + user_data.total_cash).toFixed(2));
@@ -179,7 +169,6 @@ module.exports = {
                 if (data.trans && data.trans == true) {
                     update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
                 } else {
-                    console.log("for cut cash", user_data.total_cash);
                     let total_cash = user_data.total_cash;
                     let bonus_cash = user_data.bonus_cash;
                     let total_cut_cash = Math.abs(data.cash);
@@ -189,27 +178,22 @@ module.exports = {
                         let halft_deduct_cash = total_cut_cash / 2;
 
                         if (total_cash == 0 && bonus_cash >= total_cut_cash) {
-                            console.log("1-");
                             bonus_cash = bonus_cash - total_cut_cash;
                             total_cut_cash = 0;
                         } else if (bonus_cash == 0 && total_cash >= total_cut_cash) {
-                            console.log("2-");
                             total_cash = total_cash - total_cut_cash;
                             total_cut_cash = 0;
                         } else if (total_cash >= halft_deduct_cash && bonus_cash >= halft_deduct_cash) {
-                            console.log("3-");
                             total_cash = total_cash - halft_deduct_cash;
                             bonus_cash = bonus_cash - halft_deduct_cash;
                             total_cut_cash = 0;
                         } else if ((bonus_cash < halft_deduct_cash && bonus_cash > 0) || (total_cash < halft_deduct_cash && total_cash > 0)) {
                             if (bonus_cash < halft_deduct_cash) {
-                                console.log("4");
                                 let diff = halft_deduct_cash - bonus_cash;
                                 bonus_cash = 0;
                                 total_cash = total_cash - (halft_deduct_cash + diff);
                                 total_cut_cash = 0;
                             } else if (total_cash < halft_deduct_cash) {
-                                console.log("5");
                                 let diff = halft_deduct_cash - total_cash;
                                 total_cash = 0;
                                 bonus_cash = bonus_cash - (halft_deduct_cash + diff);
@@ -220,9 +204,6 @@ module.exports = {
                         console.log("not enough cash");
                     }
 
-                    console.log("total_cash", total_cash);
-                    console.log("bonus_cash", bonus_cash);
-                    console.log("total_cut_cash", total_cut_cash);
 
                     update_json["total_cash"] = parseFloat(total_cash.toFixed(2));
                     update_json["bonus_cash"] = parseFloat(bonus_cash.toFixed(2));
@@ -231,7 +212,6 @@ module.exports = {
                 }
             }
 
-            console.log("update_json", update_json);
             // var final_cash = (((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2);
             // console.log("final_cash", final_cash);
             // let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: { total_cash: parseFloat(final_cash) } }, { returnDocument: 'after' });
@@ -254,7 +234,6 @@ module.exports = {
         }
 
 
-        console.log("data");
     },
     trackChips: function (data) {
         if (data) {

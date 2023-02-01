@@ -134,15 +134,11 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
                     cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
-                    console.log("userdata.isexpire", userdata.isexpire);
-                    console.log("userdata.isexpire", userdata.OTP);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
-                        console.log("otp verified");
                         db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
                         signupClass.SP(data, client);
                     } else {
-                        console.log("----------------1-----------------");
                         commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
                     }
                 }
@@ -178,9 +174,7 @@ module.exports = {
                 var extime = commonClass.AddTime(60);
                 commonClass.SendSMS(udatac, function (cb_status) {
                     if (cb_status.status == 1) {
-                        console.log("condition calle");
                         db.collection('game_users').updateOne({ mobile_no: userData.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) {
-                            console.log("call oen otp screen");
                             commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, mobile_no: data.mobile_no, timer: 60 } });
                             schedule.scheduleJob(jid, new Date(extime), function () {
                                 schedule.cancelJob(jid);
@@ -211,7 +205,6 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Phone Number Already Registered Please Login." } });
         } else {
             var UserFields = await signupClass.getUserDefaultFields(data, client);
-            console.log("UserFields", UserFields);
             let user = await db.collection('game_users').insertOne(UserFields);
             let newUserData = await db.collection('game_users').find(wh).toArray();
             newUserData = newUserData[0];
@@ -387,7 +380,6 @@ module.exports = {
             let user_data = await db.collection('game_users').find({ unique_id: ref_uniq_id }).toArray();
             if (user_data.length > 0) {
                 let bonus_amount = amount * config.FIRST_DEPOSIT_REFERAL_BONUS_PER / 100;
-                console.log("bonus_amount", bonus_amount);
                 if (bonus_amount > 0) {
                     await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: bonus_amount, msg: "Referal Bonus from user : " + ref_uniq_id, bonus: true });
                 }

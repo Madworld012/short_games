@@ -114,7 +114,6 @@ module.exports = {
                             await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), bet_from_bonus: 0, tblid: new_table_data._id.toString() } }, function () { })
                             client.tblid = new_table_data._id.toString();
                             client.join(new_table_data._id.toString());
-                            console.log("userData.total_cash----------------------------------------------------------------------", userData.total_cash);
                             new_table_data["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
@@ -388,7 +387,6 @@ module.exports = {
                 cl("11");
 
                 if (data.bet1.is_bet_1 == true && data.bet1.auto_1 == true && parseFloat(data.bet1.auto_1_x) > 0) {
-                    console.log("call come in set 1");
                     await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.bet1.auto_1_x) + "_1", JSON.stringify({
                         x: data.bet1.auto_1_x,
                         bet_1: parseFloat(data.bet1.bet_1)
@@ -396,7 +394,6 @@ module.exports = {
                 }
 
                 if (data.bet2.is_bet_2 == true && data.bet2.auto_2 == true && parseFloat(data.bet2.auto_2_x) > 0) {
-                    console.log("call come in set 2");
                     await cache.set("auto_" + user_data[0].tblid.toString() + "_" + user_data[0]._id.toString() + "_" + parseFloat(data.bet2.auto_2_x) + "_2", JSON.stringify({
                         x: data.bet2.auto_2_x,
                         bet_2: parseFloat(data.bet2.bet_2)
@@ -405,7 +402,6 @@ module.exports = {
 
                 //cache.delWildcard("cache_*", function () { });
 
-                console.log("total_bet", total_bet);
                 if (user_data[0].total_cash + user_data[0].bonus_cash >= total_bet) {
                     await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false,trans: false });
                     let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
@@ -427,14 +423,10 @@ module.exports = {
     },
     CASH_OUT: async function (data, client) {
         console.log("\nUser Cashout Come", data);
-        console.log('--------------');
         let current_x_value = JSON.parse(await cache.get(client.tblid.toString()));
-        console.log("x male 6e ke te pan delete thay gayo hoy ?---------------", current_x_value);
         if (data.auto) {
-            console.log('--------in------', data.x);
             current_x_value = data.x;
         }
-        console.log("current_x_value", current_x_value);
 
         if (data.uid) {
 
@@ -444,7 +436,6 @@ module.exports = {
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
                 if (current_x_value == null) {
-                    console.log("1");
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Already Flay Away Plane...." } });
                     // commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Already Flay Away Plane...." } });
                     // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Already Flay Away Plane...." } });
@@ -453,7 +444,6 @@ module.exports = {
 
                 if (typeof user_data.tblid == "undefined" || user_data.tblid == "") {
                     // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Table Not Found" } });
-                    console.log("table Not Found");
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
                     cl("2");
 
@@ -467,17 +457,11 @@ module.exports = {
                     // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
                     if (data.auto) {
                         let last_x_value = table_data[0].history[table_data[0].history.length - 1];
-                        console.log("auto 6e bhai java dejo-----------------------------------", last_x_value);
-                        console.log("auto 6e bhai java dejo-----------------------------------", typeof last_x_value);
-                        console.log("auto 6e bhai java dejo-----------------------------------", current_x_value.x);
-                        console.log("auto 6e bhai java dejo-----------------------------------", typeof current_x_value.x);
                         if (last_x_value != current_x_value.x) {
-                            console.log("a - 1");
                             commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, msg: "You can not cashout this time" } });
                             return false;
                         }
                     } else {
-                        console.log("a - 2");
                         commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, msg: "You can not cashout this time" } });
                         return false;
                     }
@@ -495,8 +479,6 @@ module.exports = {
                             cache.delWildcard("auto_" + user_data.tblid.toString() + "_" + user_data._id.toString() + "_" + parseFloat(current_x_value.x) + "_1", function () { });
                         }
 
-                        cl("current_x_value", current_x_value.x);
-                        cl("user_data[0].bet_1", user_data.bet_1);
                         win_amount += current_x_value.x * user_data.bet_1;
                         update_data["bet_1"] = 0;
                     } else {
@@ -610,7 +592,6 @@ module.exports = {
                     _id: ObjectId(user_data[0]._id.toString()),
                 }, update_data, { returnDocument: 'after' });
 
-                console.log("new_user_data", new_user_data);
 
                 commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false,trans: false });
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
@@ -724,7 +705,6 @@ module.exports = {
             //dwn deposit withdraw notification
             list.push({ name: _.sample(names), action: _.sample(["Deposited", "Withdrawal"]), amount: final_amount });
         }
-        console.log("list", list);
         commonClass.sendDirectToUserSocket(client, { en: "DWN_LIST", data: { status: true, list: list } });
     }
 }

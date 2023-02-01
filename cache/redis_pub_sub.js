@@ -11,7 +11,6 @@ module.exports = {
             }
 
             if (config.MODE == "PROD") {
-                console.log("call cme for live");
                 redis_conf.host = config.REDIS_HOST_LIVE;
                 redis_conf["password"] = config.REDIS_PASS;
             }
@@ -68,12 +67,11 @@ module.exports = {
                     }
                     if (pattern == "socket.*") {
                         let socket = channel.replace('socket.', '');
-                        console.log("socket", socket);
                         let clientObj = io.sockets.sockets.get(socket);
                         // let clientObj = io.sockets.connected[single];
                         if (clientObj) {
                             // var eData = commonClass.Enc(message);
-                            console.log("data send from pubsub");
+                            console.log("data send from pubsub",message.en);
                             if (message.en == "NCC") {
                                 delete clientObj.uid;
                                 clientObj.emit('res', message);

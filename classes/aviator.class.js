@@ -274,7 +274,7 @@ module.exports = {
 
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, update_data, function () { });
                 setTimeout(async () => {
-                    await db.collection('game_users').updateOne({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0, bet_from_bonus: 0 } }, { multi: true }, function () { });
+                    await db.collection('game_users').updateMany({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0, bet_from_bonus: 0 } }, { multi: true }, function () { });
                 }, 5);
                 var startNewGameTimer = commonClass.AddTime(config.NEW_ROUND_START_TIME);
                 cl("\nWait For New Round");

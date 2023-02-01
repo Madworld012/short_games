@@ -62,12 +62,12 @@ module.exports = {
                         return false;
                     }
 
-                    // if (userData.tblid != "") {
-                    //     console.log("Your Game Already Running please leave first");
-                    //     aviatorClass.LG({}, client);
-                    //     commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Please leave from Game first" } });
-                    //     return;
-                    // }
+                    if (userData.tblid != "") {
+                        console.log("Your Game Already Running please leave first");
+                        aviatorClass.LG({}, client);
+                        commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Please leave from Game first" } });
+                        return;
+                    }
 
                     let wh = { count: { $lte: config.TABLE_USER_SIZE } };
                     let tableData = await db.collection('aviator_table').find(wh).toArray();

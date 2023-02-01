@@ -68,8 +68,8 @@ if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
 }
 io = module.exports = socketIO(server, {
 	'origins': '*:*',
-	'pingTimeout': 7000,
-	'pingInterval': 10000,
+	'pingTimeout': 1000,
+	'pingInterval': 1000,
 	parser: require("socket.io-msgpack-parser")
 });
 server.listen(SERVER_PORT);

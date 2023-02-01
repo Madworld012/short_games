@@ -626,7 +626,9 @@ module.exports = {
                         let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
                         if (tableDate.length > 0) {
                             await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
-                            client.leave(tableDate[0]._id.toString());
+                            try {
+                                client.leave(tableDate[0]._id.toString());
+                            } catch (error) {}
                             commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
                         }
                         await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })

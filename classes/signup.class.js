@@ -21,7 +21,7 @@ module.exports = {
             let rejoin = 0;
             if (userData.sck != null && userData.sck != '' && userData.sck != client.id) {
                 commonClass.sendDataToUserSocketId(userData.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
-                //aviatorClass.LG(data,{uid:userData._id.toString()});
+                aviatorClass.LG(data,{uid:userData._id.toString()});
                 rejoin = 1;
             }
 

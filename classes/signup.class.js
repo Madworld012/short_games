@@ -114,6 +114,7 @@ module.exports = {
 
         if (data.sck != null && data.sck != '' && data.sck != client.id) {
             commonClass.sendDataToUserSocketId(data.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
+            io.sockets.sockets[data.sck].disconnect();
         }
 
         client.uid = data._id.toString();

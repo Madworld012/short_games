@@ -210,8 +210,8 @@ module.exports = {
 
                 //need to add indexing
                 let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
-                let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
-                if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && rand_value == 1 && 0) {
+                // let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
+                if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && config.FAKE_FLAY_ON_OFF_FLG) {
                     let next_cut_value = parseFloat((x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE)).toFixed(2));
                     console.log("-----------------------------------------start again-------------------------------------------------------", next_cut_value);
                     call(next_cut_value);
@@ -403,7 +403,7 @@ module.exports = {
                 //cache.delWildcard("cache_*", function () { });
 
                 if (user_data[0].total_cash + user_data[0].bonus_cash >= total_bet) {
-                    await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false,trans: false });
+                    await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: -total_bet, msg: "Place Bet", bonus: false, trans: false });
                     let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: true, bet: data, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bet_1: user_updated_record.value.bet_1, bet_2: user_updated_record.value.bet_2, msg: "You have Place Bet Successfully" } });
                     if (data.bet1.is_bet_1 == true) {
@@ -509,7 +509,7 @@ module.exports = {
                 if (win_amount && win_amount > 0) {
                     cl("4");
                     cl("win amount =", win_amount)
-                    commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false ,trans: false});
+                    commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false, trans: false });
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: true, cashout: data.cashout, x: current_x_value.x, win_amount: win_amount, total_cash: user_updated_data.value.total_cash + user_updated_data.value.bonus_cash } });
@@ -593,10 +593,10 @@ module.exports = {
                 }, update_data, { returnDocument: 'after' });
 
 
-                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false,trans: false });
+                commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: total_cancel, msg: "Cancel Bet", bonus: false, trans: false });
                 commonClass.sendDirectToUserSocket(client, { en: "CANCEL_BET", data: { status: true, msg: "Bet Cancel Success", cancel: data.cancel } });
-                
-                if (data.cancel == 1 ) {
+
+                if (data.cancel == 1) {
                     commonClass.sendToRoom(table_data[0]._id.toString(), { en: "UPDATE_BET", data: { type: "CANCELBET", uid: user_data[0]._id.toString() + "_1", x: 0, un: user_data[0].un, bet: 0, win_amount: 0 } });
                 }
 
@@ -613,27 +613,37 @@ module.exports = {
         }
     },
     LG: async function (data, client) {
-        if (client) {
-            if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
-                let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
-                if (userData.length > 0 && typeof userData[0].tblid != "undefined" && userData[0].tblid != "") {
-                    let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
-                    if (tableDate.length > 0) {
-                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
-                        client.leave(tableDate[0]._id.toString());
-                        commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
+        try {
+            if (client) {
+                console.log("in LG", client);
+                if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
+                    console.log("2");
+                    let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
+                    console.log("3");
+                    if (userData.length > 0 && typeof userData[0].tblid != "undefined" && userData[0].tblid != "") {
+                        console.log("4");
+
+                        let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
+                        if (tableDate.length > 0) {
+                            await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
+                            client.leave(tableDate[0]._id.toString());
+                            commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
+                        }
+                        await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
+                    } else {
+                        await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
                     }
-                    await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
                 } else {
-                    await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
+                    cl("client.uid is not found");
                 }
+                cl("userid", client.id);
             } else {
-                cl("client.uid is not found");
+                cl("socket not defined");
             }
-            cl("userid", client.id);
-        } else {
-            cl("socket not defined");
+        } catch (er) {
+            console.log("error found in LG",er);
         }
+
     },
     sendAutoNotification: async function (tblid) {
         if (tblid) {

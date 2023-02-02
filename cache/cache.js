@@ -13,8 +13,6 @@ if (config.MODE == "PROD") {
 
 redis.RedisClient.prototype.delWildcard = async function (key, callback) {
     var redis = this
-    console.log("key -------------", key);
-
     let rows = await redis.keys(key.toString());
     for (var i = 0, j = rows.length; i < j; ++i) {
         redis.del(rows[i])

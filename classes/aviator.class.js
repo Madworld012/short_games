@@ -121,11 +121,9 @@ module.exports = {
                             if (config.DEPO_WITH_AUTO_WIN_NOTIFICATION) {
                                 aviatorClass.startDepositwithdrawNoti(new_table_data._id);
                             }
-                            cl("table_data", new_table_data);
                         } else {
                             cl("Critical error please check server and log", new_table_data);
                         }
-
                     }
                 } else {
                     commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "User Not Found Please Register First" } });
@@ -195,7 +193,7 @@ module.exports = {
         let cut_out_x_value = await aviatorClass.getRandomFloat();
         // let cut_out_x_value = 1.01;
 
-        console.log("\nNext Cut Out Value ---------------------------", cut_out_x_value);
+        console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_value);
         //start x value
         let x = 0.99;
         let re_fly = 0;
@@ -225,7 +223,7 @@ module.exports = {
             } else {
 
                 // await sleep(100 / x);
-                await sleep((x > 20) ? 5 : 100 / x);
+                await sleep((x > 20) ? 5 : 150 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
                 aviatorClass.autoCutUser(tblid.toString(), x);
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
@@ -294,7 +292,6 @@ module.exports = {
             rand_value = _.random(1, config.RANGE_MAX_COUNT);
         }
 
-        console.log("rand_value---------------", rand_value)
         let range = await db.collection('range').find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
         console.log("range", range);
         if (range && range.length > 0) {
@@ -430,31 +427,23 @@ module.exports = {
 
         if (data.uid) {
 
-            cl("2");
             let user_data = await db.collection('game_users').find({ _id: ObjectId(client.uid.toString()) }).toArray();
 
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
                 if (current_x_value == null) {
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Already Flay Away Plane...." } });
-                    // commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, logout: true, msg: "Already Flay Away Plane...." } });
-                    // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Already Flay Away Plane...." } });
                     return false;
                 }
 
                 if (typeof user_data.tblid == "undefined" || user_data.tblid == "") {
-                    // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "Table Not Found" } });
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
-                    cl("2");
-
                     return false;
                 }
 
                 let table_data = await db.collection('aviator_table').find({ _id: ObjectId(user_data.tblid.toString()) }).toArray();
 
                 if (!table_data || table_data.length <= 0 || table_data[0].cash_out_flg != true) {
-                    cl("3");
-                    // commonClass.sendDirectToUserSocket(client, { en: "CASH_OUT", data: { status: false, x: 0, msg: "You can not cashout this time" } });
                     if (data.auto) {
                         let last_x_value = table_data[0].history[table_data[0].history.length - 1];
                         if (last_x_value != current_x_value.x) {
@@ -466,14 +455,10 @@ module.exports = {
                         return false;
                     }
                 }
-
-
-                cl("4");
                 let update_data = {};
                 let win_amount = 0;
 
                 if (data.cashout == 1) {
-                    cl("5");
                     if (user_data.bet_1 > 0) {
                         if (data.auto) {
                             cache.delWildcard("auto_" + user_data.tblid.toString() + "_" + user_data._id.toString() + "_" + parseFloat(current_x_value.x) + "_1", function () { });
@@ -482,13 +467,11 @@ module.exports = {
                         win_amount += current_x_value.x * user_data.bet_1;
                         update_data["bet_1"] = 0;
                     } else {
-                        cl("6");
                         commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "You not Place Any bet" } });
                         return;
                     }
                 } else if (data.cashout == 2) {
                     if (user_data.bet_2 > 0) {
-                        cl("7");
                         if (data.auto) {
                             cache.delWildcard("auto_" + user_data.tblid.toString() + "_" + user_data._id.toString() + "_" + parseFloat(current_x_value.x) + "_2", function () { });
                         }
@@ -496,19 +479,15 @@ module.exports = {
                         win_amount += current_x_value.x * user_data.bet_2;
                         update_data["bet_2"] = 0;
                     } else {
-                        cl("8");
                         commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "You not Place Any bet" } });
                         return;
                     }
                 } else {
-                    cl("9");
                     commonClass.sendDataToUserSocketId(user_data.sck, { en: "CASH_OUT", data: { status: false, x: 0, cashout: data.cashout, msg: "Please provide proper cashout data" } });
                     return false;
                 }
 
                 if (win_amount && win_amount > 0) {
-                    cl("4");
-                    cl("win amount =", win_amount)
                     commonClass.update_cash({ uid: user_data._id.toString(), cash: win_amount, msg: "Cash Out", bonus: false, trans: false });
 
                     let user_updated_data = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(client.uid.toString()) }, { $set: update_data }, { returnDocument: 'after' });

@@ -114,7 +114,6 @@ module.exports = {
             console.log("CRITICAL Error in UPdate balance:: ", data.msg);
             return;
         }
-        console.log("data", data);
         let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
 
         if (user_data && user_data.length > 0) {
@@ -304,7 +303,6 @@ module.exports = {
     },
     getRandomeHistory: async function (number) {
         let history_data = await db.collection("daily_table_history").aggregate([{$addFields: {history_count:{$size:"$history"}}},{$match:{history_count:{$gte:25}}},{$sort:{cd:-1}},{$limit:1}]).toArray();
-        console.log("data", history_data);
         let history = _.shuffle([1.97, 2.87, 3.00, 2.89, 1.85, 5.30, 1.67, 10.25, 1.32, 1.18, 1.23, 10.25, 1.32, 1.18, 1.23]);
         if (history_data.length > 0) {
             history = history_data[0].history.splice(0, 25)

@@ -316,7 +316,9 @@ module.exports = {
                 MIN_DEPOSIT: config.MIN_DEPOSIT,
                 MIN_WITHDRAW: config.MIN_WITHDRAW,
                 POLICY_TEXT: config.POLICY_TEXT,
-                REJOIN_MSG : config.REJOIN_MSG
+                REJOIN_MSG : config.REJOIN_MSG,
+                MAX_BET: config.MAX_BET,
+                MAX_BET_FLAG: config.MAX_BET_FLAG
             };
             commonClass.response(res, app_config_data);
             // } catch (error) {

@@ -305,7 +305,7 @@ module.exports = {
         let history_data = await db.collection("daily_table_history").aggregate([{$addFields: {history_count:{$size:"$history"}}},{$match:{history_count:{$gt:26}}},{$sort:{cd:-1}},{$limit:1}]).toArray();
         let history = _.shuffle([1.97, 2.87, 3.00, 2.89, 1.85, 5.30, 1.67, 10.25, 1.32, 1.18, 1.23, 10.25, 1.32, 1.18, 1.23]);
         if (history_data.length > 0) {
-            history = history_data[0].history.splice(array.length - 25,array.length)
+            history = history_data[0].history.splice(history_data[0].history.length - 25,history_data[0].history.length)
         }
         return history;
     }

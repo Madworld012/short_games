@@ -594,7 +594,6 @@ module.exports = {
     LG: async function (data, client) {
         try {
             if (client) {
-                console.log("in LG", client);
                 if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
                     console.log("2");
                     let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();

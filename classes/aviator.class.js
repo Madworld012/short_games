@@ -223,7 +223,7 @@ module.exports = {
             } else {
 
                 // await sleep(100 / x);
-                await sleep((x > 20) ? 5 : 125 / x);
+                await sleep((x > 20) ? 5 : 110 / x);
                 x = parseFloat((x + 0.01).toFixed(2));
                 aviatorClass.autoCutUser(tblid.toString(), x);
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });

@@ -99,7 +99,7 @@ module.exports = {
                             status: "INIT",
                             cd: new Date(),
                             history: [],
-                            f_history: commonClass.getRandomeHistory(25),
+                            f_history: await commonClass.getRandomeHistory(),
                             x: 0,
                             count: 1,
                             bet_flg: false,

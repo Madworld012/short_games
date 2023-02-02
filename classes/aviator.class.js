@@ -118,7 +118,7 @@ module.exports = {
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
-                            if (config.DEPO_WITH_AUTO_WIN_NOTIFICATION) {
+                            if (config.DEPO_WITH_AUTO_NOTIFICATION) {
                                 aviatorClass.startDepositwithdrawNoti(new_table_data._id);
                             }
                         } else {
@@ -625,22 +625,22 @@ module.exports = {
 
     },
     sendAutoNotification: async function (tblid) {
-        if (tblid) {
-            if (tblid && config.AUTO_WIN_NOTIFICATION) {
-                let count = 1;
-                let run_count = _.random(1, config.AUTO_WIN_NOTIFICATION_COUNT);
-                let myintervaal = setInterval(() => {
-                    if (count == run_count) {
-                        clearInterval(myintervaal);
-                    } else {
-                        commonClass.sendToRoom(tblid.toString(), { en: "NOTIFICATION", data: { status: true, name: _.sample(names), amount: _.random(config.NOTIFICATION_MIN_WIN_AMOUNT, config.NOTIFICATION_MAX_WIN_AMOUNT) } });
-                        console.log("call come", count);
-                        count++;
-                    }
-                }, _.random(400, 500));
+        // if (tblid) {
+        //     if (tblid && config.AUTO_WIN_NOTIFICATION) {
+        //         let count = 1;
+        //         let run_count = _.random(1, config.AUTO_WIN_NOTIFICATION_COUNT);
+        //         let myintervaal = setInterval(() => {
+        //             if (count == run_count) {
+        //                 clearInterval(myintervaal);
+        //             } else {
+        //                 commonClass.sendToRoom(tblid.toString(), { en: "NOTIFICATION", data: { status: true, name: _.sample(names), amount: _.random(config.NOTIFICATION_MIN_WIN_AMOUNT, config.NOTIFICATION_MAX_WIN_AMOUNT) } });
+        //                 console.log("call come", count);
+        //                 count++;
+        //             }
+        //         }, _.random(400, 500));
 
-            }
-        }
+        //     }
+        // }
     },
     HISTORY: async function (data, client) {
         if (data.tblid && data.uid) {

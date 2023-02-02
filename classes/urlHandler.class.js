@@ -255,6 +255,10 @@ module.exports = {
                                 if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
                                     signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount: parseInt(_result.TXNAMOUNT) });
                                 }
+                                
+                                if(user_data.length > 0 && user_data[0].is_deposited == 0){
+                                    signupClass.firstDepositBonus({ uid: user_data[0]._id, amount: parseInt(_result.TXNAMOUNT) });
+                                }
                                 await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
                                 commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(_result.TXNAMOUNT) } });
                                 commonClass.sendDataToUserId(payment_record.value.UID.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your transaction is successfull." } })

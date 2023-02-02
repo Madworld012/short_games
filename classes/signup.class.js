@@ -21,7 +21,7 @@ module.exports = {
             let rejoin = 0;
             if (userData.sck != null && userData.sck != '' && userData.sck != client.id) {
                 commonClass.sendDataToUserSocketId(userData.sck, { en: 'NCC', data: { leave: true, logout: true, msg: "You Logged in another device." } });
-                aviatorClass.LG(data,{uid:userData._id.toString()});
+                aviatorClass.LG(data, { uid: userData._id.toString() });
                 rejoin = 1;
             }
 
@@ -391,6 +391,30 @@ module.exports = {
                 let bonus_amount = amount * config.FIRST_DEPOSIT_REFERAL_BONUS_PER / 100;
                 if (bonus_amount > 0) {
                     await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: bonus_amount, msg: "Referal Bonus from user : " + ref_uniq_id, bonus: true });
+                }
+            } else {
+                console.log("user not found");
+            }
+
+        }
+    },
+    firstDepositBonus: async function (data) {
+        if (data) {
+            console.log("data", data);
+            let amount = data.amount;
+
+            let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
+            if (user_data.length > 0) {
+
+                let bonus_amount = 0;
+                if (amount <= config.MAX_FIRST_DEPOSIT_BONUS) {
+                    bonus_amount = amount * config.MAX_FIRST_DEPOSIT_BONUS_PER / 100;
+                } else {
+                    bonus_amount = config.MAX_FIRST_DEPOSIT_BONUS;
+                }
+
+                if (bonus_amount > 0) {
+                    await commonClass.update_cash({ uid: user_data[0]._id.toString(), cash: bonus_amount, msg: "First Deposit Bonus " + config.MAX_FIRST_DEPOSIT_BONUS_PER + "%", bonus: true });
                 }
             } else {
                 console.log("user not found");

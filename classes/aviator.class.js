@@ -142,8 +142,7 @@ module.exports = {
             if (table_data && table_data.length > 0) {
                 if (table_data[0].count <= 0) {
                     cl("game over no more player available.")
-                    let today = moment().format("DD/MM/YYYY");
-                    await db.collection('daily_table_history').insertOne({ cd: today, history: table_data[0].history });
+                    await db.collection('daily_table_history').insertOne({ cd: new Date(), history: table_data[0].history });
                     await db.collection('aviator_table').deleteOne({ _id: ObjectId(tblid.toString()) });
                     return false;
                 }

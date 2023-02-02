@@ -1,6 +1,5 @@
 const commonClass = require("./common.class");
 let cache = require('../cache/cache');
-const { ObjectId } = require("mongodb");
 const names = require('../name');
 const Queue = require('bull');
 const opts = require('../cache/bullOpts');
@@ -118,6 +117,7 @@ module.exports = {
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
+                            console.log("config.DEPO_WITH_AUTO_NOTIFICATION",config.DEPO_WITH_AUTO_NOTIFICATION);
                             if (config.DEPO_WITH_AUTO_NOTIFICATION) {
                                 aviatorClass.startDepositwithdrawNoti(new_table_data._id);
                             }

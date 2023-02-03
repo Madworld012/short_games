@@ -1,7 +1,6 @@
 module.exports = {
     disconnectUser: async function (client) {
         if (client) {
-            console.log("in rejoin function");
             if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
                 // let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
                 let userData = await db.collection('game_users').find({ sck: client.id }).toArray();
@@ -17,7 +16,6 @@ module.exports = {
                         let startGameBetTimer = commonClass.AddTime(config.REJOIN_TIME);
                         schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                             schedule.cancelJob(jobId);
-                            console.log("\nTime Over Reset Is_Play flag ");
                             await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { sck: "", is_online: 0, is_play: 0, rejoin_id: "", bet_1: 0, bet_2: 0, tblid: "" } }, function () { })
                         });
 

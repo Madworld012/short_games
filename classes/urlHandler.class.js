@@ -10,7 +10,7 @@ module.exports = {
         const path = require('path');
 
         app.get('/gcf', function (req, res) {
-            console.log("req.query", req.query.k);
+            console.log("req.query-----------------------------------------------", req.query.k);
             let key = moment().format("DDMMYYYY");
             console.log(key);
             if (req.query.k === key.toString()) {
@@ -130,7 +130,6 @@ module.exports = {
                                 }
 
                                 let insert_status = await db.collection('payment_transection').insertOne(store_payment_data);
-                                console.log(insert_status);
 
                                 if (insert_status.acknowledged) {
                                     console.log("------------------------------------");
@@ -297,7 +296,6 @@ module.exports = {
         app.post("/selectServer", (req, res) => {
             // try {
             cl("in choose server", req.body);
-            console.log("req.body.v", req.body.v);
             if (typeof req.body.v == undefined || req.body.v == "" || req.body.v == null) {
                 commonClass.response(res, {
                     msg: "not proper data"

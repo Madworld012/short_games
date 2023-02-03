@@ -15,10 +15,10 @@ module.exports = {
 	BindSocketToEvent: function (client) {
 
 		client.on('req', function (request) {
-			console.log("call come for socket ", typeof request);
+			cl("call come for socket ", typeof request);
 			request = commonClass.Dec(request);
-			console.log("request.en", request.en);
-			console.log("request.data", request.data);
+			cl("request.en", request.en);
+			cl("request.data", request.data);
 
 			var en = request.en;
 

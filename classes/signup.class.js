@@ -12,7 +12,6 @@ module.exports = {
                 return false;
             }
 
-            console.log("userData.rejoin_id", userData.rejoin_id);
             if (userData.rejoin_id != "") {
                 console.log("cancel job id -------------------------------------------");
                 schedule.cancelJob(userData.rejoin_id);
@@ -201,7 +200,6 @@ module.exports = {
     },
     //AL
     REGISTRATION: async function (data, client) {
-        console.log("data", data);
         if (!data || !data.mobile_no || !data.password || !data.name || !data.email) {
             commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { success: false, msg: "Please send proper data." } });
             return;
@@ -280,7 +278,6 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
-                        console.log("otp verified");
                         db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { password: data.new_password, isexpire: true, OTP: "" } }, function () { });
                         commonClass.sendDirectToUserSocket(client, { en: "VERIFY_CAHNGE_PASS_OTP", data: { status: true, msg: "Your Password Has Been Changed Please Do login." } });
                     } else {
@@ -381,7 +378,6 @@ module.exports = {
     },
     firstDepositReferalBonus: async function (data) {
         if (data) {
-            console.log("data", data);
             let amount = data.amount;
             let deposit_user = data.uid;
             let ref_uniq_id = data.ref_uniq_id;
@@ -400,7 +396,6 @@ module.exports = {
     },
     firstDepositBonus: async function (data) {
         if (data) {
-            console.log("data", data);
             let amount = data.amount;
 
             let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();

@@ -10,13 +10,10 @@ const autoCut = new Queue('auto-cut', opts);
 
 autoCut.process(async (job, done) => {
     try {
-        console.log("reply", job.data);
         const { reply } = job.data;
-        console.log("call come in bull process", reply);
 
         for (let i = 0; i < reply.length; i++) {
             const key = reply[i];
-            console.log("key", key);
             let user_data = key.split("_");
             let tblid = user_data[1];
             let uid = user_data[2];
@@ -117,7 +114,6 @@ module.exports = {
                             new_table_data.history = new_table_data.f_history.reverse();
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
-                            console.log("config.DEPO_WITH_AUTO_NOTIFICATION",config.DEPO_WITH_AUTO_NOTIFICATION);
                             if (config.DEPO_WITH_AUTO_NOTIFICATION) {
                                 aviatorClass.startDepositwithdrawNoti(new_table_data._id);
                             }
@@ -140,7 +136,7 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
 
             if (table_data && table_data.length > 0) {
-                if (table_data[0].count <= 0) {
+                if (table_data[0].count <= 0 && config.TABLE_DELETE) {
                     cl("game over no more player available.")
                     await db.collection('daily_table_history').insertOne({ cd: new Date(), history: table_data[0].history });
                     await db.collection('aviator_table').deleteOne({ _id: ObjectId(tblid.toString()) });
@@ -153,14 +149,12 @@ module.exports = {
                 cl("config.BET_TIME", config.BET_TIME);
                 var startGameBetTimer = commonClass.AddTime(config.BET_TIME);
                 var jobId = randomstring.generate(10);
-                console.log("\nStart Bet time");
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
 
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
-                    console.log("\nFlying plane Or Stop bet");
                     await aviatorClass.fly_plane(table_data[0]._id.toString());
                 });
             } else {
@@ -240,7 +234,6 @@ module.exports = {
         //key - auto_tbld_uid_xvalue_betbutton
         let reply = await cache.keys("auto_" + tbid.toString() + "_*_" + x + "_*");
         if (reply.length > 0) {
-            console.log("data found", reply);
             autoCut.add({ reply }, {
                 removeOnComplete: true,
                 removeOnFail: true
@@ -292,7 +285,6 @@ module.exports = {
         }
 
         let range = await db.collection('range').find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
-        console.log("range", range);
         if (range && range.length > 0) {
             range = range[0];
             const str = (Math.random() * (range.max_value - range.min_value) + range.min_value).toFixed(2);
@@ -378,7 +370,6 @@ module.exports = {
                 update_data['bet_2'] = parseFloat(data.bet2.bet_2);
             }
 
-            console.log("total_bet", total_bet);
             if (total_bet > 0 && user_data[0].total_cash + user_data[0].bonus_cash >= total_bet) {
                 cl("11");
 
@@ -418,7 +409,6 @@ module.exports = {
         }
     },
     CASH_OUT: async function (data, client) {
-        console.log("\nUser Cashout Come", data);
         let current_x_value = JSON.parse(await cache.get(client.tblid.toString()));
         if (data.auto) {
             current_x_value = data.x;
@@ -594,11 +584,8 @@ module.exports = {
         try {
             if (client) {
                 if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
-                    console.log("2");
                     let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
-                    console.log("3");
                     if (userData.length > 0 && typeof userData[0].tblid != "undefined" && userData[0].tblid != "") {
-                        console.log("4");
 
                         let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
                         if (tableDate.length > 0) {
@@ -658,7 +645,6 @@ module.exports = {
     },
     startDepositwithdrawNoti: async function (tblid) {
         if (tblid) {
-            console.log("call come noti noti noti");
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
             if (table_data.length > 0) {
                 let interval_id = setInterval(async () => {
@@ -675,7 +661,6 @@ module.exports = {
 
                     } else {
                         clearInterval(interval_id);
-                        console.log("clear time out");
                     }
                 }, _.random(1, config.DEPO_WITH_TIME_MAX_INTERVAL) * 20 * 1000);
             }

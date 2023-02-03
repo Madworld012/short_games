@@ -136,7 +136,7 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
 
             if (table_data && table_data.length > 0) {
-               cl("config.TABLE_DELETE",config.TABLE_DELETE)
+               cl("config.TABLE_DELETE",config.TABLE_DELETE);
                 if (table_data[0].count <= 0 && config.TABLE_DELETE) {
                     cl("game over no more player available.")
                     await db.collection('daily_table_history').insertOne({ cd: new Date(), history: table_data[0].history });

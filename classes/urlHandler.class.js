@@ -322,7 +322,9 @@ module.exports = {
                 POLICY_TEXT: config.POLICY_TEXT,
                 REJOIN_MSG : config.REJOIN_MSG,
                 MAX_BET: config.MAX_BET,
-                MAX_BET_FLAG: config.MAX_BET_FLAG
+                MAX_BET_FLAG: config.MAX_BET_FLAG,
+                POLICY_URL: config.POLICY_URL,
+                TERM_CONDITION_URL: config.TERM_CONDITION_URL
             };
             commonClass.response(res, app_config_data);
             // } catch (error) {

@@ -84,7 +84,7 @@ module.exports = {
         var fields = {
             un: data.name.substr(0, 15),
             unique_id: unique_id,
-            reference_user_id: (typeof data.reference_user_id != 'undefined') ? parseInt(data.reference_user_id) : "",
+            reference_user_id: (typeof data.reference_user_id != 'undefined' && data.reference_user_id != '') ? parseInt(data.reference_user_id) : "",
             sck: client.id,//client.id,
             ue: (typeof data.email != 'undefined') ? data.email : "",
             mobile_no: data.mobile_no,

@@ -416,5 +416,77 @@ module.exports = {
             }
 
         }
+    },
+    // add update payment details
+    AUPD: async function (data, client) {
+        if (data.uid) {
+            let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
+            if (user_data.length > 0) {
+                let update_data = {};
+
+                if (typeof data.bank_no != "undefined") {
+                    update_data['bank_no'] = data.bank_no;
+                }
+                if (typeof data.ifsc_code != "undefined") {
+                    update_data['ifsc_code'] = data.ifsc_code;
+                }
+                if (typeof data.bank_name != "undefined") {
+                    update_data['bank_name'] = data.bank_name;
+                }
+                if (typeof data.holder_name != "undefined") {
+                    update_data['holder_name'] = data.holder_name;
+                }
+                if (typeof data.uip_id != "undefined") {
+                    update_data['uip_id'] = data.uip_id;
+                }
+
+                update_data["cd"] = new Date();
+
+                let user_updated_record = await db.collection('users_bank_details').findOneAndUpdate({ uid: data.uid.toString() }, { $set: update_data }, { upsert: true, returnDocument: 'after' });
+                user_updated_record = user_updated_record.value;
+                commonClass.sendDirectToUserSocket(client, {
+                    en: "APD",
+                    data: {
+                        success: true,
+                        msg: "Payment Details Added Successfully!"
+                    }
+                });
+            }
+        }
+    },
+    //get payment details
+    GPD: async function (data, client) {
+        if (data.uid) {
+            let user_bank_details = await db.collection('users_bank_details').find({ uid: data.uid.toString() }).toArray();
+            if (user_bank_details.length > 0) {
+                user_bank_details = user_bank_details[0];
+                commonClass.sendDirectToUserSocket(client, {
+                    en: "GPD",
+                    data: {
+                        status: true,
+                        bank_no: user_bank_details.bank_no,
+                        ifsc_code: user_bank_details.ifsc_code,
+                        bank_name: user_bank_details.bank_name,
+                        holder_name: user_bank_details.holder_name,
+                        uip_id: user_bank_details.uip_id
+                    }
+                });
+            } else {
+                commonClass.sendDirectToUserSocket(client, { en: "GPD", data: { status: false, data: {} } });
+            }
+        }
+    },
+    SUPPORT: async function (data, client) {
+        if (data.uid) {
+            let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
+            if (user_data.length > 0) {
+                await db.collection('support_msg').insert({
+                    uid: data.uid.toString(),
+                    msg: data.msg,
+                    cd: new Date()
+                })
+                commonClass.sendDirectToUserSocket(client, { en: "SUPPORT", data: { status: true, msg: "Your Ticket Added Successfully, Admin Will Contact You Soon." } });
+            }
+        }
     }
 }

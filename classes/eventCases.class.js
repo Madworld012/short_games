@@ -33,6 +33,9 @@ module.exports = {
 				case "CHANGE_PASSWORD":
 				case "PD": // profile detail
 				case "UP": //update profile
+				case "AUPD" : //add or update payemnt details
+				case "GPD" : //get payment details
+				case "SUPPORT" : // for support message.
 					signupClass[en](request.data, client);
 					break;
 				case "SG": //start game

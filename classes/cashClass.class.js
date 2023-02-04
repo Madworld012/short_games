@@ -16,6 +16,7 @@ module.exports = {
                         email: (user_data.ue) ? user_data.ue : "",
                         mobile_no: user_data.mobile_no,
                         amount: parseInt(data.amount),
+                        payment_method : (typeof data.payment_method != 'undefined' && data.payment_method != '') ? parseInt(data.payment_method) : "",
                         cd: new Date(),
                         status: "pending"
                     }

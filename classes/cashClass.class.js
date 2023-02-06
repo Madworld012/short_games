@@ -1,6 +1,6 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
-        console.log("WITHDRAWAL",data);
+        console.log("WITHDRAWAL", data);
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
             if (parseInt(data.amount) < config.MIN_WITHDRAW) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'Please Withdraw Minimum ' + config.MIN_WITHDRAW + ' Rs.' } });
@@ -17,7 +17,7 @@ module.exports = {
                         email: (user_data.ue) ? user_data.ue : "",
                         mobile_no: user_data.mobile_no,
                         amount: parseInt(data.amount),
-                        payment_method : (typeof data.payment_method != 'undefined' && data.payment_method != '') ? parseInt(data.payment_method) : "",
+                        payment_method: (typeof data.payment_method != 'undefined' && data.payment_method != '') ? data.payment_method : "",
                         cd: new Date(),
                         status: "pending"
                     }

@@ -437,7 +437,7 @@ module.exports = {
                     update_data['holder_name'] = data.holder_name;
                 }
                 if (typeof data.uip_id != "undefined") {
-                    update_data['uip_id'] = data.uip_id;
+                    update_data['upi_id'] = data.uip_id;
                 }
 
                 update_data["cd"] = new Date();
@@ -465,12 +465,12 @@ module.exports = {
                     data: {
                         status: true,
                         bank_status: (user_bank_details.bank_no) ? true : false,
-                        upi_status: (user_bank_details.user_bank_details.uip_id) ? true : false,
+                        upi_status: (user_bank_details.upi_id) ? true : false,
                         bank_no: user_bank_details.bank_no,
                         ifsc_code: user_bank_details.ifsc_code,
                         bank_name: user_bank_details.bank_name,
                         holder_name: user_bank_details.holder_name,
-                        uip_id: user_bank_details.uip_id
+                        upi_id: user_bank_details.upi_id
                     }
                 });
             } else {

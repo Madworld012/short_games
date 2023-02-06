@@ -1,5 +1,6 @@
 module.exports = {
     WITHDRAWAL: async function (data, client) {
+        console.log("WITHDRAWAL",data);
         if (data.uid && parseInt(data.amount) && parseInt(data.amount) > 0) {
             if (parseInt(data.amount) < config.MIN_WITHDRAW) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'Please Withdraw Minimum ' + config.MIN_WITHDRAW + ' Rs.' } });

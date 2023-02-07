@@ -322,7 +322,8 @@ module.exports = {
                 MAX_BET: config.MAX_BET,
                 MAX_BET_FLAG: config.MAX_BET_FLAG,
                 POLICY_URL: config.POLICY_URL,
-                TERM_CONDITION_URL: config.TERM_CONDITION_URL
+                TERM_CONDITION_URL: config.TERM_CONDITION_URL,
+                FIRST_DEPOSIT_REFERAL_BONUS_PER: config.FIRST_DEPOSIT_REFERAL_BONUS_PER
             };
             commonClass.response(res, app_config_data);
             // } catch (error) {

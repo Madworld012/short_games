@@ -52,6 +52,7 @@ module.exports = {
 				case "DEPOSIT_HISTORY":
 				case "WITHDRAWAL_HISTORY":
 				case "CD": // cash details
+				case "REFERRAl_DETAILS" : //referal test 
 					cashClass[en](request.data, client);
 					break;
 

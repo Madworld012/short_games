@@ -75,5 +75,25 @@ module.exports = {
         } else {
             commonClass.sendDirectToUserSocket(client, { en: "CD", data: { success: false, msg: "User Not Found" } });
         }
+    },
+    REFERRAl_DETAILS: async function (data, client) {
+        let referral_details = await db.collection('referral_details').find({}).toArray();
+        if (referral_details.length > 0) {
+            delete referral_details[0]._id;
+            commonClass.sendDirectToUserSocket(client, { en: "REFERRAl_DETAILS", data: { status: true, referral_details: referral_details[0] } });
+        } else {
+            commonClass.sendDirectToUserSocket(client, {
+                en: "REFERRAl_DETAILS", data: {
+                    status: true, referral_details: {
+                        "line1": "Download the app to share the referral code with your friends from inside the app.",
+                        "line2": "Find the Refer & Earn tab at the bottom right corner inside the app",
+                        "line3": "Share with friends on whatsapp",
+                        "line4": "Rs.100 Bonus Cash when your friend joins Lucky Rocket.",
+                        "line5": "Get 25% of your friend's first deposit, up to a maximum of Rs.500 Bonus Cash.",
+                        "line6": "Guaranteed benefits of Rs.100 Bonus Cash on signing up and upto Rs.500 on playing on LUCKY ROCKET"
+                    }
+                }
+            });
+        }
     }
 }

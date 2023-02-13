@@ -95,5 +95,32 @@ module.exports = {
                 }
             });
         }
+    },
+    DEPOSIT_DETAILS: async function (data, client) {
+        let referral_details = await db.collection('payment_details').find({}).toArray();
+        let upi_details = await db.collection('UPI_dtails').find({}).toArray();
+        if (referral_details.length > 0) {
+            delete referral_details[0]._id;
+            if(upi_details.length > 0){
+                referral_details[0].UPI_ID = upi_details[0].UPI_ID;
+                referral_details[0].QR_CODE = (config.MODE == "DEV")? "http://" + config.BASE_URL +"/" + upi_details[0].QR_CODE: "https://" + config.BASE_URL +"/"+upi_details[0].QR_CODE
+
+            }
+            commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_DETAILS", data: { status: true, referral_details: referral_details[0] } });
+        } else {
+            commonClass.sendDirectToUserSocket(client, {
+                en: "DEPOSIT_DETAILS", data: {
+                    status: true, referral_details: {
+                        "line1": "Copy The UPI ID or Scan QR code to make payment. | पेमेंट करने के लिए UPI आईडी कॉपी करें या QR कोड स्कैन करें",
+                        "line2": "Copy and Paste amount | राशि को कॉपी करें और पेमेंट करें",
+                        "line3": "Confirm payment | पेमेंट ऐप में पेमेंट को कन्फर्म करें",
+                        "line4": "Copy the UTR after making payment from payment application | पेमेंट करने के बाद UTR को Payment App से कॉपी करें",
+                        "line5": "Paste the copied UTR in 'Enter UTR' Field | कॉपी किए गए UTR को निचे Paste करें",
+                        "UPI_ID" : "payluckyrocket@sbi",
+                        "QR_CODE" : (config.MODE == "DEV")? "http://" + config.BASE_URL +"/qr_code.JPG": "https://" + config.BASE_URL +"/qr_code.JPG"
+                    }
+                }
+            });
+        }
     }
 }

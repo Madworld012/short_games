@@ -228,6 +228,7 @@ module.exports = {
                 if (cb_status.status == 1) {
                     var jid = randomstring.generate(10);
                     var extime = commonClass.AddTime(60);
+                    console.log("cb_status",cb_status);
                     db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
                     commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, is_from_pass: false, mobile_no: data.mobile_no, timer: 60 } });
                     schedule.scheduleJob(jid, new Date(extime), function () {

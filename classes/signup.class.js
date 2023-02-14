@@ -145,8 +145,10 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
-                        await db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
-                        await signupClass.SP(data, client);
+                        console.log("data update done..................");
+                       let satus = await db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } });
+                       console.log("status ",satus); 
+                       await signupClass.SP(data, client);
                     } else {
                         commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });
                     }

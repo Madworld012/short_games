@@ -136,7 +136,7 @@ module.exports = {
     //AL
     VERIFY_OTP: function (data, client) {
         if (data && data.mobile_no && data.otp) {
-            db.collection('game_users').findOne({ mobile_no: data.mobile_no }, function (err, userdata) {
+            db.collection('game_users').findOne({ mobile_no: data.mobile_no },async function (err, userdata) {
                 cl("VERIFY_LOGIN_MOBILE-----------------------------------------------", userdata)
                 if (!err && userdata) {
                     cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
@@ -144,7 +144,7 @@ module.exports = {
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
-                        db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
+                        await db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } }, function () { });
                         signupClass.SP(data, client);
                     } else {
                         commonClass.sendDirectToUserSocket(client, { en: "WOTP", data: { status: false, msg: "OTP is incorrect Or Expire" } });

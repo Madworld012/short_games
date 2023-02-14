@@ -43,7 +43,6 @@ module.exports = {
                 mobile_no: userData.mobile_no,
                 is_play: (rejoin) ? 0 : userData.is_play
             }
-            console.log("userData.isMobileVerified",userData.isMobileVerified);
             if (userData.isMobileVerified == 1) {
                 commonClass.sendDirectToUserSocket(client, { en: "SP", data: send_json });
                 return;
@@ -138,14 +137,12 @@ module.exports = {
     VERIFY_OTP: async function (data, client) {
         if (data && data.mobile_no && data.otp) {
             db.collection('game_users').findOne({ mobile_no: data.mobile_no }, async function (err, userdata) {
-                console.log("VERIFY_LOGIN_MOBILE-----------------------------------------------", userdata)
                 if (!err && userdata) {
                     cl("VERIFY_LOGIN_MOBILE------userdata.OTP", userdata.OTP);
                     cl("VERIFY_LOGIN_MOBILE------data.otp", data.otp);
                     cl("VERIFY_LOGIN_MOBILE------userdata.isexpire ", userdata.isexpire);
                     if (userdata.OTP == data.otp && userdata.isexpire == false) {
                         schedule.cancelJob(userdata.jid);
-                        console.log("data update done..................");
                        let satus = await db.collection('game_users').updateOne({ _id: MongoID(userdata._id.toString()) }, { $set: { isMobileVerified: 1, OTP: "" } });
                        console.log("status ",satus); 
                        await signupClass.SP(data, client);
@@ -228,7 +225,6 @@ module.exports = {
                 if (cb_status.status == 1) {
                     var jid = randomstring.generate(10);
                     var extime = commonClass.AddTime(60);
-                    console.log("cb_status",cb_status);
                     db.collection('game_users').updateOne({ mobile_no: data.mobile_no }, { $set: { OTP: cb_status.data.otp, jid: jid, isexpire: false } }, function (err) { })
                     commonClass.sendDirectToUserSocket(client, { en: "OPENOTP", data: { success: true, is_from_pass: false, mobile_no: data.mobile_no, timer: 60 } });
                     schedule.scheduleJob(jid, new Date(extime), function () {

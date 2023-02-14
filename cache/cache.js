@@ -1,14 +1,11 @@
 const redis = require('redis');
 const util = require('util');
 let redis_conf = {
-    port: config.REDIS_PORT,        // replace with your port
-    host: config.REDIS_HOST,        // replace with your hostanme or IP address
+    url: config.REDIS_URL        // replace with your port
 }
 
 if (config.MODE == "PROD") {
-    console.log("call cme for live");
-    redis_conf.host = config.REDIS_HOST_LIVE;
-    redis_conf["password"] = config.REDIS_PASS;
+    redis_conf["url"] = config.REDIS_LIVE_URL;
 }
 
 redis.RedisClient.prototype.delWildcard = async function (key, callback) {

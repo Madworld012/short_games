@@ -5,14 +5,11 @@ module.exports = {
         return new Promise(resolve => {
 
             let redis_conf = {
-                port: config.REDIS_PORT,        // replace with your port
-                host: config.REDIS_HOST,        // replace with your hostanme or IP address
-                db: config.REDIS_DB
+                url: config.REDIS_URL
             }
 
             if (config.MODE == "PROD") {
-                redis_conf.host = config.REDIS_HOST_LIVE;
-                redis_conf["password"] = config.REDIS_PASS;
+                redis_conf["url"] = config.REDIS_LIVE_URL;
             }
 
 
@@ -31,14 +28,11 @@ module.exports = {
     initRedisSubscriber: function () {
         return new Promise(resolve => {
             let redis_conf = {
-                port: config.REDIS_PORT,        // replace with your port
-                host: config.REDIS_HOST,        // replace with your hostanme or IP address
-                db: config.REDIS_DB
+                url: config.REDIS_URL
             }
 
             if (config.MODE == "PROD") {
-                redis_conf.host = config.REDIS_HOST_LIVE;
-                redis_conf["password"] = config.REDIS_PASS;
+                redis_conf["url"] = config.REDIS_LIVE_URL;
             }
 
 

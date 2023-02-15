@@ -254,8 +254,8 @@ module.exports = {
                                 if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
                                     signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount: parseInt(_result.TXNAMOUNT) });
                                 }
-                                
-                                if(user_data.length > 0 && user_data[0].is_deposited == 0){
+
+                                if (user_data.length > 0 && user_data[0].is_deposited == 0) {
                                     signupClass.firstDepositBonus({ uid: user_data[0]._id, amount: parseInt(_result.TXNAMOUNT) });
                                 }
                                 await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
@@ -293,6 +293,37 @@ module.exports = {
             });
         });
 
+
+        app.post("/approve_deposite", async (req, res) => {
+            // Route for verifiying payment
+            console.log("--calllback function=------", req.body);
+            let data = req.body;
+            if (typeof data._id != "undefined" && data._id) {
+                let deposit_details = await db.collection('deposit_request').find({ _id: ObjectId(data._id.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
+
+                if (deposit_details.length > 0) {
+                    deposit_details = deposit_details[0];
+                    if (deposit_details.status === "pending") {
+                        commonClass.update_cash({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount), msg: "Deposite Money From UTR", bonus: false, trans: true });
+                        let user_data = await db.collection('game_users').find({ _id: ObjectId(deposit_details.uid.toString()) }).toArray();
+                        if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
+                            signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount: parseInt(deposit_details.amount) });
+                        }
+
+                        if (user_data.length > 0 && user_data[0].is_deposited == 0) {
+                            signupClass.firstDepositBonus({ uid: user_data[0]._id, amount: parseInt(deposit_details.amount) });
+                        }
+
+                        await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
+                        commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(_result.TXNAMOUNT) } });
+                        commonClass.sendDataToUserId(deposit_details.uid.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your Money Added into your account" } })
+                    }else{
+                        console.log("no any pending request");
+                    }
+                }
+            }
+        });
+
         app.post("/selectServer", (req, res) => {
             // try {
             cl("in choose server", req.body);
@@ -316,15 +347,17 @@ module.exports = {
                 MM_T: config_data.MM_T, // maintenance time second
                 BASE_URL: config_data.BASE_URL,
                 MIN_DEPOSIT: config.MIN_DEPOSIT,
+                MAX_DEPOSIT: config.MAX_DEPOSIT,
                 MIN_WITHDRAW: config.MIN_WITHDRAW,
+                MAX_WITHDRAW: config.MAX_WITHDRAW,
                 POLICY_TEXT: config.POLICY_TEXT,
-                REJOIN_MSG : config.REJOIN_MSG,
+                REJOIN_MSG: config.REJOIN_MSG,
                 MAX_BET: config.MAX_BET,
                 MAX_BET_FLAG: config.MAX_BET_FLAG,
                 POLICY_URL: config.POLICY_URL,
                 TERM_CONDITION_URL: config.TERM_CONDITION_URL,
                 FIRST_DEPOSIT_REFERAL_BONUS_PER: config.FIRST_DEPOSIT_REFERAL_BONUS_PER,
-                COMING_SOON_PAGE : config.COMING_SOON_PAGE
+                COMING_SOON_PAGE: config.COMING_SOON_PAGE
             };
             commonClass.response(res, app_config_data);
             // } catch (error) {

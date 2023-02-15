@@ -6,6 +6,12 @@ module.exports = {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'Please Withdraw Minimum ' + config.MIN_WITHDRAW + ' Rs.' } });
                 return;
             }
+
+            if (parseInt(data.amount) > config.MAX_WITHDRAW) {
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'You can Withdraw Maximum ' + config.MAX_WITHDRAW + ' Rs.' } });
+                return;
+            }
+
             let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
             if (user_data && user_data.length > 0) {
                 user_data = user_data[0];
@@ -35,9 +41,53 @@ module.exports = {
             commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL", data: { status: false, cash: -parseInt(data.amount), msg: "Please Send Proper Data" } });
         }
     },
+    DEPOSIT: async function (data, client) {
+        console.log("DEPOSIT", data);
+
+        if (typeof data.uid == 'undefined' || typeof data.amount == 'undefined' || typeof data.UTR_CODE == 'undefined') {
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'Please send Proper Data' } });
+            return;
+        }
+
+        if (data.uid && parseInt(data.amount) && data.UTR_CODE && parseInt(data.amount) > 0) {
+            if (parseInt(data.amount) < config.MIN_DEPOSIT) {
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'Please Deposit Minimum ' + config.MIN_WITHDRAW + ' Rs.' } });
+                return;
+            }
+
+            if (parseInt(data.amount) > config.MAX_DEPOSIT) {
+                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'You can Deposit Maximum ' + config.MAX_WITHDRAW + ' Rs.' } });
+                return;
+            }
+
+            let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
+            if (user_data && user_data.length > 0) {
+                user_data = user_data[0];
+
+                let deposit_data = {
+                    uid: user_data._id,
+                    name: (user_data.un) ? user_data.un : "",
+                    email: (user_data.ue) ? user_data.ue : "",
+                    mobile_no: user_data.mobile_no,
+                    amount: parseInt(data.amount),
+                    UTR_CODE : data.UTR_CODE,
+                    cd: new Date(),
+                    status: "pending"
+                }
+                await db.collection('deposit_request').insertOne(deposit_data);
+                // commonClass.update_cash({ uid: user_data._id.toString(), cash: -parseInt(data.amount), msg: "Withdrawal Request", bonus: false, trans: true });
+                // commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data.un) ? user_data.un : "Lucky", action: "Withdrawal", amount: parseInt(data.amount) } });
+                commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT", data: { status: true, cash: -parseInt(data.amount), msg: "Deposit Request Added, Admin Will Approve soon !" } });
+            } else {
+                commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT", data: { status: false, cash: -parseInt(data.amount), msg: "User Not Found" } });
+            }
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT", data: { status: false, cash: -parseInt(data.amount), msg: "Please Send Proper Data" } });
+        }
+    },
     DEPOSIT_HISTORY: async function (data, client) {
         if (data.uid) {
-            let deposit_history = await db.collection('payment_transection').find({ UID: ObjectId(data.uid.toString()) }, { UID: 1, TXN_AMOUNT: 1, MOBILE_NO: 1, STATUS: 1, CD: 1 }).sort({ cd: -1 }).toArray();
+            let deposit_history = await db.collection('deposit_request').find({ UID: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
             if (deposit_history && deposit_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_HISTORY", data: { status: true, deposit_history: deposit_history } });
             } else {
@@ -47,8 +97,7 @@ module.exports = {
     },
     WITHDRAWAL_HISTORY: async function (data, client) {
         if (data.uid) {
-            let withdraw_history = await db.collection('withdrawal_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
-
+            let withdraw_history = await db.collection('withdrawal_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1, payment_method: 1 }).sort({ cd: -1 }).toArray();
             if (withdraw_history && withdraw_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });
             } else {
@@ -101,10 +150,9 @@ module.exports = {
         let upi_details = await db.collection('UPI_dtails').find({}).toArray();
         if (referral_details.length > 0) {
             delete referral_details[0]._id;
-            if(upi_details.length > 0){
+            if (upi_details.length > 0) {
                 referral_details[0].UPI_ID = upi_details[0].UPI_ID;
-                referral_details[0].QR_CODE = (config.MODE == "DEV")? "http://" + config.BASE_URL +"/" + upi_details[0].QR_CODE: "https://" + config.BASE_URL +"/"+upi_details[0].QR_CODE
-
+                referral_details[0].QR_CODE = (config.MODE == "DEV") ? "http://" + config.BASE_URL + "/" + upi_details[0].QR_CODE : "https://" + config.BASE_URL + "/" + upi_details[0].QR_CODE
             }
             commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_DETAILS", data: { status: true, referral_details: referral_details[0] } });
         } else {
@@ -116,8 +164,8 @@ module.exports = {
                         "line3": "Confirm payment | पेमेंट ऐप में पेमेंट को कन्फर्म करें",
                         "line4": "Copy the UTR after making payment from payment application | पेमेंट करने के बाद UTR को Payment App से कॉपी करें",
                         "line5": "Paste the copied UTR in 'Enter UTR' Field | कॉपी किए गए UTR को निचे Paste करें",
-                        "UPI_ID" : "payluckyrocket@sbi",
-                        "QR_CODE" : (config.MODE == "DEV")? "http://" + config.BASE_URL +"/qr_code.JPG": "https://" + config.BASE_URL +"/qr_code.JPG"
+                        "UPI_ID": "payluckyrocket@sbi",
+                        "QR_CODE": (config.MODE == "DEV") ? "http://" + config.BASE_URL + "/qr_code.JPG" : "https://" + config.BASE_URL + "/qr_code.JPG"
                     }
                 }
             });

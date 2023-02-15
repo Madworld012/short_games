@@ -153,7 +153,7 @@ module.exports = {
             if (upi_details.length > 0) {
                 referral_details[0].UPI_ID = upi_details[0].UPI_ID;
                 referral_details[0].UPI_NAME = upi_details[0].UPI_NAME;
-                referral_details[0].QR_CODE = (config.MODE == "DEVV") ? "http://" + config.BASE_URL + "/" + upi_details[0].QR_CODE : "https://" + config.BASE_URL + "/" + upi_details[0].QR_CODE
+                referral_details[0].QR_CODE = (config.MODE == "PRODd") ? "https://" + config.BASE_URL + "/" + upi_details[0].QR_CODE : "http://" + config.BASE_URL + "/" + upi_details[0].QR_CODE
             }
             commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_DETAILS", data: { status: true, referral_details: referral_details[0] } });
         } else {

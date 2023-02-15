@@ -152,6 +152,7 @@ module.exports = {
             delete referral_details[0]._id;
             if (upi_details.length > 0) {
                 referral_details[0].UPI_ID = upi_details[0].UPI_ID;
+                referral_details[0].UPI_NAME = upi_details[0].UPI_NAME;
                 referral_details[0].QR_CODE = (config.MODE == "DEV") ? "http://" + config.BASE_URL + "/" + upi_details[0].QR_CODE : "https://" + config.BASE_URL + "/" + upi_details[0].QR_CODE
             }
             commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_DETAILS", data: { status: true, referral_details: referral_details[0] } });
@@ -165,7 +166,8 @@ module.exports = {
                         "line4": "Copy the UTR after making payment from payment application | पेमेंट करने के बाद UTR को Payment App से कॉपी करें",
                         "line5": "Paste the copied UTR in 'Enter UTR' Field | कॉपी किए गए UTR को निचे Paste करें",
                         "UPI_ID": "payluckyrocket@sbi",
-                        "QR_CODE": (config.MODE == "DEV") ? "http://" + config.BASE_URL + "/qr_code.JPG" : "https://" + config.BASE_URL + "/qr_code.JPG"
+                        "QR_CODE": (config.MODE == "DEV") ? "http://" + config.BASE_URL + "/qr_code.JPG" : "https://" + config.BASE_URL + "/qr_code.JPG",
+                        "UPI_NAME" : "LuckyRocket"
                     }
                 }
             });

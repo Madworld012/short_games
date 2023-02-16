@@ -87,7 +87,7 @@ module.exports = {
     },
     DEPOSIT_HISTORY: async function (data, client) {
         if (data.uid) {
-            let deposit_history = await db.collection('deposit_request').find({ UID: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
+            let deposit_history = await db.collection('deposit_request').find({ uid: ObjectId(data.uid.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
             if (deposit_history && deposit_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_HISTORY", data: { status: true, deposit_history: deposit_history } });
             } else {

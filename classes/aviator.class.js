@@ -88,6 +88,8 @@ module.exports = {
                             let table_o_history = tableData.history.reverse();
                             tableData.history = table_o_history.concat(tableData.f_history.reverse());
                         }
+
+                        tableData.history.reverse();
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
                     } else {
@@ -284,8 +286,7 @@ module.exports = {
         if (config.RANGE_MAX_COUNT && config.RANGE_MAX_COUNT > 10) {
             rand_value = _.random(1, config.RANGE_MAX_COUNT);
         }
-
-        let range = await db.collection('range').find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
+        let range = await db.collection(config.RANGE_TABLE).find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
         if (range && range.length > 0) {
             range = range[0];
             const str = (Math.random() * (range.max_value - range.min_value) + range.min_value).toFixed(2);

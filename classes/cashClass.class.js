@@ -7,7 +7,7 @@ module.exports = {
                 return;
             }
 
-            if (parseInt(data.amount) > config.MAX_WITHDRAW) {
+            if (parseInt(data.amount) >= config.MAX_WITHDRAW) {
                 commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: 'You can Withdraw Maximum ' + config.MAX_WITHDRAW + ' Rs.' } });
                 return;
             }

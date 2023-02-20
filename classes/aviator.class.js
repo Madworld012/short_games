@@ -87,7 +87,7 @@ module.exports = {
                         if (tableData.history.length <= 15) {
                             let table_o_history = tableData.history.reverse();
                             tableData.history = table_o_history.concat(tableData.f_history.reverse());
-                        }else{
+                        } else {
                             tableData.history.reverse();
                         }
 
@@ -139,7 +139,7 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(tblid.toString()) }).toArray();
 
             if (table_data && table_data.length > 0) {
-               cl("config.TABLE_DELETE",config.TABLE_DELETE);
+                cl("config.TABLE_DELETE", config.TABLE_DELETE);
                 if (table_data[0].count <= 0 && config.TABLE_DELETE) {
                     cl("game over no more player available.")
                     await db.collection('daily_table_history').insertOne({ cd: new Date(), history: table_data[0].history });
@@ -221,7 +221,21 @@ module.exports = {
 
                 // await sleep((x > 20) ? 5 : 110 / x);
                 await sleep((x > 20) ? 5 : 150 / x + 0.75);
-                x = parseFloat((x + 0.01).toFixed(2));
+
+
+                let ix = 0.01;
+
+                if(x > 10 && x <= 20){
+                    ix = (cut_out_x_value < x + 0.05) ? 0.01 : 0.05;
+                }else if(x > 20 && x <= 30){
+                    ix = (cut_out_x_value < x + 0.10) ? 0.01 : 0.10;
+                }else if(x > 30 && x <= 40){
+                    ix = (cut_out_x_value < x + 0.15) ? 0.01 : 0.15;
+                }else if(x > 40){
+                    ix = (cut_out_x_value < x + 0.20) ? 0.01 : 0.20;
+                }
+
+                x = parseFloat((x + ix).toFixed(2));
                 aviatorClass.autoCutUser(tblid.toString(), x);
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
 
@@ -595,7 +609,7 @@ module.exports = {
                             await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
                             try {
                                 client.leave(tableDate[0]._id.toString());
-                            } catch (error) {}
+                            } catch (error) { }
                             commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
                         }
                         await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
@@ -610,7 +624,7 @@ module.exports = {
                 cl("socket not defined");
             }
         } catch (er) {
-            console.log("error found in LG",er);
+            console.log("error found in LG", er);
         }
 
     },

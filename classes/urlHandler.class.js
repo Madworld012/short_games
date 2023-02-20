@@ -298,9 +298,10 @@ module.exports = {
             // Route for verifiying payment
             console.log("--calllback function=------", req.body);
             let data = req.body;
+            console.log("data", data._id);
             if (typeof data._id != "undefined" && data._id) {
                 let deposit_details = await db.collection('deposit_request').find({ _id: ObjectId(data._id.toString()) }, { uid: 1, amount: 1, mobile_no: 1, status: 1, cd: 1 }).sort({ cd: -1 }).toArray();
-
+                console.log("deposit_details", deposit_details);
                 if (deposit_details.length > 0) {
                     deposit_details = deposit_details[0];
                     if (deposit_details.status === "pending") {
@@ -315,9 +316,10 @@ module.exports = {
                         }
 
                         await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
-                        commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(_result.TXNAMOUNT) } });
+                        commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(deposit_details.amount) } });
                         commonClass.sendDataToUserId(deposit_details.uid.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your Money Added into your account" } })
-                    }else{
+                        res.send({ msg: "Done", flg: true })
+                    } else {
                         console.log("no any pending request");
                     }
                 }

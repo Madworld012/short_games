@@ -316,6 +316,8 @@ module.exports = {
                         }
 
                         await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
+                        await db.collection('deposit_request').updateOne({ _id: ObjectId(deposit_details._id.toString()) }, { $set: { status: "Approve" } }, function () { })
+                        
                         commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(deposit_details.amount) } });
                         commonClass.sendDataToUserId(deposit_details.uid.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your Money Added into your account" } })
                         res.send({ msg: "Done", flg: true })

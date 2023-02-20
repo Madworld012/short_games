@@ -226,13 +226,13 @@ module.exports = {
                 let ix = 0.01;
 
                 if(x > 30 && x <= 50){
-                    ix = (cut_out_x_value < x + 0.04) ? 0.01 : 0.05;
+                    ix = (cut_out_x_value < x + 0.02) ? 0.01 : 0.02;
                 }else if(x > 50 && x <= 100){
-                    ix = (cut_out_x_value < x + 0.08) ? 0.01 : 0.10;
+                    ix = (cut_out_x_value < x + 0.03) ? 0.01 : 0.03;
                 }else if(x > 100 && x <= 500){
-                    ix = (cut_out_x_value < x + 0.12) ? 0.01 : 0.15;
+                    ix = (cut_out_x_value < x + 0.04) ? 0.01 : 0.04;
                 }else if(x > 500){
-                    ix = (cut_out_x_value < x + 0.19) ? 0.01 : 0.20;
+                    ix = (cut_out_x_value < x + 0.07) ? 0.01 : 0.07;
                 }
 
                 x = parseFloat((x + ix).toFixed(2));

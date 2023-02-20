@@ -225,14 +225,14 @@ module.exports = {
 
                 let ix = 0.01;
 
-                if(x > 10 && x <= 20){
-                    ix = (cut_out_x_value < x + 0.05) ? 0.01 : 0.05;
-                }else if(x > 20 && x <= 30){
-                    ix = (cut_out_x_value < x + 0.10) ? 0.01 : 0.10;
-                }else if(x > 30 && x <= 40){
-                    ix = (cut_out_x_value < x + 0.15) ? 0.01 : 0.15;
-                }else if(x > 40){
-                    ix = (cut_out_x_value < x + 0.20) ? 0.01 : 0.20;
+                if(x > 30 && x <= 50){
+                    ix = (cut_out_x_value < x + 0.04) ? 0.01 : 0.05;
+                }else if(x > 50 && x <= 100){
+                    ix = (cut_out_x_value < x + 0.08) ? 0.01 : 0.10;
+                }else if(x > 100 && x <= 500){
+                    ix = (cut_out_x_value < x + 0.12) ? 0.01 : 0.15;
+                }else if(x > 500){
+                    ix = (cut_out_x_value < x + 0.19) ? 0.01 : 0.20;
                 }
 
                 x = parseFloat((x + ix).toFixed(2));

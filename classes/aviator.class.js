@@ -311,6 +311,7 @@ module.exports = {
         }
     },
     PLACE_BET: async function (data, client) {
+        console.log("place bet come ",data);
         if (data.uid && data.tblid) {
 
             if (typeof data.bet1.bet_1 == "undefined" || parseFloat(data.bet1.bet_1) < 0) {

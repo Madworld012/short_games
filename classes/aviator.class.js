@@ -10,8 +10,9 @@ const autoCut = new Queue('auto-cut', opts);
 
 autoCut.process(async (job, done) => {
     try {
+        console.log("call 1");
         const { reply } = job.data;
-
+        console.log("call 2");
         for (let i = 0; i < reply.length; i++) {
             const key = reply[i];
             let user_data = key.split("_");
@@ -23,7 +24,7 @@ autoCut.process(async (job, done) => {
             // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
             await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
         }
-
+        console.log("call 3");
         done();
     } catch (error) {
         Promise.reject(error);
@@ -235,7 +236,7 @@ module.exports = {
 
                     x = parseFloat((x + ix).toFixed(2));
                     console.log("x", x);
-                    aviatorClass.autoCutUser(tblid.toString(), x);
+                    await aviatorClass.autoCutUser(tblid.toString(), x);
                     commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
 
                     await cache.set(tblid.toString(), JSON.stringify({

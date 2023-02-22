@@ -236,7 +236,7 @@ module.exports = {
                     }
 
                     x = parseFloat((x + ix).toFixed(2));
-                    await aviatorClass.autoCutUser(tblid.toString(), x);
+                    aviatorClass.autoCutUser(tblid.toString(), x);
                     commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
 
                     await cache.set(tblid.toString(), JSON.stringify({

@@ -7,29 +7,33 @@ const autoCut = new Queue('auto-cut', opts);
 
 // let tblid = "63bd0c4318fbe31071588f78";
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
-
-autoCut.process(async (job, done) => {
-    try {
-        console.log("call 1");
-        const { reply } = job.data;
-        console.log("call 2");
-        for (let i = 0; i < reply.length; i++) {
-            const key = reply[i];
-            let user_data = key.split("_");
-            let tblid = user_data[1];
-            let uid = user_data[2];
-            let x = user_data[3];
-            let bet_data = user_data[4];
-
-            // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
-            await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+try {
+    autoCut.process(async (job, done) => {
+        try {
+            console.log("call 1");
+            const { reply } = job.data;
+            console.log("call 2");
+            for (let i = 0; i < reply.length; i++) {
+                const key = reply[i];
+                let user_data = key.split("_");
+                let tblid = user_data[1];
+                let uid = user_data[2];
+                let x = user_data[3];
+                let bet_data = user_data[4];
+    
+                // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+                await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+            }
+            console.log("call 3");
+            done();
+        } catch (error) {
+            Promise.reject(error);
         }
-        console.log("call 3");
-        done();
-    } catch (error) {
-        Promise.reject(error);
-    }
-});
+    });
+} catch (error) {
+    console.log("error",error);
+}
+
 
 module.exports = {
     /**

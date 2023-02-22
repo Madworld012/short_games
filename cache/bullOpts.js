@@ -1,10 +1,10 @@
 const Redis = require('ioredis');
 
-const client = new Redis(config.REDIS_URL, {
+const client = new Redis(config.REDIS_LIVE_URL, {
     maxRetriesPerRequest: null,
     enableReadyCheck: false
 });
-const subscriber = new Redis(config.REDIS_URL, {
+const subscriber = new Redis(config.REDIS_LIVE_URL, {
     maxRetriesPerRequest: null,
     enableReadyCheck: false
 });
@@ -17,7 +17,7 @@ const opts = {
             case 'subscriber':
                 return subscriber;
             default:
-                return new Redis(config.REDIS_URL, {
+                return new Redis(config.REDIS_LIVE_URL, {
                     maxRetriesPerRequest: null,
                     enableReadyCheck: false
                 });

@@ -209,66 +209,66 @@ module.exports = {
         }
     },
     send_fly_event: async function (tblid) {
+        try {
+            let cut_out_x_value = await aviatorClass.getRandomFloat();
+            // let cut_out_x_value = 1.01;
 
-        let cut_out_x_value = await aviatorClass.getRandomFloat();
-        // let cut_out_x_value = 1.01;
-
-        console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_value);
-        //start x value
-        let x = 0.99;
-        let re_fly = 0;
-        async function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-        const call = async (cut_out_x_value) => {
-
-            if (x == cut_out_x_value) {
-                cache.del(tblid.toString());
-                cache.delWildcard("auto_" + tblid.toString() + "_*", function () { });
-
-                //need to add indexing
-                let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
-                // let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
-                if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && config.FAKE_FLAY_ON_OFF_FLG) {
-                    let next_cut_value = parseFloat((x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE)).toFixed(2));
-                    console.log("-----------------------------------------start again-------------------------------------------------------", next_cut_value);
-                    call(next_cut_value);
-                    re_fly = 1;
-                    return;
-                } else {
-                    await db.collection('aviator_table').updateOne({ _id: ObjectId(tblid.toString()) }, { $set: { bet_flg: false, cash_out_flg: false }, $push: { history: x } }, function () { });
-                    aviatorClass.cut_plane({ tblid: tblid, x: x });
-                    return false;
-                }
-            } else {
-
-                // await sleep((x > 20) ? 5 : 110 / x);
-                await sleep((x > 20) ? 5 : 150 / x + 0.75);
-
-
-                let ix = 0.01;
-
-                if (x > 50 && x <= 100) {
-                    ix = (cut_out_x_value < x + 0.02) ? 0.01 : 0.02;
-                } else if (x > 100 && x <= 200) {
-                    ix = (cut_out_x_value < x + 0.03) ? 0.01 : 0.03;
-                } else if (x > 200) {
-                    ix = (cut_out_x_value < x + 0.07) ? 0.01 : 0.07;
-                }
-
-                x = parseFloat((x + ix).toFixed(2));
-                aviatorClass.autoCutUser(tblid.toString(), x);
-                aviatorClass.fakeBetNoti(tblid.toString(), x);
-                commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
-
-                await cache.set(tblid.toString(), JSON.stringify({
-                    x: x
-                }));
-                // console.log("x", x);
-                call(cut_out_x_value);
+            console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_v                                                                                  alue);
+            //start x value
+            let x = 0.99;
+            let re_fly = 0;
+            async function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
+            const call = async (cut_out_x_value) => {
+
+                if (x == cut_out_x_value) {
+                    cache.del(tblid.toString());
+                    cache.delWildcard("auto_" + tblid.toString() + "_*", function () { });
+
+                    //need to add indexing
+                    let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $                                                                                  gt: 0 } }] }).toArray();
+                    // let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
+                    if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && config.FAKE_FLAY_ON_OFF_FLG) {
+                        let next_cut_value = parseFloat((x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE)).toFixed(2));
+                        console.log("-----------------------------------------start again-------------------------------------------------------", next_cut                                                                                  _value);
+                        call(next_cut_value);
+                        re_fly = 1;
+                        return;
+                    } else {
+                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tblid.toString()) }, { $set: { bet_flg: false, cash_out_flg: false }                                                                                  , $push: { history: x } }, function () { });
+                        aviatorClass.cut_plane({ tblid: tblid, x: x });
+                        return false;
+                    }
+                } else {
+
+                    // await sleep((x > 20) ? 5 : 110 / x);
+                    await sleep((x > 20) ? 5 : 150 / x + 0.75);
+
+
+                    let ix = 0.01;
+
+                    if (x > 50 && x <= 100) {
+                        ix = (cut_out_x_value < x + 0.02) ? 0.01 : 0.02;
+                    } else if (x > 100 && x <= 200) {
+                        ix = (cut_out_x_value < x + 0.03) ? 0.01 : 0.03;
+                    } else if (x > 200) {
+                        ix = (cut_out_x_value < x + 0.07) ? 0.01 : 0.07;
+                    }
+
+                    x = parseFloat((x + ix).toFixed(2));
+                    aviatorClass.autoCutUser(tblid.toString(), x);
+                    commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
+
+                    await cache.set(tblid.toString(), JSON.stringify({
+                        x: x
+                    }));
+                    call(cut_out_x_value);
+                }
+            }
+            return await call(cut_out_x_value);
+        } catch (error) {
         }
-        return await call(cut_out_x_value);
     },
     fakeBetNoti: async function(tblid,x) {
         

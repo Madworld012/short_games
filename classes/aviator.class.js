@@ -24,7 +24,6 @@ autoCut.process(async (job, done) => {
             // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
             await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
         }
-
         done();
     } catch (error) {
         Promise.reject(error);
@@ -236,7 +235,7 @@ module.exports = {
                         re_fly = 1;
                         return;
                     } else {
-                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tblid.toString()) }, { $set: { bet_flg: false, cash_out_flg: false }                                                                                  , $push: { history: x } }, function () { });
+                        await db.collection('aviator_table').updateOne({ _id: ObjectId(tblid.toString()) }, { $set: { bet_flg: false, cash_out_flg: false }, $push: { history: x } }, function () { });
                         aviatorClass.cut_plane({ tblid: tblid, x: x });
                         return false;
                     }

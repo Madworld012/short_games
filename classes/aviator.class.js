@@ -10,24 +10,21 @@ let MAIN_BET_JSON = {};
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
 
 autoCut.process(async (job, done) => {
-    try {
-        const { reply } = job.data;
+    const { reply } = job.data;
 
-        for (let i = 0; i < reply.length; i++) {
-            const key = reply[i];
-            let user_data = key.split("_");
-            let tblid = user_data[1];
-            let uid = user_data[2];
-            let x = user_data[3];
-            let bet_data = user_data[4];
+    for (let i = 0; i < reply.length; i++) {
+        const key = reply[i];
+        let user_data = key.split("_");
+        let tblid = user_data[1];
+        let uid = user_data[2];
+        let x = user_data[3];
+        let bet_data = user_data[4];
 
-            // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
-            await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
-        }
-        done();
-    } catch (error) {
-        Promise.reject(error);
+        // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+        await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
     }
+    done();
+
 });
 
 module.exports = {
@@ -169,17 +166,17 @@ module.exports = {
             }
         }
     },
-    ganrateBetCashNoti: function(tblid){
-        if(tblid){
+    ganrateBetCashNoti: function (tblid) {
+        if (tblid) {
             console.log("in new function-------------ganrateBetCashNoti----------------------");
             let bet_data = MAIN_BET_JSON[tblid];
-            if(bet_data){
+            if (bet_data) {
                 delete MAIN_BET_JSON[tblid];
                 MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
                 { name: "b", uid: "12112", xx: 1.30 },
                 { name: "c", uid: "12113", xx: 1.45 }]
                 console.log(MAIN_BET_JSON);
-            }else{
+            } else {
                 MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
                 { name: "b", uid: "12112", xx: 1.30 },
                 { name: "c", uid: "12113", xx: 1.45 }]
@@ -269,8 +266,8 @@ module.exports = {
         } catch (error) {
         }
     },
-    fakeBetNoti: async function(tblid,x) {
-        
+    fakeBetNoti: async function (tblid, x) {
+
     },
     autoCutUser: async function (tbid, x) {
         //key - auto_tbld_uid_xvalue_betbutton

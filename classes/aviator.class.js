@@ -213,7 +213,7 @@ module.exports = {
             let cut_out_x_value = await aviatorClass.getRandomFloat();
             // let cut_out_x_value = 1.01;
 
-            console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_v                                                                                  alue);
+            console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_value);
             //start x value
             let x = 0.99;
             let re_fly = 0;
@@ -227,11 +227,11 @@ module.exports = {
                     cache.delWildcard("auto_" + tblid.toString() + "_*", function () { });
 
                     //need to add indexing
-                    let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $                                                                                  gt: 0 } }] }).toArray();
+                    let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
                     // let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
                     if (no_bet_available_data && no_bet_available_data.length == 0 && re_fly == 0 && config.FAKE_FLAY_ON_OFF_FLG) {
                         let next_cut_value = parseFloat((x * _.sample(config.FAKE_PLANE_X_MULTIPLY_RANGE)).toFixed(2));
-                        console.log("-----------------------------------------start again-------------------------------------------------------", next_cut                                                                                  _value);
+                        console.log("-----------------------------------------start again-------------------------------------------------------", next_cut_value);
                         call(next_cut_value);
                         re_fly = 1;
                         return;

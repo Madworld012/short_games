@@ -4,6 +4,7 @@ const names = require('../name');
 const Queue = require('bull');
 const opts = require('../cache/bullOpts');
 const autoCut = new Queue('auto-cut', opts);
+let MAIN_BET_JSON = {};
 
 // let tblid = "63bd0c4318fbe31071588f78";
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
@@ -157,6 +158,8 @@ module.exports = {
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
 
+                // aviatorClass.ganrateBetCashNoti(tblid.toString());
+
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
                     await aviatorClass.fly_plane(table_data[0]._id.toString());
@@ -165,6 +168,26 @@ module.exports = {
                 cl("game already started");
                 return false;
             }
+        }
+    },
+    ganrateBetCashNoti: function(tblid){
+        if(tblid){
+            console.log("in new function-------------ganrateBetCashNoti----------------------");
+            let bet_data = MAIN_BET_JSON[tblid];
+            if(bet_data){
+                delete MAIN_BET_JSON[tblid];
+                MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
+                { name: "b", uid: "12112", xx: 1.30 },
+                { name: "c", uid: "12113", xx: 1.45 }]
+                console.log(MAIN_BET_JSON);
+            }else{
+                MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
+                { name: "b", uid: "12112", xx: 1.30 },
+                { name: "c", uid: "12113", xx: 1.45 }]
+                console.log(MAIN_BET_JSON);
+            }
+
+
         }
     },
     fly_plane: async function (tblid) {
@@ -235,6 +258,7 @@ module.exports = {
 
                 x = parseFloat((x + ix).toFixed(2));
                 aviatorClass.autoCutUser(tblid.toString(), x);
+                aviatorClass.fakeBetNoti(tblid.toString(), x);
                 commonClass.sendToRoom(tblid.toString(), { en: "FLAY", data: { x: x } });
 
                 await cache.set(tblid.toString(), JSON.stringify({
@@ -245,6 +269,9 @@ module.exports = {
             }
         }
         return await call(cut_out_x_value);
+    },
+    fakeBetNoti: async function(tblid,x) {
+        
     },
     autoCutUser: async function (tbid, x) {
         //key - auto_tbld_uid_xvalue_betbutton

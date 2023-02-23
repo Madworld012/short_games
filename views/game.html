@@ -137,7 +137,7 @@
 
             <div class="bid-full">
                 <div class="bid-content">
-                    <input type="number" step=any style="height: 28px;width: 172px;" id="bet_1" value="1" /></br></br>
+                    <input type="number" step=any style="height: 28px;width: 172px;" id="bet_1" value=10 /></br></br>
                     <input type="button" style="height:65px;width:287px;font-size: x-large;" id="btn_bet_1"
                         onclick="bet(1)" value="BET"></button></br>
                     <input type="button" style="height:65px;width:287px;font-size: x-large;" id="cashout_1"
@@ -148,7 +148,7 @@
 
                 </div>
                 <div class="bid-content">
-                    <input type="number" step=any style="height: 28px;width: 172px;" id="bet_2" value="1" /></br></br>
+                    <input type="number" step=any style="height: 28px;width: 172px;" id="bet_2" value=1 /></br></br>
                     <input type="button" style="height:65px;width:287px;font-size: x-large;" id="btn_bet_2"
                         onclick="bet(2)" value="BET"></button></br>
                     <input type="button" style="height:65px;width:287px;font-size: x-large;" id="cashout_2"
@@ -162,17 +162,31 @@
             <!-- <input style="height:50px;width:200px" type="button" id="" value="ns test"
                 onclick="nstest()"> -->
 
-            <!-- <input style="height:50px;width:200px" type="button" id="" value="REGISTRATION" onclick="SIGNUP()">
-
+            <input style="height:50px;width:200px" type="button" id="" value="REGISTRATION" onclick="SIGNUP()">
+            <!-- 
             <input style="height:50px;width:200px" type="button" id="" value="LOGIN" onclick="LOGIN()">
 
             <input style="height:50px;width:200px" type="button" id="" value="VERIFYOTP" onclick="VERIFYOTP()">
 
             <input style="height:50px;width:200px" type="button" id="" value="RESEND" onclick="RESENDOTP()"> -->
 
-            <input style="height:50px;width:200px" type="button" id="" value="FORGOT_PASS" onclick="FORGOT_PASS()">
-            <input style="height:50px;width:200px" type="button" id="" value="VERIFY_CAHNGE_PASS_OTP" onclick="VERIFY_CAHNGE_PASS_OTP()">
-            <input style="height:50px;width:200px" type="button" id="" value="CHANGE_PASSWORD" onclick="CHANGE_PASSWORD()">
+            <!-- <input style="height:50px;width:200px" type="button" id="" value="GET_CASH_LIST" onclick="GET_CASH_LIST()"> -->
+
+            <input style="height:50px;width:200px" type="button" id="" value="WITHDRAWAL" onclick="WITHDRAWAL()">
+            <input style="height:50px;width:200px" type="button" id="" value="Add payment details" onclick="APD()">
+            <input style="height:50px;width:200px" type="button" id="" value="get payment details" onclick="GPD()">
+            <input style="height:50px;width:200px" type="button" id="" value="SUPPORT" onclick="SUPPORT()">
+            <input style="height:50px;width:200px" type="button" id="" value="REFERRAl_DETAILS" onclick="REFERRAl_DETAILS()">
+            <input style="height:50px;width:200px" type="button" id="" value="DEPOSIT_DETAILS" onclick="DEPOSIT_DETAILS()">
+
+
+
+
+            <!-- <input style="height:50px;width:200px" type="button" id="" value="FORGOT_PASS" onclick="FORGOT_PASS()">
+            <input style="height:50px;width:200px" type="button" id="" value="VERIFY_CAHNGE_PASS_OTP"
+                onclick="VERIFY_CAHNGE_PASS_OTP()">
+            <input style="height:50px;width:200px" type="button" id="" value="CHANGE_PASSWORD"
+                onclick="CHANGE_PASSWORD()"> -->
 
 
 
@@ -392,29 +406,62 @@
 
         //change password
         function FORGOT_PASS() {
-            socket.emit('req', { en: "FORGOT_PASS", data: { mobile_no: "9999999999" ,uid:"63ad84503290c507323c5982"} })
+            socket.emit('req', { en: "FORGOT_PASS", data: { mobile_no: "9999999999", uid: "63ad84503290c507323c5982" } })
         }
 
         //change password
         function VERIFY_CAHNGE_PASS_OTP() {
-            socket.emit('req', { en: "VERIFY_CAHNGE_PASS_OTP", data: { mobile_no: "9999999999", new_pass: "Nachi2203#1111", otp:"999999" } })
+            socket.emit('req', { en: "VERIFY_CAHNGE_PASS_OTP", data: { mobile_no: "9999999999", new_pass: "Nachi2203#1111", otp: "999999" } })
         }
+
+
 
         //change password
         function CHANGE_PASSWORD() {
-            socket.emit('req', { en: "CHANGE_PASSWORD", data: { mobile_no: "9999999999", new_password : "Nachi2203#1", current_password:"Nachi2203#1111" } })
+            socket.emit('req', { en: "CHANGE_PASSWORD", data: { mobile_no: "9999999999", new_password: "Nachi2203#1", current_password: "Nachi2203#1111" } })
         }
 
 
 
         //login 
         function SIGNUP() {
-            socket.emit('req', { en: "REGISTRATION", data: { ult: "phone", mobile_no: "9999999999", password: "Nachi2203#", name: "zz", email: "zz@game.com" } })
+            socket.emit('req', { en: "REGISTRATION", data: { ult: "phone", mobile_no: "9999999999", password: "9999", name: "zz", email: "zz@game.com", reference_user_id: "1234567" } })
         }
 
         //login 
         function VERIFYOTP() {
             socket.emit('req', { en: "VERIFY_OTP", data: { ult: "phone", mobile_no: "9999999999", otp: 999999, name: "zz", email: "zz@game.com" } })
+        }
+
+        // //login 
+        // function GET_CASH_LIST() {
+        //     socket.emit('req', { en: "DWN_LIST", data: {  } })
+        // }
+
+
+        //Add payment details 
+        function APD() {
+            socket.emit('req', { en: "AUPD", data: { uid: "63d396317a37a18c5f34d90d", bank_no: "1111111111", ifsc_code: "Nachi2203#1", bank_name: "icici", holder_name: "Viju", uip_id: "viju@okicici" } })
+        }
+
+        //Add payment details 
+        function GPD() {
+            socket.emit('req', { en: "GPD", data: { uid: "63d396317a37a18c5f34d90d" } })
+        }
+
+        //Add payment details 
+        function SUPPORT() {
+            socket.emit('req', { en: "SUPPORT", data: { uid: "63d396317a37a18c5f34d90d", msg: "Make Money" } })
+        }
+
+        //Add payment details 
+        function REFERRAl_DETAILS() {
+            socket.emit('req', { en: "REFERRAl_DETAILS", data: { uid: "63d396317a37a18c5f34d90d" } })
+        }
+
+         //Add payment details 
+         function DEPOSIT_DETAILS() {
+            socket.emit('req', { en: "DEPOSIT_DETAILS", data: { uid: "63d396317a37a18c5f34d90d" } })
         }
 
         //login 
@@ -429,7 +476,9 @@
             socket.emit('req', { en: "RESEND", data: { ult: "phone", mobile_no: "9999999999" } })
         }
 
-
+        function WITHDRAWAL() {
+            socket.emit('req', { en: "WITHDRAWAL", data: { uid: "63d396317a37a18c5f34d90d", amount: 100 } })
+        }
 
 
 
@@ -476,21 +525,42 @@
                 console.log("tblid", tblid);
                 if (bet_flg == "true") {
                     console.log("you can bet");
+                    // socket.emit('req', {
+                    //     en: "PLACE_BET", data:
+                    //     {
+                    //         uid: uid,
+                    //         tblid: tblid,
+
+                    //         auto_1: 0,
+                    //         auto_1_x: 0,
+                    //         bet_1: parseFloat(bet_1),
+
+                    //         bet: data,
+
+                    //         auto_2: 1,
+                    //         auto_2_x: 1.10,
+                    //         bet_2: parseFloat(bet_2)
+                    //     }
+                    // });
+
+                    //new
                     socket.emit('req', {
                         en: "PLACE_BET", data:
                         {
                             uid: uid,
                             tblid: tblid,
-
-                            auto_1: 0,
-                            auto_1_x: 0,
-                            bet_1: parseFloat(bet_1),
-
-                            bet: data,
-
-                            auto_2: 1,
-                            auto_2_x: 1.10,
-                            bet_2: parseFloat(bet_2)
+                            bet1: {
+                                is_bet_1: true,
+                                bet_1: parseFloat(bet_1),
+                                auto_1: false,
+                                auto_1_x: 1.01,
+                            },
+                            bet2: {
+                                is_bet_2: true,
+                                bet_2: parseFloat(bet_2),
+                                auto_2: false,
+                                auto_2_x: 1.02
+                            },
                         }
                     });
                 } else {

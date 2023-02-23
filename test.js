@@ -1,102 +1,111 @@
-_ = module.exports = require('underscore');
-// let x = 0;
 
-// let a = 0;
-// let b = 0;
-// let c = 0;
-// let d = 0;
-
-// let id = setInterval(() => {
-//     x += 1;
-//     if (x == 100) {
-//         clearInterval(id);
-//         console.log("a = ",a);
-//         console.log("b = ",b);
-//         console.log("c = ",c);
-//         console.log("d = ",d);
-//         return false;
-//     }
-//     let value = _.random(1, 100);
-
-//     // let range = db.collection('range').find({$and:[{prob_min:{$lte:86}},{prob_max:{$gte:86}}]})
-
-//     if(0 <= value && 80 >= value){
-//         // console.log("min 1 max 5");
-//         a += 1;
-//     }else if(81 <= value && 85 >= value){
-//         // console.log("min 1 max 5");
-//         b += 1;
-//     }else if(86 <= value && 95 >= value){
-//         // console.log("min 1 max 5");
-//         c += 1;
-//     }else if(96 <= value && 100 >= value){
-//         d += 1;
-//         // console.log("min 1 max 5");
-//     }
-
-//     // console.log("value",value);
-
-// }, 10);
+// async function init(params) {
 
 
+// let cut_out_x_value = 40.5;
+// // let cut_out_x_value = 1.01;
 
-// setInterval(() => {
-//     // let value = (_.random(1, 2) / 1).toFixed(2);
-//     let value = (Math.random() * (2 - 1) + 1).toFixed(2);
-//     // let value = _.random(1, 2);
-//     // let value = Math.random()
-
-//     console.log(parseFloat(value));
-//     if(parseFloat(value) <= 1.5){
-//         console.log("-----------------------------------",parseFloat(value))
-//     }
-// }, 100);
-
-// const str = (Math.random() * (range.max_value - range.min_value) + range.min_value).toFixed(2);
-
-
-// setInterval(() => {
-//     const str = (Math.random() * (2 - 1) + 1).toFixed(2);
-//     console.log("str", str);
-//     if(str == "1.00"){
-//         console.log("-------------------------------------",str);
-//     }
-// }, 100);
-
-
-
-// let a = -1;
-
-// if(!a){
-//     console.log("------");
+// console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_value);
+// //start x value
+// let x = 0.99;
+// let re_fly = 0;
+// async function sleep(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
 // }
-// console.log("a",a);
+// const call = async (cut_out_x_value) => {
 
-// let balance = -1.501000001;
-// let total_cash = 1.522000002;
+//     if (x == cut_out_x_value) {
 
-// var final_cash = (((balance + total_cash) < 0) ? 0 : balance + total_cash).toFixed(2);
+//         //need to add indexing
+//         // let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
+//         console.log("plane cut out no at----------------------------",x);
+//     } else {
 
-// console.log("final_cash",parseFloat(final_cash));
+//         await sleep((x > 10) ? 5 : 50 / x );
 
-// setInterval(() => {
-//     const str = (Math.random() * (1.5 - 1) + 1).toFixed(2);
 
-//     console.log(str)   
-//     if(str == 1.00) {
-//         console.log("-----------------------",str);
+
+
+//         let ix = 0.01;
+//         if(x > 10 && x <= 20){
+//             ix = (cut_out_x_value < x + 0.05)? 0.01 : 0.05;
+//         }else if(x > 20 && x <= 30){
+//             ix = (cut_out_x_value < x + 0.10)? 0.01 : 0.10;
+//         }else if(x > 30 && x <= 40){
+//             ix = (cut_out_x_value < x + 0.20)? 0.01 : 0.20;
+//         }else if(x < 40){
+//             ix = (cut_out_x_value < x + 0.21)? 0.01 : 0.21;
+//         }
+
+//         x = parseFloat((x + ix).toFixed(2));
+//         console.log("x value is ",x);
+
+//         // console.log("x", x);
+//         call(cut_out_x_value);
 //     }
-// }, 50);
+// }
+// return await call(cut_out_x_value);
 
 
-let count = 1;
-let run_count = 6;
 
-let myintervaal = setInterval(() => {
-    if(count == run_count){
-        clearInterval(myintervaal);
-    }else{
-        console.log("call come",count);
-        count++;
-    }
-},  _.random(300, 500));
+
+
+// async function sleep(ms) {
+//     return new Promise(resolve => setTimeout(resolve, ms));
+// }
+
+// }
+
+
+// init()
+
+
+// let x = 1.30;
+// let tblid = "1111";
+
+// let bet_data = [
+//     { name: "a", uid: "12111", xx: 1.20 },
+//     { name: "b", uid: "12112", xx: 1.30 },
+//     { name: "c", uid: "12113", xx: 1.45 },
+//     { name: "a", uid: "12111", xx: 1.20 },
+//     { name: "b", uid: "12112", xx: 1.30 },
+//     { name: "c", uid: "12113", xx: 1.45 }
+// ]
+// const result = bet_data.find(({ xx }) => xx === x);
+// console.log("found", result);
+
+
+
+
+
+let x = 1.30;
+let tblid = "1111";
+
+let MAIN_BET_JSON = {
+    "1111": [
+        { name: "a", uid: "12111", xx: 1.20 },
+        { name: "b", uid: "12112", xx: 1.30 },
+        { name: "c", uid: "12113", xx: 1.45 }],
+
+    "1112": [
+        { name: "a", uid: "12111", xx: 1.20 },
+        { name: "b", uid: "12112", xx: 1.30 },
+        { name: "c", uid: "12113", xx: 1.45 }]
+
+}
+
+console.log(MAIN_BET_JSON);
+delete MAIN_BET_JSON[tblid];
+console.log(MAIN_BET_JSON);
+
+
+
+
+// let bet_data = MAIN_BET_JSON[tblid];
+// console.log(bet_data);
+
+// const result = bet_data.find(({ xx }) => xx === x);
+// console.log("found", result);
+
+
+

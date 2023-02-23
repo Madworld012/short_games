@@ -4,33 +4,28 @@ const names = require('../name');
 const Queue = require('bull');
 const opts = require('../cache/bullOpts');
 const autoCut = new Queue('auto-cut', opts);
+let MAIN_BET_JSON = {};
 
 // let tblid = "63bd0c4318fbe31071588f78";
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
-try {
-    autoCut.process(async (job, done) => {
-        try {
-            const { reply } = job.data;
-            for (let i = 0; i < reply.length; i++) {
-                const key = reply[i];
-                let user_data = key.split("_");
-                let tblid = user_data[1];
-                let uid = user_data[2];
-                let x = user_data[3];
-                let bet_data = user_data[4];
-    
-                // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
-                await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
-            }
-            done();
-        } catch (error) {
-            Promise.reject(error);
-        }
-    });
-} catch (error) {
-    console.log("error",error);
-}
 
+autoCut.process(async (job, done) => {
+    const { reply } = job.data;
+
+    for (let i = 0; i < reply.length; i++) {
+        const key = reply[i];
+        let user_data = key.split("_");
+        let tblid = user_data[1];
+        let uid = user_data[2];
+        let x = user_data[3];
+        let bet_data = user_data[4];
+
+        // await aviatorClass.AUTO_CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+        await aviatorClass.CASH_OUT({ uid: uid, tblid: tblid, x: { x: parseFloat(x) }, cashout: bet_data, auto: true }, { uid: uid, tblid: tblid })
+    }
+    done();
+
+});
 
 module.exports = {
     /**
@@ -159,6 +154,8 @@ module.exports = {
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
 
+                // aviatorClass.ganrateBetCashNoti(tblid.toString());
+
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
                     await aviatorClass.fly_plane(table_data[0]._id.toString());
@@ -167,6 +164,26 @@ module.exports = {
                 cl("game already started");
                 return false;
             }
+        }
+    },
+    ganrateBetCashNoti: function (tblid) {
+        if (tblid) {
+            console.log("in new function-------------ganrateBetCashNoti----------------------");
+            let bet_data = MAIN_BET_JSON[tblid];
+            if (bet_data) {
+                delete MAIN_BET_JSON[tblid];
+                MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
+                { name: "b", uid: "12112", xx: 1.30 },
+                { name: "c", uid: "12113", xx: 1.45 }]
+                console.log(MAIN_BET_JSON);
+            } else {
+                MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
+                { name: "b", uid: "12112", xx: 1.30 },
+                { name: "c", uid: "12113", xx: 1.45 }]
+                console.log(MAIN_BET_JSON);
+            }
+
+
         }
     },
     fly_plane: async function (tblid) {
@@ -247,8 +264,9 @@ module.exports = {
             }
             return await call(cut_out_x_value);
         } catch (error) {
-
         }
+    },
+    fakeBetNoti: async function (tblid, x) {
 
     },
     autoCutUser: async function (tbid, x) {
@@ -316,7 +334,6 @@ module.exports = {
         }
     },
     PLACE_BET: async function (data, client) {
-        console.log("place bet come ", data);
         if (data.uid && data.tblid) {
 
             if (typeof data.bet1.bet_1 == "undefined" || parseFloat(data.bet1.bet_1) < 0) {

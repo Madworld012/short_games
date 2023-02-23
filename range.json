@@ -1,63 +1,94 @@
 [
     {
         "prob_min": 1,
-        "prob_max": 350,
+        "prob_max": 150,
         "min_value": 1,
-        "max_value": 1.4
+        "max_value": 1.14
     },
     {
-        "prob_min": 351,
-        "prob_max": 600,
+        "prob_min": 151,
+        "prob_max": 270,
         "min_value": 1,
-        "max_value": 1.55
+        "max_value": 1.39
     },
     {
-        "prob_min": 601,
+        "prob_min": 271,
+        "prob_max": 370,
+        "min_value": 1,
+        "max_value": 1.90
+    },
+    {
+        "prob_min": 371,
+        "prob_max": 470,
+        "min_value": 1,
+        "max_value": 20.20
+    },
+    {
+        "prob_min": 471,
+        "prob_max": 570,
+        "min_value": 1,
+        "max_value": 2.40
+    },
+    {
+        "prob_min": 571,
+        "prob_max": 670,
+        "min_value": 1,
+        "max_value": 2.70
+    },
+    {
+        "prob_min": 671,
         "prob_max": 750,
         "min_value": 1,
-        "max_value": 1.65
+        "max_value": 2.90
     },
     {
         "prob_min": 751,
-        "prob_max": 850,
+        "prob_max": 830,
         "min_value": 1,
-        "max_value": 2.75
+        "max_value": 3.40
     },
     {
-        "prob_min": 851,
-        "prob_max": 920,
+        "prob_min": 831,
+        "prob_max": 880,
         "min_value": 1,
-        "max_value": 3.77
+        "max_value": 4.90
     },
     {
-        "prob_min": 921,
-        "prob_max": 960,
+        "prob_min": 881,
+        "prob_max": 930,
         "min_value": 1,
-        "max_value": 5.89
+        "max_value": 5.90
     },
     {
-        "prob_min": 961,
-        "prob_max": 980,
+        "prob_min": 931,
+        "prob_max": 965,
         "min_value": 1,
-        "max_value": 11.49
+        "max_value": 9.90
     },
     {
-        "prob_min": 981,
-        "prob_max": 990,
+        "prob_min": 966,
+        "prob_max": 985,
         "min_value": 1,
-        "max_value": 19.55
+        "max_value": 14.90
     },
     {
-        "prob_min": 991,
-        "prob_max": 998,
+        "prob_min": 986,
+        "prob_max": 995,
         "min_value": 1,
-        "max_value": 34.50
+        "max_value": 24
     },
     {
-        "prob_min": 999,
+        "prob_min": 996,
+        "prob_max": 999,
+        "min_value": 1,
+        "max_value": 99
+    },
+    {
+        "prob_min": 1000,
         "prob_max": 1000,
         "min_value": 1,
-        "max_value": 199.80
+        "max_value": 999
     }
-    
 ]
+
+

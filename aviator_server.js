@@ -84,6 +84,10 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 
+//test
+rdsOpsNew = module.exports = require('./cache/keyspace.js');
+
+
 //all class exports
 rdsOpsNew = module.exports = require('./cache/redis_pub_sub.js');
 ecClass = module.exports = require("./classes/eventCases.class.js");

@@ -154,7 +154,7 @@ module.exports = {
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
 
-                // aviatorClass.ganrateBetCashNoti(tblid.toString());
+                aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME);
 
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
@@ -221,6 +221,8 @@ module.exports = {
                 if (x == cut_out_x_value) {
                     cache.del(tblid.toString());
                     cache.delWildcard("auto_" + tblid.toString() + "_*", function () { });
+                    //delete fakebet
+                    cache.delWildcard(tblid.toString() + "-*", function () { });
 
                     //need to add indexing
                     let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
@@ -266,8 +268,46 @@ module.exports = {
         } catch (error) {
         }
     },
-    fakeBetNoti: async function (tblid, x) {
+    fakeBetNoti: async function (tblid, time) {
+        if (tblid && time) {
+            setTimeout(() => {
+                let uid = _.random(100);
+                let un = _.sample(names);
+                let bet = _.random(1, 10) * 50;
+                commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+                cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
+                cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 10);
+            }, 500);
 
+            setTimeout(() => {
+                let uid = _.random(100);
+                let un = _.sample(names);
+                let bet = _.random(1, 10) * 50;
+                commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+                cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
+                cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 15);
+            }, 652);
+
+            setTimeout(() => {
+                let uid = _.random(100);
+                let un = _.sample(names);
+                let bet = _.random(1, 10) * 50;
+                commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+                cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
+                cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 12);
+            }, 700);
+
+            
+            setTimeout(() => {
+                let uid = _.random(100);
+                let un = _.sample(names);
+                let bet = _.random(1, 10) * 50;
+                commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+                cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
+                cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 11);
+            }, 800);
+
+        }
     },
     autoCutUser: async function (tbid, x) {
         //key - auto_tbld_uid_xvalue_betbutton
@@ -388,7 +428,7 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(user_data[0].tblid.toString()) }).toArray();
             if (!table_data || table_data.length <= 0 || table_data[0].bet_flg != true) {
                 console.log("table or Bet flar of");
-                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
+                //commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
                 // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
                 cl("8");
                 return false;

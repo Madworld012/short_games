@@ -21,7 +21,7 @@ const ex_client = redis.createClient(redis_conf);
 ex_client.select(config.REDIS_DB);
 
 ex_client.send_command('config', ['set', 'notify-keyspace-events', 'Ex'], SubscribeExpired)
-
+console.log("call come call keyspace file");
 async function SubscribeExpired(e, r) {
     
     const expired_subKey = '__keyevent@1__:expired';

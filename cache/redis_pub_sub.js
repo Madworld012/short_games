@@ -5,7 +5,7 @@ module.exports = {
         return new Promise(resolve => {
 
             let redis_conf = {
-                url: process.env.REDIS_URI 
+                url: "redis://default:WpQjHzot3cfwAm4SR3jCXKXAn0gGfhV3@redis-13598.c11.us-east-1-3.ec2.cloud.redislabs.com:13598"
             }
 
             rPub = module.exports = redis.createClient(redis_conf);
@@ -23,7 +23,7 @@ module.exports = {
     initRedisSubscriber: function () {
         return new Promise(resolve => {
             let redis_conf = {
-                url: process.env.REDIS_URI  
+                url: "redis://default:WpQjHzot3cfwAm4SR3jCXKXAn0gGfhV3@redis-13598.c11.us-east-1-3.ec2.cloud.redislabs.com:13598"  
             }
 
            

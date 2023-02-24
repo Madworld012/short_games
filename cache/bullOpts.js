@@ -1,10 +1,13 @@
 const Redis = require('ioredis');
 
-const client = new Redis(process.env.REDIS_URI, {
+// let redis_url = process.env.REDIS_URI;
+let redis_url = "redis://default:WpQjHzot3cfwAm4SR3jCXKXAn0gGfhV3@redis-13598.c11.us-east-1-3.ec2.cloud.redislabs.com:13598";
+
+const client = new Redis(redis_url, {
     maxRetriesPerRequest: null,
     enableReadyCheck: false
 });
-const subscriber = new Redis(process.env.REDIS_URI, {
+const subscriber = new Redis(redis_url, {
     maxRetriesPerRequest: null,
     enableReadyCheck: false
 });
@@ -17,7 +20,7 @@ const opts = {
             case 'subscriber':
                 return subscriber;
             default:
-                return new Redis(process.env.REDIS_URI, {
+                return new Redis(redis_url, {
                     maxRetriesPerRequest: null,
                     enableReadyCheck: false
                 });

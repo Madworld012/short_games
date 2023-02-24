@@ -349,7 +349,7 @@ module.exports = {
                 SHOW_ADS: config_data.SHOW_ADS,
                 MM: config_data.MM, // maintenance flag
                 MM_T: config_data.MM_T, // maintenance time second
-                BASE_URL: config_data.BASE_URL,
+                BASE_URL: process.env.BASE_URL,
                 MIN_DEPOSIT: config.MIN_DEPOSIT,
                 MAX_DEPOSIT: config.MAX_DEPOSIT,
                 MIN_WITHDRAW: config.MIN_WITHDRAW,

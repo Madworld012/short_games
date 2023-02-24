@@ -4,11 +4,20 @@ const names = require('../name');
 const Queue = require('bull');
 const opts = require('../cache/bullOpts');
 const autoCut = new Queue('auto-cut', opts);
+const fakeNoti = new Queue('fake-noti', opts);
 let myTimer = [];
 
 
 // let tblid = "63bd0c4318fbe31071588f78";
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
+fakeNoti.process(async (job, done) => {
+    // const { reply } = job.data;
+    console.log("fakeNoti",job.data);
+    
+    done();
+});
+
+
 
 autoCut.process(async (job, done) => {
     const { reply } = job.data;
@@ -155,7 +164,7 @@ module.exports = {
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
 
-                aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME);
+                // aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME);
 
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
@@ -205,7 +214,7 @@ module.exports = {
                     //delete fakebet
                     // cache.delWildcard(tblid.toString() + "-*", function () { });
                     //clear fake time for bet
-                    for (var i=0; i<myTimer.length; i++) {
+                    for (var i = 0; i < myTimer.length; i++) {
                         clearTimeout(myTimer[i]);
                     }
 
@@ -259,85 +268,26 @@ module.exports = {
             let un = _.sample(names);
             let bet = _.random(1, 10) * 50;
             commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            // cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
-            // cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 10);
             console.log();
             myTimer.push(
                 setTimeout(async function () {
                     let current_x_value = JSON.parse(await cache.get(tblid.toString()));
                     console.log("current_x_value0", current_x_value);
                     commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: uid.toString(), x: current_x_value.x, bet: bet, win_amount: current_x_value.x * bet } });
-                }, _.random(10,20)*1000));
-        }, _.random(1,5)*100);
+                }, _.random(10, 20) * 1000));
+        }, _.random(1, 5) * 100);
     },
-    
+
     fakeBetNoti: async function (tblid, time) {
         if (tblid && time) {
-
-            for (let i = 0; i < _.random(10,18); i++) {
-                aviatorClass.ganrateBet(tblid,time)
+            for (let i = 0; i < 10; i++) {
+                // aviatorClass.ganrateBet(tblid, time);
+                let uid = _.random(100);
+                let un = _.sample(names);
+                let bet = _.random(1, 10) * 50;
+                commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+                fakeNoti.add({ tblid,uid,un,bet },{ delay: 5000,removeOnComplete: true,removeOnFail: true });
             }
-
-            // setTimeout(() => {
-            //     let uid = _.random(100);
-            //     let un = _.sample(names);
-            //     let bet = _.random(1, 10) * 50;
-            //     commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            //     // cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
-            //     // cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 10);
-            //     console.log();
-            //     myTimer.push(
-            //         setTimeout(async function () {
-            //             let current_x_value = JSON.parse(await cache.get(tblid.toString()));
-            //             console.log("current_x_value0", current_x_value);
-            //             commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: uid.toString(), x: "current_x_value.x", bet: bet, win_amount: "current_x_value.x" * bet } });
-            //         }, 20000));
-            // }, 500);
-
-            // setTimeout(() => {
-            //     let uid = _.random(100);
-            //     let un = _.sample(names);
-            //     let bet = _.random(1, 10) * 50;
-            //     commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            //     // cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
-            //     // cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 10);
-            //     console.log();
-            //     myTimer.push(
-            //         setTimeout(async function () {
-            //             let current_x_value = JSON.parse(await cache.get(tblid.toString()));
-            //             console.log("current_x_value0", current_x_value);
-            //             commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: uid.toString(), x: "current_x_value.x", bet: bet, win_amount: "current_x_value.x" * bet } });
-            //         }, 20000));
-            // }, 5600);
-
-            // setTimeout(() => {
-            //     let uid = _.random(100);
-            //     let un = _.sample(names);
-            //     let bet = _.random(1, 10) * 50;
-            //     commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            //     // cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
-            //     // cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 15);
-            // }, 652);
-
-            // setTimeout(() => {
-            //     let uid = _.random(100);
-            //     let un = _.sample(names);
-            //     let bet = _.random(1, 10) * 50;
-            //     commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            //     // cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
-            //     // cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 12);
-            // }, 700);
-
-
-            // setTimeout(() => {
-            //     let uid = _.random(100);
-            //     let un = _.sample(names);
-            //     let bet = _.random(1, 10) * 50;
-            //     commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            //     // cache.set(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", "OMG");
-            //     // cache.expire(tblid + "-PLACEBET-" + uid.toString() + "-0-" + un + "-" + bet + "-0", 11);
-            // }, 800);
-
         }
     },
     autoCutUser: async function (tbid, x) {

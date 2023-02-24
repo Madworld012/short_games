@@ -2,8 +2,7 @@ const redis = require('redis');
 const util = require('util');
 
 let redis_conf = {
-    // url: process.env.REDIS_URI       // replace with your port
-    url: "redis://default:WpQjHzot3cfwAm4SR3jCXKXAn0gGfhV3@redis-13598.c11.us-east-1-3.ec2.cloud.redislabs.com:13598"      // replace with your port
+    url: process.env.REDIS_URL       // replace with your port
 }
 
 

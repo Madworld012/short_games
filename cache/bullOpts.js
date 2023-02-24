@@ -1,7 +1,6 @@
 const Redis = require('ioredis');
 
-// let redis_url = process.env.REDIS_URI;
-let redis_url = "redis://default:WpQjHzot3cfwAm4SR3jCXKXAn0gGfhV3@redis-13598.c11.us-east-1-3.ec2.cloud.redislabs.com:13598";
+let redis_url = process.env.REDIS_URL;
 
 const client = new Redis(redis_url, {
     maxRetriesPerRequest: null,

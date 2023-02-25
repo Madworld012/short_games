@@ -289,7 +289,7 @@ module.exports = {
     fakeBetNoti: async function (tblid, time, round_id) {
         if (tblid && time) {
             console.log("time",time);
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < _.random(5, 15); i++) {
                 // aviatorClass.ganrateBet(tblid, time);
                 let uid = _.random(100);
                 let un = _.sample(names);

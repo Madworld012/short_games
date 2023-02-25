@@ -12,8 +12,14 @@ let myTimer = [];
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
 fakeNoti.process(async (job, done) => {
     // const { reply } = job.data;
-    console.log("fakeNoti",job.data);
-    
+    let job_data = job.data
+    let table_data = await db.collection('aviator_table').find({ _id: ObjectId(job_data.tblid.toString()), round_id: job_data.round_id, status: "FLAY_PLANE" }).toArray();
+    if (table_data.length > 0) {
+        let current_x_value = JSON.parse(await cache.get(job_data.tblid.toString()));
+        if (current_x_value) {
+            commonClass.sendToRoom(job_data.tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: job_data.uid.toString(), x: current_x_value.x, bet: job_data.bet, win_amount: current_x_value.x * job_data.bet } });
+        }
+    }
     done();
 });
 
@@ -160,11 +166,13 @@ module.exports = {
                 cl("config.BET_TIME", config.BET_TIME);
                 var startGameBetTimer = commonClass.AddTime(config.BET_TIME);
                 var jobId = randomstring.generate(10);
-                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
+
+                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, round_id: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
-
-                // aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME);
+                if(config.FAKE_BET){
+                    aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME, jobId);
+                }
 
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
@@ -278,15 +286,17 @@ module.exports = {
         }, _.random(1, 5) * 100);
     },
 
-    fakeBetNoti: async function (tblid, time) {
+    fakeBetNoti: async function (tblid, time, round_id) {
         if (tblid && time) {
+            console.log("time",time);
             for (let i = 0; i < 10; i++) {
                 // aviatorClass.ganrateBet(tblid, time);
                 let uid = _.random(100);
                 let un = _.sample(names);
                 let bet = _.random(1, 10) * 50;
                 commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-                fakeNoti.add({ tblid,uid,un,bet },{ delay: 5000,removeOnComplete: true,removeOnFail: true });
+                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(3, 9)) * 1000 , removeOnComplete: true, removeOnFail: true });
+                // fakeNoti.add({ color: 'white' }, { delay: 5000 });
             }
         }
     },

@@ -219,8 +219,7 @@ module.exports = {
                 if (x == cut_out_x_value) {
                     cache.del(tblid.toString());
                     cache.delWildcard("auto_" + tblid.toString() + "_*", function () { });
-                    //delete fakebet
-                    // cache.delWildcard(tblid.toString() + "-*", function () { });
+
                     //clear fake time for bet
                     for (var i = 0; i < myTimer.length; i++) {
                         clearTimeout(myTimer[i]);
@@ -295,8 +294,7 @@ module.exports = {
                 let un = _.sample(names);
                 let bet = _.random(1, 10) * 50;
                 commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(3, 9)) * 1000 , removeOnComplete: true, removeOnFail: true });
-                // fakeNoti.add({ color: 'white' }, { delay: 5000 });
+                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(3, 10)) * 1000 , removeOnComplete: true, removeOnFail: true });
             }
         }
     },
@@ -312,7 +310,6 @@ module.exports = {
     },
     cut_plane: async function (data) {
         if (data.tblid) {
-            cl("\nPlane Cut Out", data.tblid);
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }).toArray();
             if (table_data.length > 0 && table_data[0].status == "FLAY_PLANE") {
                 //CP - Cutout plae , stop cutout, wait for start new round
@@ -335,9 +332,8 @@ module.exports = {
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, update_data, function () { });
                 setTimeout(async () => {
                     await db.collection('game_users').updateMany({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0, bet_from_bonus: 0 } }, { multi: true }, function () { });
-                }, 5);
+                }, 1000);
                 var startNewGameTimer = commonClass.AddTime(config.NEW_ROUND_START_TIME);
-                cl("\nWait For New Round");
                 schedule.scheduleJob(jobId, new Date(startNewGameTimer), async function () {
                     schedule.cancelJob(jobId);
                     aviatorClass.startGame(table_data[0]._id.toString());

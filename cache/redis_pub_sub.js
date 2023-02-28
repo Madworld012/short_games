@@ -57,12 +57,12 @@ module.exports = {
                             if (message.en == "NCC") {
                                 delete clientObj.uid;
                                 var eData = commonClass.Enc(message);
-                                clientObj.emit('res', eData);
+                                clientObj.emit('res', {data:eData});
                                 clientObj.disconnect();
                             } else {
-                                // var eData = commonClass.Enc(message);
-                                // console.log("eData",eData);
-                                clientObj.emit('res', {data:"XXjurowcsOjE4p2l1ICBv/WHeDEMRMXbs9Lj6TR7yaQjpu6NHsoD9aGNLN5fyU44/pSl1aOjHiehtAaMTp3E0xPPKNQj02zJLMAys5P6S+/S3ay7wNLopPSWK1PK7QhGWFDy0nfOEs2yO9/u+CmUjiNfoi9gOssZZSmQPVDN3fap3iBUX6HAnSmYEI3H5B3KsRjUcHzmXdp6uNquysR3M77ALnYIBTN66m79WoU/ItPmTDyHjJZqdJZ2/qlIQbO12sohx7V4McpA02X6NEGvDpOb5Uyt07fyjpRq5f2GeTd+vZEwFuRHabCVBEHHzDLT"});
+                                var eData = commonClass.Enc(message);
+                                console.log("eData",eData);
+                                clientObj.emit('res', {data:eData});
                             }
                         }
                     } else if (pattern == "room.*") {
@@ -74,11 +74,11 @@ module.exports = {
                         }
                         if (typeof io.to(room) != 'undefined') {
                             var eData = commonClass.Enc(message);
-                            io.to(room).emit('res', eData);
+                            io.to(room).emit('res', {data:eData});
                         }
                     } else if (pattern == "toallsck.*") {
                         var eData = commonClass.Enc(message);
-                        io.emit('res', eData);
+                        io.emit('res', {data:eData});
                     }
                     else {
                         console.log("invalid message in redis channel")

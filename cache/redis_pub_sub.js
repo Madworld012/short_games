@@ -54,14 +54,14 @@ module.exports = {
                         let clientObj = io.sockets.sockets.get(socket);
                         // let clientObj = io.sockets.connected[single];
                         if (clientObj) {
-                            // var eData = commonClass.Enc(message);
-                            console.log("data send from pubsub",message.en);
                             if (message.en == "NCC") {
                                 delete clientObj.uid;
-                                clientObj.emit('res', message);
+                                var eData = commonClass.Enc(message);
+                                clientObj.emit('res', {data:eData});
                                 clientObj.disconnect();
                             } else {
-                                clientObj.emit('res', message);
+                                var eData = commonClass.Enc(message);
+                                clientObj.emit('res', {data:eData});
                             }
                         }
                     } else if (pattern == "room.*") {
@@ -72,11 +72,12 @@ module.exports = {
                             return false;
                         }
                         if (typeof io.to(room) != 'undefined') {
-                            // var eData = commonClass.Enc(message);
-                            io.to(room).emit('res', message);
+                            var eData = commonClass.Enc(message);
+                            io.to(room).emit('res', {data:eData});
                         }
                     } else if (pattern == "toallsck.*") {
-                        io.emit('res', message);
+                        var eData = commonClass.Enc(message);
+                        io.emit('res', {data:eData});
                     }
                     else {
                         console.log("invalid message in redis channel")

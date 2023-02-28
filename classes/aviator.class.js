@@ -294,7 +294,7 @@ module.exports = {
                 let un = _.sample(names);
                 let bet = _.random(1, 10) * 50;
                 commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(3, 10)) * 1000 , removeOnComplete: true, removeOnFail: true });
+                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(config.FAKE_BET_CASHOUT_TIME_MIN, config.FAKE_BET_CASHOUT_TIME_MAX)) * 1000 , removeOnComplete: true, removeOnFail: true });
             }
         }
     },

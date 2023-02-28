@@ -1,7 +1,7 @@
 var request = require("request");
 require('dotenv').config();
 let crypto = require('crypto');
-const encKey = process.env.DATA_ENC_KEY;
+const encKey = "jkhJHhlkdflklklkJHL23jljksDJhdkj";
 module.exports = {
     GetRandomInt: async function (min, max) {
         var rnd = Math.floor(Math.random() * (parseInt(max) - parseInt(min) + 1)) + parseInt(min);
@@ -66,10 +66,27 @@ module.exports = {
         let cipher = crypto.createCipheriv('aes256', keyBuf, ivBuf);
 
         output = cipher.update(JSON.stringify(toCrypt), 'utf-8', 'base64') + cipher.final('base64');
-        // return output;
-        return toCrypt;
+        return output;
+        // return toCrypt;
     },
     Dec: function (toDecrypt) {
+        let keyBuf = Buffer.from(Array(32));
+
+        keyBuf.write(encKey, 'utf8');
+
+        // Create the 16-byte zero-filled IV buffer
+        ivBuf = Buffer.from(Array(16));
+
+        let deCipher = crypto.createDecipheriv('aes256', keyBuf, ivBuf);
+
+        try {
+            decrypted = deCipher.update(toDecrypt, 'base64', 'utf8') + deCipher.final('utf8');
+            return JSON.parse(decrypted);
+        } catch (e) {
+            throw new Error(e)
+        }
+    },
+    Dec_old: function (toDecrypt) {
         let keyBuf = Buffer.from(Array(32));
 
         keyBuf.write(encKey, 'utf8');

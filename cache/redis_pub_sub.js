@@ -60,7 +60,8 @@ module.exports = {
                                 clientObj.emit('res', eData);
                                 clientObj.disconnect();
                             } else {
-                                clientObj.emit('res', message);
+                                var eData = commonClass.Enc(message);
+                                clientObj.emit('res', eData);
                             }
                         }
                     } else if (pattern == "room.*") {

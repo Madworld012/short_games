@@ -61,7 +61,6 @@ module.exports = {
                                 clientObj.disconnect();
                             } else {
                                 var eData = commonClass.Enc(message);
-                                console.log("eData",eData);
                                 clientObj.emit('res', {data:eData});
                             }
                         }

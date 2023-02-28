@@ -1,12 +1,10 @@
 const redis = require('redis');
 const util = require('util');
+
 let redis_conf = {
-    url: config.REDIS_URL        // replace with your port
+    url: process.env.REDIS_URL       // replace with your port
 }
 
-if (config.MODE == "PROD") {
-    redis_conf["url"] = config.REDIS_LIVE_URL;
-}
 
 redis.RedisClient.prototype.delWildcard = async function (key, callback) {
     var redis = this
@@ -18,7 +16,6 @@ redis.RedisClient.prototype.delWildcard = async function (key, callback) {
 }
 
 const client = redis.createClient(redis_conf);
-client.select(config.REDIS_DB);
 
 //Incase any error pops up, log it
 client.on("error", function (err) {

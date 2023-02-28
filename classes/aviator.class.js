@@ -4,10 +4,26 @@ const names = require('../name');
 const Queue = require('bull');
 const opts = require('../cache/bullOpts');
 const autoCut = new Queue('auto-cut', opts);
-let MAIN_BET_JSON = {};
+const fakeNoti = new Queue('fake-noti', opts);
+let myTimer = [];
+
 
 // let tblid = "63bd0c4318fbe31071588f78";
 // cache.delWildcard("auto_"+tblid+"_*_*", function () { });
+fakeNoti.process(async (job, done) => {
+    // const { reply } = job.data;
+    let job_data = job.data
+    let table_data = await db.collection('aviator_table').find({ _id: ObjectId(job_data.tblid.toString()), round_id: job_data.round_id, status: "FLAY_PLANE" }).toArray();
+    if (table_data.length > 0) {
+        let current_x_value = JSON.parse(await cache.get(job_data.tblid.toString()));
+        if (current_x_value) {
+            commonClass.sendToRoom(job_data.tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: job_data.uid.toString(), x: current_x_value.x, bet: job_data.bet, win_amount: current_x_value.x * job_data.bet } });
+        }
+    }
+    done();
+});
+
+
 
 autoCut.process(async (job, done) => {
     const { reply } = job.data;
@@ -150,11 +166,13 @@ module.exports = {
                 cl("config.BET_TIME", config.BET_TIME);
                 var startGameBetTimer = commonClass.AddTime(config.BET_TIME);
                 var jobId = randomstring.generate(10);
-                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
+
+                await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, round_id: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
-
-                // aviatorClass.ganrateBetCashNoti(tblid.toString());
+                if(config.FAKE_BET){
+                    aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME, jobId);
+                }
 
                 schedule.scheduleJob(jobId, new Date(startGameBetTimer), async function () {
                     schedule.cancelJob(jobId);
@@ -164,26 +182,6 @@ module.exports = {
                 cl("game already started");
                 return false;
             }
-        }
-    },
-    ganrateBetCashNoti: function (tblid) {
-        if (tblid) {
-            console.log("in new function-------------ganrateBetCashNoti----------------------");
-            let bet_data = MAIN_BET_JSON[tblid];
-            if (bet_data) {
-                delete MAIN_BET_JSON[tblid];
-                MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
-                { name: "b", uid: "12112", xx: 1.30 },
-                { name: "c", uid: "12113", xx: 1.45 }]
-                console.log(MAIN_BET_JSON);
-            } else {
-                MAIN_BET_JSON[tblid] = [{ name: "a", uid: "12111", xx: 1.20 },
-                { name: "b", uid: "12112", xx: 1.30 },
-                { name: "c", uid: "12113", xx: 1.45 }]
-                console.log(MAIN_BET_JSON);
-            }
-
-
         }
     },
     fly_plane: async function (tblid) {
@@ -221,6 +219,11 @@ module.exports = {
                 if (x == cut_out_x_value) {
                     cache.del(tblid.toString());
                     cache.delWildcard("auto_" + tblid.toString() + "_*", function () { });
+
+                    //clear fake time for bet
+                    for (var i = 0; i < myTimer.length; i++) {
+                        clearTimeout(myTimer[i]);
+                    }
 
                     //need to add indexing
                     let no_bet_available_data = await db.collection('game_users').find({ tblid: tblid.toString(), $or: [{ bet_1: { $gt: 0 } }, { bet_2: { $gt: 0 } }] }).toArray();
@@ -266,8 +269,34 @@ module.exports = {
         } catch (error) {
         }
     },
-    fakeBetNoti: async function (tblid, x) {
+    ganrateBet: function (tblid, time) {
+        setTimeout(() => {
+            let uid = _.random(100);
+            let un = _.sample(names);
+            let bet = _.random(1, 10) * 50;
+            commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+            console.log();
+            myTimer.push(
+                setTimeout(async function () {
+                    let current_x_value = JSON.parse(await cache.get(tblid.toString()));
+                    console.log("current_x_value0", current_x_value);
+                    commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: uid.toString(), x: current_x_value.x, bet: bet, win_amount: current_x_value.x * bet } });
+                }, _.random(10, 20) * 1000));
+        }, _.random(1, 5) * 100);
+    },
 
+    fakeBetNoti: async function (tblid, time, round_id) {
+        if (tblid && time) {
+            console.log("time",time);
+            for (let i = 0; i < _.random(5, 15); i++) {
+                // aviatorClass.ganrateBet(tblid, time);
+                let uid = _.random(100);
+                let un = _.sample(names);
+                let bet = _.random(1, 10) * 50;
+                commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
+                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(3, 10)) * 1000 , removeOnComplete: true, removeOnFail: true });
+            }
+        }
     },
     autoCutUser: async function (tbid, x) {
         //key - auto_tbld_uid_xvalue_betbutton
@@ -281,7 +310,6 @@ module.exports = {
     },
     cut_plane: async function (data) {
         if (data.tblid) {
-            cl("\nPlane Cut Out", data.tblid);
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(data.tblid.toString()) }).toArray();
             if (table_data.length > 0 && table_data[0].status == "FLAY_PLANE") {
                 //CP - Cutout plae , stop cutout, wait for start new round
@@ -304,9 +332,8 @@ module.exports = {
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, update_data, function () { });
                 setTimeout(async () => {
                     await db.collection('game_users').updateMany({ tblid: table_data[0]._id.toString() }, { $set: { bet_1: 0, bet_2: 0, bet_from_bonus: 0 } }, { multi: true }, function () { });
-                }, 5);
+                }, 1000);
                 var startNewGameTimer = commonClass.AddTime(config.NEW_ROUND_START_TIME);
-                cl("\nWait For New Round");
                 schedule.scheduleJob(jobId, new Date(startNewGameTimer), async function () {
                     schedule.cancelJob(jobId);
                     aviatorClass.startGame(table_data[0]._id.toString());
@@ -388,7 +415,7 @@ module.exports = {
             let table_data = await db.collection('aviator_table').find({ _id: ObjectId(user_data[0].tblid.toString()) }).toArray();
             if (!table_data || table_data.length <= 0 || table_data[0].bet_flg != true) {
                 console.log("table or Bet flar of");
-                commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
+                //commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, leave: true, msg: "Table Not Found" } });
                 // commonClass.sendDirectToUserSocket(client, { en: "PLACE_BET", data: { status: false, msg: "Table Not Found" } });
                 cl("8");
                 return false;

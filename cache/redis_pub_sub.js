@@ -5,13 +5,8 @@ module.exports = {
         return new Promise(resolve => {
 
             let redis_conf = {
-                url: config.REDIS_URL
+                url: process.env.REDIS_URL
             }
-
-            if (config.MODE == "PROD") {
-                redis_conf["url"] = config.REDIS_LIVE_URL;
-            }
-
 
             rPub = module.exports = redis.createClient(redis_conf);
 
@@ -28,13 +23,8 @@ module.exports = {
     initRedisSubscriber: function () {
         return new Promise(resolve => {
             let redis_conf = {
-                url: config.REDIS_URL
+                url: process.env.REDIS_URL  
             }
-
-            if (config.MODE == "PROD") {
-                redis_conf["url"] = config.REDIS_LIVE_URL;
-            }
-
 
             rSub = module.exports = redis.createClient(redis_conf);
 

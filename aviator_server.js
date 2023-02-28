@@ -58,14 +58,9 @@ let SERVER_PORT = process.argv[2];
 app = module.exports = express();
 
 socketIO = require('socket.io');
-if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
-	var server = http.createServer(app);
-} else {
-	var server = http.createServer(app);
 
-	// var httpsOptions = { key: fs.readFileSync('certificate/server.key'), cert: fs.readFileSync('certificate/final.crt') };
-	// var server = https.createServer(httpsOptions, app);
-}
+var server = http.createServer(app);
+
 io = module.exports = socketIO(server, {
 	'origins': '*:*',
 	'pingTimeout': 1000,
@@ -84,6 +79,9 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
 
 
+//test
+
+
 //all class exports
 rdsOpsNew = module.exports = require('./cache/redis_pub_sub.js');
 ecClass = module.exports = require("./classes/eventCases.class.js");
@@ -95,18 +93,11 @@ cashClass = module.exports = require("./classes/cashClass.class.js"); //common f
 urlHandler = require('./classes/urlHandler.class.js');
 
 
-let DB_Name = "";
-if (typeof config.MODE != "undefined" && config.MODE == "DEV") {
-	var databaseConnectionString = config.DATABASE_DEV; // Connect Mongoose to DB
-	DB_Name = config.DB_NAME_DEV;
-} else {
-	console.log("call come here");
-	var databaseConnectionString = config.DATABASE_LIVE; // Connect Mongoose to DB
-	DB_Name = config.LIVE_DB_NAME;
-}
+var DB_URL = process.env.DB_URL; // Connect Mongoose to DB
+var DB_NAME = process.env.DB_NAME; // Connect Mongoose to DB
 
-MongoClient.connect(databaseConnectionString, { useUnifiedTopology: true, useNewUrlParser: true }, async function (error, database) {
-	databaseConnectionString = null;
+
+MongoClient.connect(DB_URL, { useUnifiedTopology: true, useNewUrlParser: true }, async function (error, database) {
 	if (error) {
 		console.log("Mongo Error", error);
 	}
@@ -115,7 +106,7 @@ MongoClient.connect(databaseConnectionString, { useUnifiedTopology: true, useNew
 		console.log("\nDatabase connected......");
 		console.log("\nServer Started On......", SERVER_PORT, "\n");
 
-		db = module.exports = database.db(DB_Name);
+		db = module.exports = database.db(DB_NAME);
 		rdsOpsNew.initRedisPublisher();
 		rdsOpsNew.initRedisSubscriber();
 

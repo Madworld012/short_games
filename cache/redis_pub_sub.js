@@ -62,7 +62,7 @@ module.exports = {
                             } else {
                                 // var eData = commonClass.Enc(message);
                                 // console.log("eData",eData);
-                                clientObj.emit('res', message);
+                                clientObj.emit('res', "XXjurowcsOjE4p2l1ICBv/WHeDEMRMXbs9Lj6TR7yaQjpu6NHsoD9aGNLN5fyU44/pSl1aOjHiehtAaMTp3E0xPPKNQj02zJLMAys5P6S+/S3ay7wNLopPSWK1PK7QhGWFDy0nfOEs2yO9/u+CmUjiNfoi9gOssZZSmQPVDN3fap3iBUX6HAnSmYEI3H5B3KsRjUcHzmXdp6uNquysR3M77ALnYIBTN66m79WoU/ItPmTDyHjJZqdJZ2/qlIQbO12sohx7V4McpA02X6NEGvDpOb5Uyt07fyjpRq5f2GeTd+vZEwFuRHabCVBEHHzDLT");
                             }
                         }
                     } else if (pattern == "room.*") {

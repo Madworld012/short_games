@@ -55,7 +55,7 @@ module.exports = {
                         // let clientObj = io.sockets.connected[single];
                         if (clientObj) {
                             // var eData = commonClass.Enc(message);
-                            console.log("data send from pubsub",message.en);
+                            //console.log("data send from pubsub",message.en);
                             if (message.en == "NCC") {
                                 delete clientObj.uid;
                                 clientObj.emit('res', message);

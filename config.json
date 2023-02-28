@@ -2,7 +2,7 @@
     "NAME": "! JAY SWAMINARAYAN !",
     "COMMING_SOON_PAGE": false,
     "DEBUG": true,
-    "RANGE_TABLE": "range",
+    "RANGE_TABLE": "range2",
     "TABLE_DELETE": 1,
     "INITIAL_CASH": 1000,
     "MAX_FIRST_DEPOSIT_BONUS": 1000,
@@ -39,7 +39,7 @@
     "DEPO_WITH_NOTIFICATION_MIN_VALUE": 1,
     "DEPO_WITH_NOTIFICATION_MAX_VALUE": 50,
     "DEPO_WITH_TIME_MAX_INTERVAL": 1,
-    "FAKE_BET" : 1,
+    "FAKE_BET" : 0,
     "FAKE_FLAY_ON_OFF_FLG": 0,
     "FAKE_PLANE_X_MULTIPLY_RANGE": [
         1,

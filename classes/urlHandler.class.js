@@ -317,7 +317,7 @@ module.exports = {
 
                         await db.collection('game_users').updateOne({ _id: ObjectId(user_data[0]._id.toString()) }, { $set: { is_deposited: 1 } }, function () { })
                         await db.collection('deposit_request').updateOne({ _id: ObjectId(deposit_details._id.toString()) }, { $set: { status: "Approve" } }, function () { })
-                        
+
                         commonClass.sendToAllSocket({ en: "DWN", data: { status: true, name: (user_data[0].un) ? user_data[0].un : "Lucky", action: "Deposited", amount: parseInt(deposit_details.amount) } });
                         commonClass.sendDataToUserId(deposit_details.uid.toString(), { en: "DEPOSIT_RES", data: { success: true, msg: "Your Money Added into your account" } })
                         res.send({ msg: "Done", flg: true })
@@ -328,49 +328,67 @@ module.exports = {
             }
         });
 
-        app.post("/selectServer", (req, res) => {
-            // try {
-            cl("in choose server", req.body);
-            if (typeof req.body.v == undefined || req.body.v == "" || req.body.v == null) {
+        app.post("/selectServer", decryptData, (req, res) => {
+            try {
+                cl("in choose server", req.body);
+                if (typeof req.body.v == undefined || req.body.v == "" || req.body.v == null) {
+                    commonClass.response(res, {
+                        msg: "not proper data"
+                    });
+                    return false;
+                }
+
+                let config_data = config;
+
+                let app_config_data = {
+                    VM: config_data.VERSION_MESSAGE,
+                    DU: config_data.DOWNLOAD_URL,
+                    VERSION_TITLE: config_data.VERSION_TITLE,
+                    FVP: (parseInt(req.body.v) < parseInt(config_data.FORCE_VERISON_CODE) && config_data.FORCE_VERSION_POPUP) ? true : false,
+                    SVP: (parseInt(req.body.v) < parseInt(config_data.CURRENT_VERISON_CODE) && config_data.DISPLAY_VERSION_POPUP) ? true : false,
+                    SHOW_ADS: config_data.SHOW_ADS,
+                    MM: config_data.MM, // maintenance flag
+                    MM_T: config_data.MM_T, // maintenance time second
+                    BASE_URL: process.env.BASE_URL,
+                    MIN_DEPOSIT: config.MIN_DEPOSIT,
+                    MAX_DEPOSIT: config.MAX_DEPOSIT,
+                    MIN_WITHDRAW: config.MIN_WITHDRAW,
+                    MAX_WITHDRAW: config.MAX_WITHDRAW,
+                    POLICY_TEXT: config.POLICY_TEXT,
+                    REJOIN_MSG: config.REJOIN_MSG,
+                    MAX_BET: config.MAX_BET,
+                    MAX_BET_FLAG: config.MAX_BET_FLAG,
+                    POLICY_URL: config.POLICY_URL,
+                    TERM_CONDITION_URL: config.TERM_CONDITION_URL,
+                    FIRST_DEPOSIT_REFERAL_BONUS_PER: config.FIRST_DEPOSIT_REFERAL_BONUS_PER,
+                    COMING_SOON_PAGE: config.COMING_SOON_PAGE
+                };
+                commonClass.response(res, app_config_data);
+            } catch (error) {
                 commonClass.response(res, {
                     msg: "not proper data"
                 });
-                return false;
             }
 
-            let config_data = config;
-
-            let app_config_data = {
-                VM: config_data.VERSION_MESSAGE,
-                DU: config_data.DOWNLOAD_URL,
-                VERSION_TITLE: config_data.VERSION_TITLE,
-                FVP: (parseInt(req.body.v) < parseInt(config_data.FORCE_VERISON_CODE) && config_data.FORCE_VERSION_POPUP) ? true : false,
-                SVP: (parseInt(req.body.v) < parseInt(config_data.CURRENT_VERISON_CODE) && config_data.DISPLAY_VERSION_POPUP) ? true : false,
-                SHOW_ADS: config_data.SHOW_ADS,
-                MM: config_data.MM, // maintenance flag
-                MM_T: config_data.MM_T, // maintenance time second
-                BASE_URL: process.env.BASE_URL,
-                MIN_DEPOSIT: config.MIN_DEPOSIT,
-                MAX_DEPOSIT: config.MAX_DEPOSIT,
-                MIN_WITHDRAW: config.MIN_WITHDRAW,
-                MAX_WITHDRAW: config.MAX_WITHDRAW,
-                POLICY_TEXT: config.POLICY_TEXT,
-                REJOIN_MSG: config.REJOIN_MSG,
-                MAX_BET: config.MAX_BET,
-                MAX_BET_FLAG: config.MAX_BET_FLAG,
-                POLICY_URL: config.POLICY_URL,
-                TERM_CONDITION_URL: config.TERM_CONDITION_URL,
-                FIRST_DEPOSIT_REFERAL_BONUS_PER: config.FIRST_DEPOSIT_REFERAL_BONUS_PER,
-                COMING_SOON_PAGE: config.COMING_SOON_PAGE
-            };
-            commonClass.response(res, app_config_data);
-            // } catch (error) {
-            //     commonClass.response(res, {
-            //         msg: "not proper data"
-            //     });
-            // }
-
         })
+
+        function decryptData(req, res, next) {
+            try {
+                console.log("call come");
+                if (Object.keys(req.body).length > 0) {
+                    console.log("-------");
+                    req.body = commonClass.Dec(req.body.data);
+                    if (typeof req.body == 'string') {
+                        req.body = JSON.parse(req.body);
+                    }
+                }
+                next();
+            } catch (e) {
+                console.log(e);
+                commonClass.response(res, { status: false, data: {} });
+            }
+
+        }
 
     }
 }

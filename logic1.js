@@ -106,48 +106,48 @@ _ = module.exports = require('underscore');
 
 
 
-let chips = -10.155465;
-let total_cash = 50;
-let bonus_cash = 50.56574864414684;
-let user_bonus_cash = 50.56574864414684;
+// let chips = -10.155465;
+// let total_cash = 50;
+// let bonus_cash = 50.56574864414684;
+// let user_bonus_cash = 50.56574864414684;
 
-let total_cut_cash = Math.abs(chips);
+// let total_cut_cash = Math.abs(chips);
 
-if (total_cash + bonus_cash >= total_cut_cash) {
+// if (total_cash + bonus_cash >= total_cut_cash) {
 
-      let halft_deduct_cash = total_cut_cash / 2;
+//       let halft_deduct_cash = total_cut_cash / 2;
 
-      if (total_cash == 0 && bonus_cash >= total_cut_cash) {
-            console.log("1");
-            bonus_cash = bonus_cash - total_cut_cash;
-            total_cut_cash = 0;
-      } else if (bonus_cash == 0 && total_cash >= total_cut_cash) {
-            console.log("2");
-            total_cash = total_cash - total_cut_cash;
-            total_cut_cash = 0;
-      } else if (total_cash >= halft_deduct_cash && bonus_cash >= halft_deduct_cash) {
-            console.log("3");
-            total_cash = total_cash - halft_deduct_cash;
-            bonus_cash = bonus_cash - halft_deduct_cash;
-            total_cut_cash = 0;
-      } else if ((bonus_cash < halft_deduct_cash && bonus_cash > 0) || (total_cash < halft_deduct_cash && total_cash > 0)) {
-            if (bonus_cash < halft_deduct_cash) {
-                  console.log("4");
-                  let diff = halft_deduct_cash - bonus_cash;
-                  bonus_cash = 0;
-                  total_cash = total_cash - (halft_deduct_cash + diff);
-                  total_cut_cash = 0;
-            } else if (total_cash < halft_deduct_cash) {
-                  console.log("5");
-                  let diff = halft_deduct_cash - total_cash;
-                  total_cash = 0;
-                  bonus_cash = bonus_cash - (halft_deduct_cash + diff);
-                  total_cut_cash = 0;
-            }
-      }
-} else {
-      console.log("not enough cash");
-}
+//       if (total_cash == 0 && bonus_cash >= total_cut_cash) {
+//             console.log("1");
+//             bonus_cash = bonus_cash - total_cut_cash;
+//             total_cut_cash = 0;
+//       } else if (bonus_cash == 0 && total_cash >= total_cut_cash) {
+//             console.log("2");
+//             total_cash = total_cash - total_cut_cash;
+//             total_cut_cash = 0;
+//       } else if (total_cash >= halft_deduct_cash && bonus_cash >= halft_deduct_cash) {
+//             console.log("3");
+//             total_cash = total_cash - halft_deduct_cash;
+//             bonus_cash = bonus_cash - halft_deduct_cash;
+//             total_cut_cash = 0;
+//       } else if ((bonus_cash < halft_deduct_cash && bonus_cash > 0) || (total_cash < halft_deduct_cash && total_cash > 0)) {
+//             if (bonus_cash < halft_deduct_cash) {
+//                   console.log("4");
+//                   let diff = halft_deduct_cash - bonus_cash;
+//                   bonus_cash = 0;
+//                   total_cash = total_cash - (halft_deduct_cash + diff);
+//                   total_cut_cash = 0;
+//             } else if (total_cash < halft_deduct_cash) {
+//                   console.log("5");
+//                   let diff = halft_deduct_cash - total_cash;
+//                   total_cash = 0;
+//                   bonus_cash = bonus_cash - (halft_deduct_cash + diff);
+//                   total_cut_cash = 0;
+//             }
+//       }
+// } else {
+//       console.log("not enough cash");
+// }
 
 
 // console.log("total_cash", parseFloat(total_cash.toFixed(2)));
@@ -164,40 +164,48 @@ if (total_cash + bonus_cash >= total_cut_cash) {
 
 
 
-let deposit_amount = 100;
-let bonus = 0;
-if (deposit_amount <= 1000) {
-      bonus = deposit_amount * 200/100;
-} else {
-      bonus = 1000
+// let deposit_amount = 100;
+// let bonus = 0;
+// if (deposit_amount <= 1000) {
+//       bonus = deposit_amount * 200/100;
+// } else {
+//       bonus = 1000
+// }
+
+// console.log(bonus);
+
+
+// console.log((Math.random() * (1- 1) + 1).toFixed(2))
+
+
+
+
+
+var myTimer = [];
+
+function myFunction() {
+      myTimer.push(setTimeout(function () { console.log("Hello") }, 3000));
 }
 
-console.log(bonus);
+function myStopFunction() {
+      console.log("clear all time");
+      clearTimeout(myTimer.pop());
+      myTimer = [];
+}
 
 
-console.log((Math.random() * (1- 1) + 1).toFixed(2))
+setTimeout(() => {
+        console.log("-");
+      myFunction();
+  myFunction();
+
+}, 1000);
 
 
 
+setTimeout(() => {
+      myStopFunction();
+}, 2000);
 
+clearTimeout("11111")
 
-/*
-
-03-02-2023
-
-1. Reference id ma balnk mokla je starting ma user add no kare to - Done
-2. Home screen sound and ee side popup.
-3. center ni x value 6e ne te je tene thoduk vadhare bold karvanu 6e 
-4. last ma plane je udi ne jatu rey 6e ne teni speed thodik oo6i karvani 6e 
-5. withdraw ma thoduk add karvanu 6e te hu tane moklu hamana
-6. aapade cashout karvi aatale je upar small poup aave 6e ne "you cashout at" kari ne teni size oo6i karvani 6e and x(close) nu button mukvanu 6e
-7. Auto play valu logic banavanu 6e 
-8. facebook SDK add karvani 6e.
-
-9. bank details add and update karvanu 6e event AUPD aa 6e data ma aatalu pass karvanu { uid: "63d396317a37a18c5f34d90d", bank_no: "1111111111", ifsc_code: "Nachi2203#1", bank_name: "icici", holder_name: "Viju", uip_id: "viju@okicici" }
-10. pa6i payemnt details add kari hoy to get karva mate GPD aa event 6e aama khali uid moklvani
-11. WITHDRAWAL aa event ma payment_method aa 1 field add karvnai 6e 
-12. support nu add karu 6e to teni event name SUPPORT and data ma { uid: "63d396317a37a18c5f34d90d", msg:"Make Money" }  aatalu moklvanu
-13. 
-
-*/

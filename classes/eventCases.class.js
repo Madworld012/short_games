@@ -15,7 +15,6 @@ module.exports = {
 	BindSocketToEvent: function (client) {
 
 		client.on('req', function (request) {
-			cl("call come for socket ", typeof request.data);
 			cl("call come for socket ",request);
 			request = commonClass.Dec(request);
 			cl("request.en", request.en);

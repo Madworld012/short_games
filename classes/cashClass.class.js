@@ -130,14 +130,12 @@ module.exports = {
         let referalcode = ""
         if (data.uid) {
             let user_refera_code = await db.collection('game_users').find({ _id: ObjectId(data.uid) }).toArray();
-            console.log("call come--",user_refera_code);
             if (user_refera_code.length > 0) {
                 referalcode = user_refera_code[0].unique_id;
             }
             if (referral_details.length > 0) {
                 delete referral_details[0]._id;
                 referral_details[0]["referalcode"] = referalcode;
-                console.log("referral_details",referral_details);
                 commonClass.sendDirectToUserSocket(client, { en: "REFERRAl_DETAILS", data: { status: true, referral_details: referral_details[0] } });
             } else {
                 commonClass.sendDirectToUserSocket(client, {

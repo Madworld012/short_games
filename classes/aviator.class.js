@@ -269,28 +269,11 @@ module.exports = {
         } catch (error) {
         }
     },
-    ganrateBet: function (tblid, time) {
-        setTimeout(() => {
-            let uid = _.random(100);
-            let un = _.sample(names);
-            let bet = _.random(1, 10) * 50;
-            commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-            console.log();
-            myTimer.push(
-                setTimeout(async function () {
-                    let current_x_value = JSON.parse(await cache.get(tblid.toString()));
-                    console.log("current_x_value0", current_x_value);
-                    commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "CASHOUT", uid: uid.toString(), x: current_x_value.x, bet: bet, win_amount: current_x_value.x * bet } });
-                }, _.random(10, 20) * 1000));
-        }, _.random(1, 5) * 100);
-    },
-
     fakeBetNoti: async function (tblid, time, round_id) {
         if (tblid && time) {
             console.log("time",time);
             for (let i = 0; i < _.random(5, 15); i++) {
-                // aviatorClass.ganrateBet(tblid, time);
-                let uid = _.random(100);
+                let uid = _.random(100) + "_" + Date.now();
                 let un = _.sample(names);
                 let bet = _.random(1, 10) * 50;
                 commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });

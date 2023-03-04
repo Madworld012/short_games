@@ -378,11 +378,15 @@ module.exports = {
     },
     firstDepositReferalBonus: async function (data) {
         if (data) {
+            console.log("data",data);
             let amount = data.amount;
             let deposit_user = data.uid;
             let ref_uniq_id = data.ref_uniq_id;
 
+
+
             let user_data = await db.collection('game_users').find({ unique_id: ref_uniq_id }).toArray();
+            console.log("user_data",user_data);
             if (user_data.length > 0) {
                 let bonus_amount = amount * config.FIRST_DEPOSIT_REFERAL_BONUS_PER / 100;
                 if (bonus_amount > 0) {

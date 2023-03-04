@@ -700,7 +700,7 @@ module.exports = {
                     if (table_data.length > 0) {
                         let min_amount = (config.DEPO_WITH_NOTIFICATION_MIN_VALUE) ? config.DEPO_WITH_NOTIFICATION_MIN_VALUE : 1;
                         let max_amount = (config.DEPO_WITH_NOTIFICATION_MAX_VALUE) ? config.DEPO_WITH_NOTIFICATION_MAX_VALUE : 10;
-                        let final_amount = _.random(min_amount, max_amount) * 100;
+                        let final_amount = _.random(min_amount, max_amount) * 1000;
                         if (final_amount == 0) {
                             final_amount = 1000;
                         }

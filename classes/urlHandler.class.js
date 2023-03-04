@@ -308,6 +308,7 @@ module.exports = {
                         commonClass.update_cash({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount), msg: "Deposite Money From UTR", bonus: false, trans: true });
                         let user_data = await db.collection('game_users').find({ _id: ObjectId(deposit_details.uid.toString()) }).toArray();
                         if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
+                            console.log("call come here");
                             signupClass.firstDepositReferalBonus({ uid: user_data[0]._id, ref_uniq_id: user_data[0].reference_user_id, amount: parseInt(deposit_details.amount) });
                         }
 

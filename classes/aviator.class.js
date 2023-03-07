@@ -271,7 +271,6 @@ module.exports = {
     },
     fakeBetNoti: async function (tblid, time, round_id) {
         if (tblid && time) {
-            console.log("time",time);
             for (let i = 0; i < _.random(5, 15); i++) {
                 let uid = _.random(100) + "_" + Date.now();
                 let un = _.sample(names);
@@ -332,6 +331,7 @@ module.exports = {
         if (config.RANGE_MAX_COUNT && config.RANGE_MAX_COUNT > 10) {
             rand_value = _.random(1, config.RANGE_MAX_COUNT);
         }
+        console.log("rand_value",rand_value);
         let range = await db.collection(config.RANGE_TABLE).find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
         if (range && range.length > 0) {
             range = range[0];

@@ -501,6 +501,7 @@ module.exports = {
             if (user_data.length > 0) {
                 await db.collection('support_msg').insert({
                     uid: data.uid.toString(),
+                    title:(data.title)?data.title:"",
                     msg: data.msg,
                     cd: new Date()
                 })

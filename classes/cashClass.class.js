@@ -159,18 +159,21 @@ module.exports = {
         let referral_details = await db.collection('payment_details').find({}).toArray();
         let upi_details = await db.collection('UPI_dtails').find({}).toArray();
 
-        if(!data.amount || data.amount <= 0){
-            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg:"Please enter proper amount." } });
+        if (!data.amount || data.amount <= 0) {
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg: "Please enter proper amount." } });
             return false;
         }
 
         if (referral_details.length > 0) {
             delete referral_details[0]._id;
             if (upi_details.length > 0) {
+                let transection_no = "luckyrocket" + "-" + new Date().valueOf();
                 referral_details[0].UPI_ID = upi_details[0].UPI_ID;
                 referral_details[0].UPI_NAME = upi_details[0].UPI_NAME;
                 referral_details[0].QR_CODE = "http://" + process.env.BASE_URL + "/" + upi_details[0].QR_CODE;
-                referral_details[0].PAY_INTENT = "upi://pay?ver=01&mode=15&am="+parseInt(data.amount)+"&mam="+parseInt(data.amount)+"&cu=INR&pa="+upi_details[0].UPI_ID+"&pn=LuckyRocket+Gaming&mc=5816&tr="+"luckyrocket" + "-" + new Date().valueOf()+"&tn=topup+wallet&mid=LUCKYROCKET&msid=LUCKYROCKET001-LUCKY&mtid=LUCKYROCKET001-001";
+                referral_details[0].PAY_INTENT = "upi://pay?ver=01&mode=15&am=" + parseInt(data.amount) + "&mam=" + parseInt(data.amount) + "&cu=INR&pa=" + upi_details[0].UPI_ID + "&pn=LuckyRocket+Gaming&mc=5816&tr=" + transection_no + "&tn=topup+wallet&mid=LUCKYROCKET&msid=LUCKYROCKET001-LUCKY&mtid=LUCKYROCKET001-001";
+                referral_details[0].TRA_NO = transection_no;
+                
             }
             commonClass.sendDirectToUserSocket(client, { en: "DEPOSIT_DETAILS", data: { status: true, referral_details: referral_details[0] } });
         } else {
@@ -185,7 +188,8 @@ module.exports = {
                         "UPI_ID": "payluckyrocket@sbi",
                         "QR_CODE": "http://" + process.env.BASE_URL + "/qr_code.JPG",
                         "UPI_NAME": "LuckyRocket",
-                        "PAY_INTENT" : "upi://pay?ver=01&mode=15&am="+parseInt(data.amount)+"&mam="+parseInt(data.amount)+"&cu=INR&pa=payluckyrocket@sbi&pn=LuckyRocket+Gaming&mc=5816&tr="+"luckyrocket" + "-" + new Date().valueOf()+"&tn=topup+wallet&mid=KOPAYMENTS001&msid=KOPAYMENTS001-ENTWIK&mtid=KOPAYMENTS001-001"
+                        "PAY_INTENT": "upi://pay?ver=01&mode=15&am=" + parseInt(data.amount) + "&mam=" + parseInt(data.amount) + "&cu=INR&pa=payluckyrocket@sbi&pn=LuckyRocket+Gaming&mc=5816&tr=" + "luckyrocket" + "-" + new Date().valueOf() + "&tn=topup+wallet&mid=KOPAYMENTS001&msid=KOPAYMENTS001-ENTWIK&mtid=KOPAYMENTS001-001",
+                        "TRA_NO":"luckyrocket" + "-" + new Date().valueOf()
                     }
                 }
             });

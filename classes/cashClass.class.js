@@ -160,7 +160,7 @@ module.exports = {
         let upi_details = await db.collection('UPI_dtails').find({}).toArray();
 
         if(!data.amount || data.amount <= 0){
-            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg:"please send proper amount" } });
+            commonClass.sendDirectToUserSocket(client, { en: "PUP", data: { status: false, msg:"Please enter proper amount." } });
             return false;
         }
 

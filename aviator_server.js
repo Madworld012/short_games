@@ -63,8 +63,8 @@ var server = http.createServer(app);
 
 io = module.exports = socketIO(server, {
 	'origins': '*:*',
-	'pingTimeout': 1000,
-	'pingInterval': 1000,
+	'pingTimeout': 10000,
+	'pingInterval': 7000,
 	parser: require("socket.io-msgpack-parser")
 });
 server.listen(SERVER_PORT);

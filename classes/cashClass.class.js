@@ -71,6 +71,7 @@ module.exports = {
                     mobile_no: user_data.mobile_no,
                     amount: parseInt(data.amount),
                     UTR_CODE: data.UTR_CODE,
+                    TRA_NO : data.TRA_NO,
                     cd: new Date(),
                     status: "pending"
                 }
@@ -171,7 +172,8 @@ module.exports = {
                 referral_details[0].UPI_ID = upi_details[0].UPI_ID;
                 referral_details[0].UPI_NAME = upi_details[0].UPI_NAME;
                 referral_details[0].QR_CODE = "http://" + process.env.BASE_URL + "/" + upi_details[0].QR_CODE;
-                referral_details[0].PAY_INTENT = "upi://pay?ver=01&mode=15&am=" + parseInt(data.amount) + "&mam=" + parseInt(data.amount) + "&cu=INR&pa=" + upi_details[0].UPI_ID + "&pn=LuckyRocket+Gaming&mc=5816&tr=" + transection_no + "&tn=topup+wallet&mid=LUCKYROCKET&msid=LUCKYROCKET001-LUCKY&mtid=LUCKYROCKET001-001";
+                // referral_details[0].PAY_INTENT = "upi://pay?ver=01&mode=15&am=" + parseInt(data.amount) + "&mam=" + parseInt(data.amount) + "&cu=INR&pa=" + upi_details[0].UPI_ID + "&pn=LuckyRocket+Gaming&mc=5816&tr=" + transection_no + "&tn=topup+wallet&mid=LUCKYROCKET&msid=LUCKYROCKET001-LUCKY&mtid=LUCKYROCKET001-001";
+                referral_details[0].PAY_INTENT = "upi://pay?&am=" + parseInt(data.amount) + "&mam=" + parseInt(data.amount) + "&cu=INR&pa=" + upi_details[0].UPI_ID +"";
                 referral_details[0].TRA_NO = transection_no;
                 
             }

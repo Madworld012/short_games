@@ -348,6 +348,7 @@ module.exports = {
                     FVP: (parseInt(req.body.v) < parseInt(config_data.FORCE_VERISON_CODE) && config_data.FORCE_VERSION_POPUP) ? true : false,
                     SVP: (parseInt(req.body.v) < parseInt(config_data.CURRENT_VERISON_CODE) && config_data.DISPLAY_VERSION_POPUP) ? true : false,
                     SHOW_ADS: config_data.SHOW_ADS,
+                    PAY_BUTTON_FLAG: config_data.PAY_BUTTON_FLAG,
                     MM: config_data.MM, // maintenance flag
                     MM_T: config_data.MM_T, // maintenance time second
                     BASE_URL: process.env.BASE_URL,

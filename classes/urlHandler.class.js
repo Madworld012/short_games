@@ -363,7 +363,10 @@ module.exports = {
                     POLICY_URL: config.POLICY_URL,
                     TERM_CONDITION_URL: config.TERM_CONDITION_URL,
                     FIRST_DEPOSIT_REFERAL_BONUS_PER: config.FIRST_DEPOSIT_REFERAL_BONUS_PER,
-                    COMING_SOON_PAGE: config.COMING_SOON_PAGE
+                    COMING_SOON_PAGE: config.COMING_SOON_PAGE,
+                    ADD_CASH_BTN_FLAG: config.ADD_CASH_BTN_FLAG,
+                    PROFILE_TRANSECTION_FLAG: config.PROFILE_TRANSECTION_FLAG,
+                    ADD_CHIPS_PLUSE_BTN_FLAG: config.ADD_CHIPS_PLUSE_BTN_FLAG
                 };
                 commonClass.response(res, app_config_data);
             } catch (error) {

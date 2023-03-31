@@ -102,7 +102,7 @@ module.exports = {
             if (withdraw_history && withdraw_history.length > 0) {
                 commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: withdraw_history } });
             } else {
-                commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: false, withdraw_history: [] } });
+                commonClass.sendDirectToUserSocket(client, { en: "WITHDRAWAL_HISTORY", data: { status: true, withdraw_history: [] } });
             }
         }
     },

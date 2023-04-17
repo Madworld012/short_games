@@ -103,6 +103,7 @@ module.exports = {
                         } else {
                             tableData.history.reverse();
                         }
+                        tableData["GUEST_LOGIN"] = false;
 
                         commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
                         await db.collection('aviator_table').updateOne({ _id: ObjectId(tableData._id.toString()) }, { $inc: { count: 1 } }, function () { });
@@ -128,6 +129,7 @@ module.exports = {
                             client.join(new_table_data._id.toString());
                             new_table_data["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
                             new_table_data.history = new_table_data.f_history.reverse();
+                            tableData["GUEST_LOGIN"] = false;
                             commonClass.sendDirectToUserSocket(client, { en: "GTI", data: new_table_data });
                             aviatorClass.startGame(new_table_data._id);
                             if (config.DEPO_WITH_AUTO_NOTIFICATION) {
@@ -761,10 +763,12 @@ module.exports = {
                 tableData.history.reverse();
             }
 
+            tableData["GUEST_LOGIN"] = true;
+
             db.collection('guest_user').insertOne({ sck: client.id, date: new Date() });
-            commonClass.sendDirectToUserSocket(client, { en: "GUEST_LOGIN", data: tableData });
+            commonClass.sendDirectToUserSocket(client, { en: "GTI", data: tableData });
         } else {
-            commonClass.sendDirectToUserSocket(client, { en: "GUEST_LOGIN", data: { status: false, msg: "table not found" } });
+            commonClass.sendDirectToUserSocket(client, { en: "GTI", data: { status: false, msg: "table not found" } });
         }
     }
 }

@@ -367,7 +367,9 @@ module.exports = {
                     COMING_SOON_PAGE: config.COMING_SOON_PAGE,
                     ADD_CASH_BTN_FLAG: config.ADD_CASH_BTN_FLAG,
                     PROFILE_TRANSECTION_FLAG: config.PROFILE_TRANSECTION_FLAG,
-                    ADD_CHIPS_PLUSE_BTN_FLAG: config.ADD_CHIPS_PLUSE_BTN_FLAG
+                    ADD_CHIPS_PLUSE_BTN_FLAG: config.ADD_CHIPS_PLUSE_BTN_FLAG,
+                    MORE_INQUIRY_LINK : config.MORE_INQUIRY,
+                    OFFER_BANNER_LINK: config.OFFER_BANNER
                 };
                 commonClass.response(res, app_config_data);
             } catch (error) {

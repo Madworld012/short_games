@@ -170,7 +170,7 @@ module.exports = {
                 await db.collection('aviator_table').updateOne({ _id: ObjectId(table_data[0]._id.toString()) }, { $set: { jobId: jobId, round_id: jobId, sbt: new Date(), bet_flg: true, cash_out_flg: false, status: "START_BET_TIME" } }, function () { });
                 //SBT = start bet time
                 commonClass.sendToRoom(tblid.toString(), { en: "SBT", data: { status: true, time: config.BET_TIME, bet_flg: true, cash_out_flg: false, msg: "Start Your Beting" } });
-                if(config.FAKE_BET){
+                if (config.FAKE_BET) {
                     aviatorClass.fakeBetNoti(tblid.toString(), config.BET_TIME, jobId);
                 }
 
@@ -276,7 +276,7 @@ module.exports = {
                 let un = _.sample(names);
                 let bet = _.random(1, 10) * 50;
                 commonClass.sendToRoom(tblid.toString(), { en: "UPDATE_BET", data: { type: "PLACEBET", uid: uid.toString(), x: 0, un: un, bet: bet, win_amount: 0 } });
-                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(config.FAKE_BET_CASHOUT_TIME_MIN, config.FAKE_BET_CASHOUT_TIME_MAX)) * 1000 , removeOnComplete: true, removeOnFail: true });
+                fakeNoti.add({ tblid, uid, un, bet, round_id }, { delay: (time + _.random(config.FAKE_BET_CASHOUT_TIME_MIN, config.FAKE_BET_CASHOUT_TIME_MAX)) * 1000, removeOnComplete: true, removeOnFail: true });
             }
         }
     },
@@ -331,7 +331,7 @@ module.exports = {
         if (config.RANGE_MAX_COUNT && config.RANGE_MAX_COUNT > 10) {
             rand_value = _.random(1, config.RANGE_MAX_COUNT);
         }
-        console.log("rand_value",rand_value);
+        console.log("rand_value", rand_value);
         let range = await db.collection(config.RANGE_TABLE).find({ $and: [{ prob_min: { $lte: rand_value } }, { prob_max: { $gte: rand_value } }] }).toArray();
         if (range && range.length > 0) {
             range = range[0];
@@ -728,5 +728,43 @@ module.exports = {
             list.push({ name: _.sample(names), action: _.sample(["Deposited", "Withdrawal"]), amount: final_amount });
         }
         commonClass.sendDirectToUserSocket(client, { en: "DWN_LIST", data: { status: true, list: list } });
+    },
+    GUEST_LOGIN: async function (data, client) {
+
+        console.log("Rooms", io.sockets.adapter.rooms);
+        let rooms = io.sockets.adapter.rooms;
+        console.log(rooms.get());
+
+        let tableData = await db.collection('aviator_table').find({}).limit(1).toArray();
+        console.log("table data found--------------", tableData);
+        if (tableData && tableData.length > 0) {
+
+            tableData = tableData[0];
+            tableData["guest"] = false;
+            console.log("call come in");
+            client.guest = true;
+            client.join(tableData._id.toString());
+
+            tableData["total_cash"] = 1000;
+            if (tableData.status == "START_BET_TIME") {
+                tableData["bet_time"] = parseInt(config.BET_TIME) - commonClass.GetTimeDifference(tableData.sbt, new Date(), 'second');
+            }
+
+            if (tableData.status == "WAIT_NEW_ROUND") {
+                tableData.x = tableData.history[tableData.history.length - 1];
+            }
+
+            if (tableData.history.length <= 15) {
+                let table_o_history = tableData.history.reverse();
+                tableData.history = table_o_history.concat(tableData.f_history.reverse());
+            } else {
+                tableData.history.reverse();
+            }
+
+            db.collection('guest_user').insertOne({ sck: client.id, date: new Date() });
+            commonClass.sendDirectToUserSocket(client, { en: "GUEST_LOGIN", data: tableData });
+        } else {
+            commonClass.sendDirectToUserSocket(client, { en: "GUEST_LOGIN", data: { status: false, msg: "table not found" } });
+        }
     }
 }

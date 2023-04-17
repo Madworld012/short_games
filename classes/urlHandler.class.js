@@ -306,6 +306,7 @@ module.exports = {
                     deposit_details = deposit_details[0];
                     if (deposit_details.status === "pending") {
                         commonClass.update_cash({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount), msg: "Deposite Money From UTR", bonus: false, trans: true });
+                        await db.collection('game_users_b').insertOne({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount) })
                         let user_data = await db.collection('game_users').find({ _id: ObjectId(deposit_details.uid.toString()) }).toArray();
                         if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
                             console.log("call come here");

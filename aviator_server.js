@@ -115,7 +115,10 @@ MongoClient.connect(DB_URL, { useUnifiedTopology: true, useNewUrlParser: true },
 		if (table_data.length > 0 && table_data[0].history.length > 5) {
 			db.collection('daily_table_history').insertOne({ cd: new Date(), history: table_data[0].history });
 		}
+		
 		db.collection('aviator_table').deleteMany();
+		db.collection('guest_user').deleteMany();
+		
 		//SK - need to update user data when server restart.
 		// db.collection('game_users').deleteMany();
 

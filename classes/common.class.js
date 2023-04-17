@@ -70,6 +70,8 @@ module.exports = {
         // return toCrypt;
     },
     Dec: function (toDecrypt) {
+        // return toDecrypt;
+        
         let keyBuf = Buffer.from(Array(32));
 
         keyBuf.write(encKey, 'utf8');
@@ -126,7 +128,7 @@ module.exports = {
         return ut;
     },
     update_cash: async function (data) {
-
+        console.log("data--------------------------------------", data);
         if (!data.uid) {
             console.log("CRITICAL Error in UPdate balance:: ", data.msg);
             return;
@@ -141,8 +143,131 @@ module.exports = {
 
             if (data.cash > 0) {
                 if (data.bonus && data.bonus == true) {
+                    console.log("----------1---------");
                     update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
                 } else {
+                    console.log("----------2---------");
+
+                    let add_cash = data.cash;
+
+                    let total_cash = 0;
+                    let bonus_cash = 0;
+
+
+                    console.log("add simple-----");
+                    total_cash = add_cash;
+
+
+                    console.log("");
+
+                    if (total_cash > 0) {
+                        update_json['total_cash'] = parseFloat((((total_cash + user_data.total_cash) < 0) ? 0 : total_cash + user_data.total_cash).toFixed(2));
+                    }
+
+                    if (bonus_cash > 0) {
+                        update_json['bonus_cash'] = parseFloat((((bonus_cash + user_data.bonus_cash) < 0) ? 0 : bonus_cash + user_data.bonus_cash).toFixed(2));
+                    }
+                }
+            } else {
+                if (data.trans && data.trans == true) {
+                    console.log("----------3---------");
+                    update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
+                } else {
+                    console.log("----------4---------");
+
+                    let total_cash = user_data.total_cash;
+                    let bonus_cash = user_data.bonus_cash;
+                    let total_cut_cash = Math.abs(data.cash);
+
+
+                    if (total_cash + bonus_cash >= total_cut_cash) {
+
+                        let cut_from_cash = Math.round(total_cut_cash * 75 / 100);
+                        let cut_from_bonus = total_cut_cash - cut_from_cash;
+
+                        console.log("cut_from_cash", cut_from_cash);
+                        console.log("cut_from_bonus", cut_from_bonus);
+                        console.log("-------------------------------------------------------");
+
+                        if (total_cash == 0 && bonus_cash >= total_cut_cash) {
+                            console.log("cond 1");
+                            bonus_cash = bonus_cash - total_cut_cash;
+                            total_cut_cash = 0;
+                        } else if (bonus_cash == 0 && total_cash >= total_cut_cash) {
+                            console.log("cond 2");
+                            total_cash = total_cash - total_cut_cash;
+                            total_cut_cash = 0;
+                        } else if (total_cash >= cut_from_cash && bonus_cash >= cut_from_bonus) {
+                            console.log("cond 3");
+                            total_cash = total_cash - cut_from_cash;
+                            bonus_cash = bonus_cash - cut_from_bonus;
+                            total_cut_cash = 0;
+                        } else {
+                            if ((total_cash <= cut_from_cash && total_cash > 0) || (bonus_cash <= cut_from_bonus && bonus_cash > 0)) {
+                                console.log("cond 4");
+                                total_cut_cash = total_cut_cash - total_cash;
+                                total_cash = 0;
+                                if (total_cut_cash > 0) {
+                                    bonus_cash = bonus_cash - total_cut_cash;
+                                    total_cut_cash = 0;
+                                }
+                            }
+                        }
+
+                    } else {
+                        console.log("not enough coin");
+                    }
+
+                    update_json["total_cash"] = parseFloat(total_cash.toFixed(2));
+                    update_json["bonus_cash"] = parseFloat(bonus_cash.toFixed(2));
+
+                    // update_json["bet_from_bonus"] = user_data.bet_from_bonus + parseFloat((user_data.bonus_cash - bonus_cash).toFixed(2));
+                }
+            }
+
+            // var final_cash = (((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2);
+            // console.log("final_cash", final_cash);
+            // let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: { total_cash: parseFloat(final_cash) } }, { returnDocument: 'after' });
+            let user_updated_record = await db.collection('game_users').findOneAndUpdate({ _id: ObjectId(data.uid.toString()) }, { $set: update_json }, { returnDocument: 'after' });
+            commonClass.trackChips({
+                uid: user_data._id.toString(),
+                msg: data.msg,
+                cut_cash: data.cash,
+                cash: user_data.total_cash,
+                bonus: user_data.bonus_cash,
+                bet_from_bonus: (user_data.bet_from_bonus) ? user_data.bet_from_bonus : "",
+                a_cash: user_updated_record.value.total_cash,
+                a_bonus: user_updated_record.value.bonus_cash,
+                a_bet_from_bonus: (update_json.bet_from_bonus) ? update_json.bet_from_bonus : "",
+                cd: new Date()
+            });
+            commonClass.sendDataToUserSocketId(user_data.sck, { en: "UC", data: { status: true, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bonus_cash: user_updated_record.value.bonus_cash } });
+        } else {
+            console.log("Problem in update cash:: ", data);
+        }
+
+
+    },
+    update_cash_old: async function (data) {
+        console.log("data", data);
+        if (!data.uid) {
+            console.log("CRITICAL Error in UPdate balance:: ", data.msg);
+            return;
+        }
+        let user_data = await db.collection('game_users').find({ _id: ObjectId(data.uid.toString()) }).toArray();
+
+        if (user_data && user_data.length > 0) {
+            user_data = user_data[0];
+
+
+            let update_json = {};
+
+            if (data.cash > 0) {
+                if (data.bonus && data.bonus == true) {
+                    console.log("----------1---------");
+                    update_json['bonus_cash'] = parseFloat((((data.cash + user_data.bonus_cash) < 0) ? 0 : data.cash + user_data.bonus_cash).toFixed(2));
+                } else {
+                    console.log("----------2---------");
 
                     let bet_from_bonus = user_data.bet_from_bonus;
                     let add_cash = data.cash;
@@ -167,9 +292,11 @@ module.exports = {
                             bet_from_bonus = 0;
                         }
                     } else {
+                        console.log("add simple-----");
                         total_cash = add_cash;
                     }
 
+                    console.log("");
 
                     if (total_cash > 0) {
                         update_json['total_cash'] = parseFloat((((total_cash + user_data.total_cash) < 0) ? 0 : total_cash + user_data.total_cash).toFixed(2));
@@ -183,8 +310,13 @@ module.exports = {
                 }
             } else {
                 if (data.trans && data.trans == true) {
+
+                    console.log("----------3---------");
+
                     update_json['total_cash'] = parseFloat((((data.cash + user_data.total_cash) < 0) ? 0 : data.cash + user_data.total_cash).toFixed(2));
                 } else {
+                    console.log("----------4---------");
+
                     let total_cash = user_data.total_cash;
                     let bonus_cash = user_data.bonus_cash;
                     let total_cut_cash = Math.abs(data.cash);
@@ -319,10 +451,10 @@ module.exports = {
         }
     },
     getRandomeHistory: async function (number) {
-        let history_data = await db.collection("daily_table_history").aggregate([{$addFields: {history_count:{$size:"$history"}}},{$match:{history_count:{$gt:6}}},{$sort:{cd:-1}},{$limit:1}]).toArray();
+        let history_data = await db.collection("daily_table_history").aggregate([{ $addFields: { history_count: { $size: "$history" } } }, { $match: { history_count: { $gt: 6 } } }, { $sort: { cd: -1 } }, { $limit: 1 }]).toArray();
         let history = _.shuffle([1.97, 2.87, 3.00, 2.89, 1.85, 5.30, 1.67, 10.25, 1.32, 1.18, 1.23, 10.25, 1.32, 1.18, 1.23]);
         if (history_data.length > 0) {
-            history = history_data[0].history.splice(history_data[0].history.length - 25,history_data[0].history.length)
+            history = history_data[0].history.splice(history_data[0].history.length - 25, history_data[0].history.length)
         }
         return history;
     }

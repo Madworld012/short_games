@@ -44,6 +44,7 @@ module.exports = {
 				case "LG": // Leave Game
 				case "HISTORY": //game history
 				case "DWN_LIST": //default history
+				case "GUEST_LOGIN" : //guest login.
 					aviatorClass[en](request.data, client);
 					break;
 				case "DEPOSIT":

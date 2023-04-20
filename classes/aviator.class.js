@@ -663,27 +663,9 @@ module.exports = {
     },
     LGG: async function (data, client) {
         try {
-            if (client) {
+            if (data.tblid && client) {
                 console.log("call come for LGG",data.tblid);
-                // if (typeof client.uid != "undefined" && client.uid != "" && client.uid != null) {
-                //     let userData = await db.collection('game_users').find({ $or: [{ _id: ObjectId(client.uid.toString()) }, { sck: client.id }] }).toArray();
-                //     if (userData.length > 0 && typeof userData[0].tblid != "undefined" && userData[0].tblid != "") {
-
-                //         let tableDate = await db.collection('aviator_table').find({ _id: ObjectId(userData[0].tblid.toString()) }).toArray();
-                //         if (tableDate.length > 0) {
-                //             await db.collection('aviator_table').updateOne({ _id: ObjectId(tableDate[0]._id.toString()) }, { $inc: { count: -1 } }, function () { });
-                //             try {
-                //                 client.leave(tableDate[0]._id.toString());
-                //             } catch (error) { }
-                //             commonClass.sendDirectToUserSocket(client, { en: "LG", data: { status: true, msg: "Leave game" } });
-                //         }
-                //         await db.collection('game_users').updateOne({ _id: ObjectId(userData[0]._id) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
-                //     } else {
-                //         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { bet_1: 0, bet_2: 0, tblid: "", is_play: 0 } }, function () { })
-                //     }
-                // } else {
-                //     cl("client.uid is not found");
-                // }
+                client.leave(data.tblid.toString());
                 // cl("userid", client.id);
             } else {
                 cl("socket not defined");
@@ -766,8 +748,8 @@ module.exports = {
     GUEST_LOGIN: async function (data, client) {
 
         console.log("Rooms", io.sockets.adapter.rooms);
-        let rooms = io.sockets.adapter.rooms;
-        console.log(rooms.get());
+        // let rooms = io.sockets.adapter.rooms;
+        // console.log(rooms.get());
 
         let tableData = await db.collection('aviator_table').find({}).limit(1).toArray();
         console.log("table data found--------------", tableData);

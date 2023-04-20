@@ -1,111 +1,103 @@
-
-// async function init(params) {
-
-
-// let cut_out_x_value = 40.5;
-// // let cut_out_x_value = 1.01;
-
-// console.log("\nNext Cut Out Value -----------------------------------------------------------------------------------------------", cut_out_x_value);
-// //start x value
-// let x = 0.99;
-// let re_fly = 0;
-// async function sleep(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
-// const call = async (cut_out_x_value) => {
-
-//     if (x == cut_out_x_value) {
-
-//         //need to add indexing
-//         // let rand_value = _.random(1, config.FAKE_PLANE_START_STOP_MAX_AMOUNT);
-//         console.log("plane cut out no at----------------------------",x);
-//     } else {
-
-//         await sleep((x > 10) ? 5 : 50 / x );
+// let total_cash = 10;
+// let bonus_cash = 10;
+// let total_cut_cash = 10;
 
 
 
 
-//         let ix = 0.01;
-//         if(x > 10 && x <= 20){
-//             ix = (cut_out_x_value < x + 0.05)? 0.01 : 0.05;
-//         }else if(x > 20 && x <= 30){
-//             ix = (cut_out_x_value < x + 0.10)? 0.01 : 0.10;
-//         }else if(x > 30 && x <= 40){
-//             ix = (cut_out_x_value < x + 0.20)? 0.01 : 0.20;
-//         }else if(x < 40){
-//             ix = (cut_out_x_value < x + 0.21)? 0.01 : 0.21;
+// if (total_cash + bonus_cash >= total_cut_cash) {
+
+//     // let halft_deduct_cash = total_cut_cash / 2;
+//     console.log("calcome");
+//     let halft_deduct_cash = Math.round(total_cut_cash * 75/100);
+//     console.log(halft_deduct_cash);
+
+//     if (total_cash == 0 && bonus_cash >= total_cut_cash) {
+//         bonus_cash = bonus_cash - total_cut_cash;
+//         total_cut_cash = 0;
+//     } else if (bonus_cash == 0 && total_cash >= total_cut_cash) {
+//         total_cash = total_cash - total_cut_cash;
+//         total_cut_cash = 0;
+//     } else if (total_cash >= halft_deduct_cash && bonus_cash >= halft_deduct_cash) {
+//         total_cash = total_cash - halft_deduct_cash;
+//         bonus_cash = bonus_cash - halft_deduct_cash;
+//         total_cut_cash = 0;
+//     } else if ((bonus_cash < halft_deduct_cash && bonus_cash > 0) || (total_cash < halft_deduct_cash && total_cash > 0)) {
+//         if (bonus_cash < halft_deduct_cash) {
+//             let diff = halft_deduct_cash - bonus_cash;
+//             bonus_cash = 0;
+//             total_cash = total_cash - (halft_deduct_cash + diff);
+//             total_cut_cash = 0;
+//         } else if (total_cash < halft_deduct_cash) {
+//             let diff = halft_deduct_cash - total_cash;
+//             total_cash = 0;
+//             bonus_cash = bonus_cash - (halft_deduct_cash + diff);
+//             total_cut_cash = 0;
 //         }
-
-//         x = parseFloat((x + ix).toFixed(2));
-//         console.log("x value is ",x);
-
-//         // console.log("x", x);
-//         call(cut_out_x_value);
 //     }
-// }
-// return await call(cut_out_x_value);
-
-
-
-
-
-// async function sleep(ms) {
-//     return new Promise(resolve => setTimeout(resolve, ms));
-// }
-
+// } else {
+//     console.log("not enough cash");
 // }
 
 
-// init()
+// console.log("total_cash",total_cash);
+// console.log("bonus_cash",bonus_cash);
+// console.log("total_cut_cash",total_cut_cash);
 
 
-// let x = 1.30;
-// let tblid = "1111";
-
-// let bet_data = [
-//     { name: "a", uid: "12111", xx: 1.20 },
-//     { name: "b", uid: "12112", xx: 1.30 },
-//     { name: "c", uid: "12113", xx: 1.45 },
-//     { name: "a", uid: "12111", xx: 1.20 },
-//     { name: "b", uid: "12112", xx: 1.30 },
-//     { name: "c", uid: "12113", xx: 1.45 }
-// ]
-// const result = bet_data.find(({ xx }) => xx === x);
-// console.log("found", result);
+// // console.log("percentage is ", Math.round(10*75/100));
 
 
 
 
 
-let x = 1.30;
-let tblid = "1111";
 
-let MAIN_BET_JSON = {
-    "1111": [
-        { name: "a", uid: "12111", xx: 1.20 },
-        { name: "b", uid: "12112", xx: 1.30 },
-        { name: "c", uid: "12113", xx: 1.45 }],
 
-    "1112": [
-        { name: "a", uid: "12111", xx: 1.20 },
-        { name: "b", uid: "12112", xx: 1.30 },
-        { name: "c", uid: "12113", xx: 1.45 }]
+let total_cash = 10;
+let bonus_cash = 30;
+let total_cut_cash = 15;
 
+if(total_cash + bonus_cash >= total_cut_cash){
+    
+    let cut_from_cash = Math.round(total_cut_cash * 75/100);
+    let cut_from_bonus = total_cut_cash - cut_from_cash;
+
+    console.log("cut_from_cash",cut_from_cash);
+    console.log("cut_from_bonus",cut_from_bonus);
+    console.log("-------------------------------------------------------");
+
+    if(total_cash == 0 && bonus_cash >= total_cut_cash){
+        console.log("cond 1");
+        bonus_cash = bonus_cash - total_cut_cash;
+        total_cut_cash = 0;
+    }else if(bonus_cash == 0 && total_cash >= total_cut_cash) {
+        console.log("cond 2");
+        total_cash = total_cash - total_cut_cash;
+        total_cut_cash = 0;
+    }else if(total_cash >= cut_from_cash && bonus_cash >= cut_from_bonus){
+        console.log("cond 3");
+        total_cash = total_cash - cut_from_cash;
+        bonus_cash = bonus_cash - cut_from_bonus;
+        total_cut_cash = 0;
+    }else{
+        if((total_cash <= cut_from_cash && total_cash > 0) || (bonus_cash <= cut_from_bonus && bonus_cash > 0)){
+            console.log("cond 4");
+            total_cut_cash = total_cut_cash - total_cash;
+            total_cash = 0;
+            if(total_cut_cash > 0){
+                bonus_cash = bonus_cash - total_cut_cash;
+                total_cut_cash = 0;
+            }
+        }
+    }
+    
+}else{
+    console.log("not enough coin");
 }
 
-console.log(MAIN_BET_JSON);
-delete MAIN_BET_JSON[tblid];
-console.log(MAIN_BET_JSON);
 
 
-
-
-// let bet_data = MAIN_BET_JSON[tblid];
-// console.log(bet_data);
-
-// const result = bet_data.find(({ xx }) => xx === x);
-// console.log("found", result);
-
-
+console.log("total_cash",total_cash);
+console.log("bonus_cash",bonus_cash);
+console.log("total_cut_cash",total_cut_cash);
 

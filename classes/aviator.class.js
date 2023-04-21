@@ -87,6 +87,7 @@ module.exports = {
                         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData._id.toString(), bet_from_bonus: 0 } }, function () { })
                         client.tblid = tableData._id.toString();
                         client.join(tableData._id.toString());
+                        commonClass.sendToRoom(tableData._id.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
                         tableData["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
 
                         if (tableData.status == "START_BET_TIME") {
@@ -127,6 +128,7 @@ module.exports = {
                             await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), bet_from_bonus: 0, tblid: new_table_data._id.toString() } }, function () { })
                             client.tblid = new_table_data._id.toString();
                             client.join(new_table_data._id.toString());
+                            commonClass.sendToRoom(new_table_data._id.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
                             new_table_data["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
                             new_table_data.history = new_table_data.f_history.reverse();
                             tableData["GUEST_LOGIN"] = false;
@@ -664,7 +666,6 @@ module.exports = {
     LGG: async function (data, client) {
         try {
             if (data.tblid && client) {
-                console.log("call come for LGG",data.tblid);
                 client.leave(data.tblid.toString());
                 // cl("userid", client.id);
             } else {
@@ -747,12 +748,13 @@ module.exports = {
     },
     GUEST_LOGIN: async function (data, client) {
 
-        console.log("Rooms", io.sockets.adapter.rooms);
-        // let rooms = io.sockets.adapter.rooms;
-        // console.log(rooms.get());
+
+
+
+        // const roomId = roomIds[0];
+        // console.log("roomId",roomIds);
 
         let tableData = await db.collection('aviator_table').find({}).limit(1).toArray();
-        console.log("table data found--------------", tableData);
         if (tableData && tableData.length > 0) {
 
             tableData = tableData[0];
@@ -760,6 +762,15 @@ module.exports = {
             console.log("call come in");
             client.guest = true;
             client.join(tableData._id.toString());
+
+            const roomIds = io.sockets.adapter.rooms.keys();
+            for (const room of roomIds) {
+                console.log("room", room);
+                if (room.length == 24) {
+                    console.log("log.", typeof room);
+                    commonClass.sendToRoom(room.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                }
+            }
 
             tableData["total_cash"] = 1000;
             if (tableData.status == "START_BET_TIME") {

@@ -87,7 +87,9 @@ module.exports = {
                         await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), tblid: tableData._id.toString(), bet_from_bonus: 0 } }, function () { })
                         client.tblid = tableData._id.toString();
                         client.join(tableData._id.toString());
-                        commonClass.sendToRoom(tableData._id.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                        setTimeout(() => {
+                            commonClass.sendToRoom(tableData._id.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                        }, 1000);
                         tableData["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
 
                         if (tableData.status == "START_BET_TIME") {
@@ -128,7 +130,9 @@ module.exports = {
                             await db.collection('game_users').updateOne({ _id: ObjectId(client.uid) }, { $set: { is_play: 1, last_game_play: new Date(), bet_from_bonus: 0, tblid: new_table_data._id.toString() } }, function () { })
                             client.tblid = new_table_data._id.toString();
                             client.join(new_table_data._id.toString());
-                            commonClass.sendToRoom(new_table_data._id.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                            setTimeout(() => {
+                                commonClass.sendToRoom(new_table_data._id.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                            }, 1000);
                             new_table_data["total_cash"] = parseFloat((userData.total_cash + userData.bonus_cash).toFixed(2));
                             new_table_data.history = new_table_data.f_history.reverse();
                             tableData["GUEST_LOGIN"] = false;
@@ -768,7 +772,9 @@ module.exports = {
                 console.log("room", room);
                 if (room.length == 24) {
                     console.log("log.", typeof room);
-                    commonClass.sendToRoom(room.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                    setTimeout(() => {
+                        commonClass.sendToRoom(room.toString(), { en: "OC", data: { c: _.random(500, 1000) } });
+                    }, 1000);
                 }
             }
 
@@ -787,7 +793,7 @@ module.exports = {
             } else {
                 tableData.history.reverse();
             }
-            
+
             tableData['tblid'] = tableData._id;
             tableData["GUEST_LOGIN"] = true;
 

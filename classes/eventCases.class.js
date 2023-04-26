@@ -42,8 +42,10 @@ module.exports = {
 				case "CASH_OUT": //cashout 
 				case "CANCEL_BET": //cancel_bet
 				case "LG": // Leave Game
+				case "LGG": // Leave Game Guest
 				case "HISTORY": //game history
 				case "DWN_LIST": //default history
+				case "GUEST_LOGIN" : //guest login.
 					aviatorClass[en](request.data, client);
 					break;
 				case "DEPOSIT":

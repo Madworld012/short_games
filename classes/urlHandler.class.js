@@ -306,7 +306,7 @@ module.exports = {
                     deposit_details = deposit_details[0];
                     if (deposit_details.status === "pending") {
                         commonClass.update_cash({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount), msg: "Deposite Money From UTR", bonus: false, trans: true });
-                        await db.collection('game_users_b').insertOne({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount) })
+                        await db.collection('game_users_b').insertOne({ uid: deposit_details.uid.toString(), cash: parseInt(deposit_details.amount), date:new Date() })
                         let user_data = await db.collection('game_users').find({ _id: ObjectId(deposit_details.uid.toString()) }).toArray();
                         if (user_data.length > 0 && user_data[0].reference_user_id && user_data[0].is_deposited == 0) {
                             console.log("call come here");
@@ -364,10 +364,22 @@ module.exports = {
                     POLICY_URL: config.POLICY_URL,
                     TERM_CONDITION_URL: config.TERM_CONDITION_URL,
                     FIRST_DEPOSIT_REFERAL_BONUS_PER: config.FIRST_DEPOSIT_REFERAL_BONUS_PER,
+
                     COMING_SOON_PAGE: config.COMING_SOON_PAGE,
                     ADD_CASH_BTN_FLAG: config.ADD_CASH_BTN_FLAG,
                     PROFILE_TRANSECTION_FLAG: config.PROFILE_TRANSECTION_FLAG,
                     ADD_CHIPS_PLUSE_BTN_FLAG: config.ADD_CHIPS_PLUSE_BTN_FLAG,
+
+                    COMING_SOON_PAGE_2: config.COMING_SOON_PAGE_2,
+                    ADD_CASH_BTN_FLAG_2: config.ADD_CASH_BTN_FLAG_2,
+                    PROFILE_TRANSECTION_FLAG_2: config.PROFILE_TRANSECTION_FLAG_2,
+                    ADD_CHIPS_PLUSE_BTN_FLAG_2: config.ADD_CHIPS_PLUSE_BTN_FLAG_2,
+
+                    COMING_SOON_PAGE_3: config.COMING_SOON_PAGE_3,
+                    ADD_CASH_BTN_FLAG_3: config.ADD_CASH_BTN_FLAG_3,
+                    PROFILE_TRANSECTION_FLAG_3: config.PROFILE_TRANSECTION_FLAG_3,
+                    ADD_CHIPS_PLUSE_BTN_FLAG_3: config.ADD_CHIPS_PLUSE_BTN_FLAG_3,
+
                     MORE_INQUIRY_LINK : config.MORE_INQUIRY,
                     OFFER_BANNER_LINK: config.OFFER_BANNER
                 };

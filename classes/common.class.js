@@ -235,10 +235,10 @@ module.exports = {
                 cut_cash: data.cash,
                 cash: user_data.total_cash,
                 bonus: user_data.bonus_cash,
-                bet_from_bonus: (user_data.bet_from_bonus) ? user_data.bet_from_bonus : "",
+                // bet_from_bonus: (user_data.bet_from_bonus) ? user_data.bet_from_bonus : "",
                 a_cash: user_updated_record.value.total_cash,
                 a_bonus: user_updated_record.value.bonus_cash,
-                a_bet_from_bonus: (update_json.bet_from_bonus) ? update_json.bet_from_bonus : "",
+                // a_bet_from_bonus: (update_json.bet_from_bonus) ? update_json.bet_from_bonus : "",
                 cd: new Date()
             });
             commonClass.sendDataToUserSocketId(user_data.sck, { en: "UC", data: { status: true, total_cash: user_updated_record.value.total_cash + user_updated_record.value.bonus_cash, bonus_cash: user_updated_record.value.bonus_cash } });
